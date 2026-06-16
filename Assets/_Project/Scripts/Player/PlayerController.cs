@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,8 +7,11 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     public Rigidbody2D rigidBody;
+    public SpriteRenderer spriteRenderer;
+    public SpriteRenderer bodyspriteRenderer;
     public float velocity = 3.5f;
-    public InputActionReference move; 
+    public bool selected;
+    //public InputActionReference move; 
     [Header("Movement Keys")]
     public KeyCode upKey;
     public KeyCode downKey;
@@ -15,8 +19,21 @@ public class PlayerController : MonoBehaviour
     public KeyCode rightKey;
     private int verticalInput;
     private int horizontalInput;
+
+    private void Start() 
+    {
+        GetComponents();
+    }
+
     private void Update()
     {
+        UpdateDirections();
+        UpdateAnimations();
+    }
+
+    private void UpdateDirections() 
+    {
+        if(! selected) return;
         verticalInput = GetVerticalInput();
         horizontalInput = GetHorizontalInput();
     }
@@ -25,6 +42,20 @@ public class PlayerController : MonoBehaviour
     {
         rigidBody.velocity = Direction() * Velocity();
     }
+
+    private void UpdateAnimations()
+    {
+        if(horizontalInput > 0)
+        {
+            spriteRenderer.flipX = false;
+            bodyspriteRenderer.flipX = false;
+        }
+        else if(horizontalInput < 0)
+        {
+            spriteRenderer.flipX = true;
+            bodyspriteRenderer.flipX = true;
+        }
+    } 
 
     private Vector2 Direction()
     {
@@ -70,5 +101,21 @@ public class PlayerController : MonoBehaviour
     private bool IsIdle()
     {
         return horizontalInput == 0 && verticalInput == 0;
+    }
+
+    private void GetComponents() 
+    {
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
+        if (rigidBody == null)
+        {
+            rigidBody = GetComponent<Rigidbody2D>();
+        }
+        if (bodyspriteRenderer == null)
+        {
+            bodyspriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        }
     }
 }

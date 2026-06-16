@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8428326957823883515}
   - component: {fileID: 1482747286849466689}
   - component: {fileID: 7582613803393902017}
+  - component: {fileID: 4625009335733229404}
   m_Layer: 0
   m_Name: B_PlayerBase
   m_TagString: Untagged
@@ -30,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -8, y: 0, z: 0}
-  m_LocalScale: {x: -2, y: 2, z: 2}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4721877160502030249}
@@ -79,7 +80,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_Sprite: {fileID: 1878926683, guid: 12fc66bea36b9fd49914720772e3d674, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 2}
@@ -128,8 +129,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rigidBody: {fileID: 8428326957823883515}
+  spriteRenderer: {fileID: 0}
+  bodyspriteRenderer: {fileID: 0}
   velocity: 3.5
-  move: {fileID: 0}
+  selected: 0
   upKey: 119
   downKey: 115
   leftKey: 97
@@ -179,6 +182,36 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.28703976, y: 0.3420292}
   m_EdgeRadius: 0
+--- !u!114 &4625009335733229404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2225486113069478318}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 05d24416a0bf8314eb9cf01e78701bba, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: Keyboard
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &6820114103705283554
 GameObject:
   m_ObjectHideFlags: 0
@@ -254,7 +287,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: 1578788199, guid: e811f8b4329d5de4eb1aecb22735cd15, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 1}
