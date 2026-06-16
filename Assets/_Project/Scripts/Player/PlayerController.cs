@@ -1,0 +1,74 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class PlayerController : MonoBehaviour
+{
+    public Rigidbody2D rigidBody;
+    public float velocity = 3.5f;
+    public InputActionReference move; 
+    [Header("Movement Keys")]
+    public KeyCode upKey;
+    public KeyCode downKey;
+    public KeyCode leftKey;
+    public KeyCode rightKey;
+    private int verticalInput;
+    private int horizontalInput;
+    private void Update()
+    {
+        verticalInput = GetVerticalInput();
+        horizontalInput = GetHorizontalInput();
+    }
+
+    private void FixedUpdate()
+    {
+        rigidBody.velocity = Direction() * Velocity();
+    }
+
+    private Vector2 Direction()
+    {
+        if(IsIdle())
+        {
+            return rigidBody.velocity * 0.7f;
+        }
+        return new Vector2(horizontalInput, verticalInput);
+    }
+
+    private float Velocity() 
+    {
+        if(IsIdle())
+        {
+            return 1f;
+        }
+        return velocity;
+    }
+
+    private int GetVerticalInput()
+    {
+       return Get_Input(upKey, downKey);
+    }
+
+    private int GetHorizontalInput()
+    {
+       return Get_Input(rightKey, leftKey);
+    }
+
+    private int Get_Input(KeyCode firstKey, KeyCode secondKey)
+    {
+        if (Input.GetKey(firstKey))
+        {
+            return 1;
+        }
+        else if (Input.GetKey(secondKey))
+        {
+            return -1;
+        }
+        return 0;
+    }
+
+    private bool IsIdle()
+    {
+        return horizontalInput == 0 && verticalInput == 0;
+    }
+}
