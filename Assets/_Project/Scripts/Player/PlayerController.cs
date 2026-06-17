@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
-{
+{   
+    public Animator _animator;
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
     public SpriteRenderer bodyspriteRenderer;
@@ -17,10 +18,19 @@ public class PlayerController : MonoBehaviour
     public KeyCode downKey;
     public KeyCode leftKey;
     public KeyCode rightKey;
+
+    [Header("Action Keys")]
+
+    public KeyCode passKey;
+    public KeyCode shootKey;
+    public KeyCode runKey;
+    public KeyCode abilityKey;
+    public KeyCode tackleKey;
+
     private int verticalInput;
     private int horizontalInput;
 
-    private void Start() 
+    private void Awake() 
     {
         GetComponents();
     }
@@ -31,7 +41,7 @@ public class PlayerController : MonoBehaviour
         UpdateAnimations();
     }
 
-    private void UpdateDirections() 
+    public void UpdateDirections() 
     {
         if(! selected) return;
         verticalInput = GetVerticalInput();
@@ -45,6 +55,8 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateAnimations()
     {
+        bool isRunning = !IsIdle();
+      
         if(horizontalInput > 0)
         {
             spriteRenderer.flipX = false;
@@ -57,23 +69,29 @@ public class PlayerController : MonoBehaviour
         }
     } 
 
-    private Vector2 Direction()
+   private Vector2 Direction()
+{
+    if (IsIdle())
     {
-        if(IsIdle())
-        {
-            return rigidBody.velocity * 0.7f;
-        }
-        return new Vector2(horizontalInput, verticalInput);
+        return Vector2.zero;
     }
 
+    return new Vector2(horizontalInput, verticalInput).normalized;
+}
     private float Velocity() 
+{
+    if (IsIdle())
     {
-        if(IsIdle())
-        {
-            return 1f;
-        }
-        return velocity;
+        return 0f;
     }
+
+    if (RunPressed())
+    {
+        return velocity * 1.7f;
+    }
+
+    return velocity;
+}
 
     private int GetVerticalInput()
     {
@@ -103,6 +121,11 @@ public class PlayerController : MonoBehaviour
         return horizontalInput == 0 && verticalInput == 0;
     }
 
+    public bool IsMoving()
+    {
+        return horizontalInput != 0 || verticalInput != 0;
+    }
+
     private void GetComponents() 
     {
         if (spriteRenderer == null)
@@ -118,4 +141,40 @@ public class PlayerController : MonoBehaviour
             bodyspriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
         }
     }
+
+      public bool PassPressed()
+    {
+        if (!selected) return false;
+
+        return Input.GetKeyDown(passKey);
+    }
+
+    public bool ShootPressed()
+    {
+        if (!selected) return false;
+
+        return Input.GetKeyDown(shootKey);
+    }
+
+    public bool ShootReleased()
+    {
+         if (!selected) return false;
+         return Input.GetKeyUp(shootKey);
+    }
+
+    public bool TacklePressed()
+    {
+         if (!selected) return false;
+         return Input.GetKeyDown(tackleKey);
+    }
+    public bool RunPressed()
+    {
+         if (!selected) return false;
+         return Input.GetKey(runKey);
+    }
+    public bool RunReleased()
+{
+    if (!selected) return false;
+    return Input.GetKeyUp(runKey);
+}
 }
