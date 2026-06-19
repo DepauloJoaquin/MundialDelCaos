@@ -38,7 +38,7 @@ public class UIManager : MonoBehaviour
 
     void ActualizarMarcadores()
     {
-        
+
     }
     void ActualizarTiempo()
     {
