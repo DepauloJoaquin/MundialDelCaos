@@ -1,18 +1,34 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
 
 public class GameManager : MonoBehaviour
 {
     // Responsabilidad:
     // Controla el estado general de la partida.
     // Más adelante manejará inicio, pausa, goles, tiempo, reinicio y fin del partido.
-   [Header("Estados de Partida")]
-   private bool _partidaEnJuego;
-   private bool _partidaPausada;
+   
+   public static GameManager Instance { get; private set; }
+    private void Awake()
+    {
+        // Configuración del Singleton
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // Evita que se destruya al cambiar de escena
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
-   private bool _partidaTerminada;
+   [Header("Estados de Partida")]
+   private GameStateManager _gameStatemanager;
+
 
 
     [Header("Marcadores")]
@@ -34,55 +50,99 @@ public class GameManager : MonoBehaviour
     private float _tiempoRestante;
     private TextMeshProUGUI _textoConValorDeTiempo;
 
+
+    //Events
+    public event Action OnMatchStarted;
+    public event Action OnMatchPaused;
+    public event Action OnMatchResumed;
+    public event Action OnMatchRestarted;
+    public event Action OnMatchEnded;
+    public event Action<string> OnGoalScored;
+
+    public event Action<int,int> OnScoreChanged;
+    public event Action<float> OnTimeChanged;
+    public event Action<GameState> OnGameStateChanged;
+
+    public event Action OnMenuActive;
+
     void Start()
     {
-        PrepararPartida();
+        Restart();
     }
 
-    void Update()
-    {
-        if(!_partidaEnJuego || !_partidaPausada || !_partidaTerminada)
-        {
-            return;
-            
-        }
-       ActualizarTiempo();
+    /*void Update()
+    {  
+      // ActualizarTiempo();
        ActualizarMarcadores();
     }
+    */
 
-
+    /*
     void ComenzarPartida()
     {
-        _partidaEnJuego = true;
+
 
         // Más adelante:
         // UIManager.Instance.MostrarHUD();
         // AudioManager.Instance.ReproducirSonidoInicio();
         
     }
-
-    void PausarPartida()
-    {   
-         if (!_partidaEnJuego || _partidaTerminada)
-        {
-            return;
-        }
-        CongelarComportamientosDeLosEquipos();
-        _partidaPausada = true;
-
-          // Más adelante:
-        // UIManager.Instance.MostrarMenuPausa();
-        // AudioManager.Instance.PausarMusica();
+    */
+    public void Pause()
+    {
+        OnMatchPaused?.Invoke();
+        _gameStatemanager.Pause();
+        
     }
 
+    public void Play()
+    {
+        OnMatchStarted?.Invoke();
+        _gameStatemanager.Play();
+    }
+
+    public void Restart()
+    {
+        OnMatchRestarted?.Invoke();
+        //_gameStatemanager.Restart();
+        ReiniciarPartida();
+    }
+
+
+    public void GoalScored()
+    {
+       
+    }
+
+    public void End()
+    {
+        OnMatchEnded?.Invoke();
+        _gameStatemanager.End();
+    }
+
+    public void ChangeState(GameState newGameState)
+    {
+        OnGameStateChanged?.Invoke(newGameState);
+    }
+
+    public void Menu()
+    {
+        OnMenuActive?.Invoke();
+        _gameStatemanager.Menu();
+    }
+
+
+
+
+
+    /*
     void ReanudarPartida()
     {   
          if (_partidaTerminada)
         {
             return;
         }
-        _partidaEnJuego = true;
-        _partidaPausada = false;
+ 
 
         // Más adelante:
         // UIManager.Instance.OcultarMenuPausa();
@@ -92,15 +152,13 @@ public class GameManager : MonoBehaviour
 
     void TerminarPartida()
     {
-        _partidaEnJuego = false;
-        _partidaPausada = false;
-        _partidaTerminada = true;
+
 
         // Más adelante:
         // UIManager.Instance.MostrarPantallaFinal();
         // AudioManager.Instance.ReproducirSonidoFinPartida();
     }
-
+    */
      public void RegistrarGolEquipoA()
     {
         _golesEquipoA +=1;
@@ -123,17 +181,18 @@ public class GameManager : MonoBehaviour
         // AudioManager.Instance.ReproducirSonidoGol();
     }
 
-
-    void CongelarComportamientosDeLosEquipos()
-    {
+    
+   // void CongelarComportamientosDeLosEquipos()
+    //{
          /*
         Más adelante:
         - Avisar a los TeamController que bloqueen movimiento.
         - Bloquear disparos, barridas y habilidades.
         */
-    }
-
-    void ActualizarTiempo()
+    //}
+    
+    
+    public void ActualizarTiempo()
     {
         
          _tiempoRestante -= Time.deltaTime;
@@ -141,29 +200,29 @@ public class GameManager : MonoBehaviour
         if (_tiempoRestante <= 0)
         {
             _tiempoRestante = 0;
-            TerminarPartida();
+            //TerminarPartida();
         }
     }
 
-    void ActualizarMarcadores()
+    public void ActualizarMarcadores()
     {   //UIManager
         /*_marcadorEquipoA.text = _golesEquipoA.ToString();
         _marcadorEquipoB.text = _golesEquipoB.ToString();*/
 
     }
-
+    
+/*
     void PrepararPartida()
     {
         ReiniciarPartida();
 
-        _partidaEnJuego = false;
-        _partidaPausada = false;
-        _partidaTerminada = false;
+
 
         _tiempoRestante = _tiempoInicial;
     }
-
-    void ReiniciarPartida()
+    */
+    
+    public void ReiniciarPartida()
     {
         ReiniciarEquipos();
         ReiniciarPosicionPelota();
