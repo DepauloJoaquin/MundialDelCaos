@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     public Animator _animator;
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
-    public SpriteRenderer bodyspriteRenderer;
+    public SpriteRenderer shirtSpriteRenderer;
     public float velocity = 3.5f;
     public bool selected;
     //public InputActionReference move; 
@@ -60,12 +60,12 @@ public class PlayerController : MonoBehaviour
         if(horizontalInput > 0)
         {
             spriteRenderer.flipX = false;
-            bodyspriteRenderer.flipX = false;
+            shirtSpriteRenderer.flipX = false;
         }
         else if(horizontalInput < 0)
         {
             spriteRenderer.flipX = true;
-            bodyspriteRenderer.flipX = true;
+            shirtSpriteRenderer.flipX = true;
         }
     } 
 
@@ -136,9 +136,9 @@ public class PlayerController : MonoBehaviour
         {
             rigidBody = GetComponent<Rigidbody2D>();
         }
-        if (bodyspriteRenderer == null)
+        if (shirtSpriteRenderer == null)
         {
-            bodyspriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
+            shirtSpriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
         }
     }
 

@@ -78,8 +78,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 1878926683, guid: 12fc66bea36b9fd49914720772e3d674, type: 3}
-  m_Color: {r: 0.82641506, g: 0.123182535, b: 0.123182535, a: 1}
+  m_Sprite: {fileID: 1578788199, guid: e811f8b4329d5de4eb1aecb22735cd15, type: 3}
+  m_Color: {r: 0.9622642, g: 0.94955504, b: 0.94955504, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -173,13 +173,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93817269a53e69a4d96365b6b3d84af4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animator: {fileID: 0}
   rigidBody: {fileID: 9062169989657019609}
+  spriteRenderer: {fileID: 0}
+  bodyspriteRenderer: {fileID: 0}
   velocity: 3.5
-  move: {fileID: 0}
+  selected: 1
   upKey: 273
   downKey: 274
   leftKey: 276
   rightKey: 275
+  passKey: 0
+  shootKey: 0
+  runKey: 0
+  abilityKey: 0
+  tackleKey: 0
 --- !u!114 &4298268059283685189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -187,13 +195,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3325976304563632852}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Actions: {fileID: -944628639613478452, guid: 05d24416a0bf8314eb9cf01e78701bba, type: 3}
-  m_NotificationBehavior: 0
+  m_NotificationBehavior: 2
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
     m_PersistentCalls:
@@ -204,7 +212,23 @@ MonoBehaviour:
   m_ControlsChangedEvent:
     m_PersistentCalls:
       m_Calls: []
-  m_ActionEvents: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: a51dad29-6718-4a1a-8a5f-63a7efd5b544
+    m_ActionName: Player/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard
   m_DefaultActionMap: Player
