@@ -6,9 +6,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : InputHandler
 {
+    public TeamController _myTeam;
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
-
     public Animator _animator;
     
     
@@ -87,5 +87,18 @@ public class PlayerController : InputHandler
             rigidBody = GetComponent<Rigidbody2D>();
         }
     }
-    
+
+    public void OnPlayerReceivesBall(PlayerController previousOwner)
+    {
+        _myTeam.SelectPlayerWhoReceiveBall(this,previousOwner);
+    }
+
+    public enum ControlSlot
+    {
+        None,
+        Player1,
+        Player2,
+        Bot
+    }
+    public ControlSlot controlSlot = ControlSlot.Bot;
 }
