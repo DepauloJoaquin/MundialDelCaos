@@ -1019,6 +1019,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c75a66438746be4ab41325b933e0c40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _currentOwner: {fileID: 0}
+  _lastOwner: {fileID: 0}
+  _lastKickPlayer: {fileID: 0}
+  _passTarget: {fileID: 0}
+  _isFree: 0
 --- !u!1 &1076842877
 GameObject:
   m_ObjectHideFlags: 0
@@ -1126,6 +1131,37 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 980896550}
   m_SourcePrefab: {fileID: 100100000, guid: 37c103e129dacce4d9470ebe7cf3e812, type: 3}
+--- !u!1 &1357934514
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1357934515}
+  m_Layer: 0
+  m_Name: Team_B
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1357934515
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1357934514}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1968342379}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1398449306
 GameObject:
   m_ObjectHideFlags: 0
@@ -1170,6 +1206,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a0e593e519227447ad9a352bcc8386a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _ball: {fileID: 0}
 --- !u!1 &1565343004
 GameObject:
   m_ObjectHideFlags: 0
@@ -1210,6 +1247,39 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2225486113069478318, guid: 18e6da13c7df2964b87cd27589a06b91, type: 3}
   m_PrefabInstance: {fileID: 1992689612}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1968342378
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1968342379}
+  m_Layer: 0
+  m_Name: Teams
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1968342379
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1968342378}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.3286104, y: 0.29317838, z: -0.0055353227}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2064325668}
+  - {fileID: 1357934515}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1992689612
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1487,6 +1557,37 @@ MonoBehaviour:
   passState: {fileID: 1992689620}
   shootState: {fileID: 1992689622}
   tackleState: {fileID: 1992689623}
+--- !u!1 &2064325667
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2064325668}
+  m_Layer: 0
+  m_Name: Team_A
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2064325668
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2064325667}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1968342379}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &6675089116500006147
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1625,6 +1726,7 @@ SceneRoots:
   - {fileID: 1565343005}
   - {fileID: 18269191}
   - {fileID: 872786167}
+  - {fileID: 1968342379}
   - {fileID: 557143523}
   - {fileID: 214383661}
   - {fileID: 79838465}
