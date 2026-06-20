@@ -2,17 +2,64 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShirtAnimationController : MonoBehaviour
+public class ShirtAnimationController : InputHandler
 {
-    // Start is called before the first frame update
+    [Header("Must Pass")]
+    public PlayerController playerController;
+    public SpriteRenderer spriteRenderer;
+    public Animator animator;
+    
     void Start()
     {
-        
+        if(playerController == null)
+        {
+            playerController = GetComponent<PlayerController>();
+        }
+        ImitatePlayerControllerProperties();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        UpdateDirections();
+        UpdateSpriteFlip();
+        UpdateSelection();
+    }
+
+    public override void UpdateDirections()
+    {
+        if (!selected) return;
+        base.UpdateDirections();
+    }
+
+    private void UpdateSpriteFlip()
+    {
+        bool isRunning = !IsIdle();
+
+        if (horizontalInput > 0)
+        {
+            spriteRenderer.flipX = false;
+        }
+        else if (horizontalInput < 0)
+        {
+            spriteRenderer.flipX = true;
+        }
+    }
+
+    private void UpdateSelection() 
+    {
+        selected = playerController.selected;
+    }
+
+    private void ImitatePlayerControllerProperties()
+    {
+        upKey = playerController.upKey;
+        downKey = playerController.downKey;
+        leftKey = playerController.leftKey;
+        rightKey = playerController.rightKey;
+        passKey = playerController.passKey;
+        shootKey = playerController.shootKey;
+        runKey = playerController.runKey;
+        abilityKey = playerController.abilityKey;
+        tackleKey = playerController.tackleKey;
     }
 }

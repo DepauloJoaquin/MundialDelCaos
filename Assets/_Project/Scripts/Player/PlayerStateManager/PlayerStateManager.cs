@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlayerStateManager : MonoBehaviour
 {
     private PlayerState _currentState;
-    private PlayerController _playerController;
+    public InputHandler _playerController;
+    private Animator _animator;
     private GameObject _player;
 
     [Header("States")]
@@ -18,14 +19,18 @@ public class PlayerStateManager : MonoBehaviour
 
     void Awake()
     {
-        _playerController = GetComponent<PlayerController>();
+        if(_playerController == null ) 
+        {
+            _playerController = GetComponent<PlayerController>();
+        }
+        _animator = GetComponent<Animator>();
         _player = gameObject;
-        idleState.Init(this, _playerController,_player);
-        walkState.Init(this, _playerController,_player);
-        runState.Init(this, _playerController,_player);
-        passState.Init(this, _playerController,_player);
-        shootState.Init(this, _playerController,_player);
-        tackleState.Init(this, _playerController,_player);
+        idleState.Init(this, _playerController,_player,_animator);
+        walkState.Init(this, _playerController,_player,_animator);
+        runState.Init(this, _playerController,_player,_animator);
+        passState.Init(this, _playerController,_player,_animator);
+        shootState.Init(this, _playerController,_player,_animator);
+        tackleState.Init(this, _playerController,_player,_animator);
     }
        
     void Start()

@@ -4,33 +4,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
-{   
-    public Animator _animator;
+public class PlayerController : InputHandler
+{
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
-    public SpriteRenderer shirtSpriteRenderer;
+
+    public Animator _animator;
+    
+    
     public float velocity = 3.5f;
-    public bool selected;
     //public InputActionReference move; 
-    [Header("Movement Keys")]
-    public KeyCode upKey;
-    public KeyCode downKey;
-    public KeyCode leftKey;
-    public KeyCode rightKey;
 
-    [Header("Action Keys")]
-
-    public KeyCode passKey;
-    public KeyCode shootKey;
-    public KeyCode runKey;
-    public KeyCode abilityKey;
-    public KeyCode tackleKey;
-
-    private int verticalInput;
-    private int horizontalInput;
-
-    private void Awake() 
+    private void Awake()
     {
         GetComponents();
     }
@@ -38,14 +23,13 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         UpdateDirections();
-        UpdateAnimations();
+        UpdateSpriteFlip();
     }
 
-    public void UpdateDirections() 
+    public override void UpdateDirections()
     {
-        if(! selected) return;
-        verticalInput = GetVerticalInput();
-        horizontalInput = GetHorizontalInput();
+        if (!selected) return;
+        base.UpdateDirections();
     }
 
     private void FixedUpdate()
@@ -53,80 +37,46 @@ public class PlayerController : MonoBehaviour
         rigidBody.velocity = Direction() * Velocity();
     }
 
-    private void UpdateAnimations()
+    private void UpdateSpriteFlip()
     {
         bool isRunning = !IsIdle();
-      
-        if(horizontalInput > 0)
+
+        if (horizontalInput > 0)
         {
             spriteRenderer.flipX = false;
-            shirtSpriteRenderer.flipX = false;
         }
-        else if(horizontalInput < 0)
+        else if (horizontalInput < 0)
         {
             spriteRenderer.flipX = true;
-            shirtSpriteRenderer.flipX = true;
         }
-    } 
-
-   private Vector2 Direction()
-{
-    if (IsIdle())
-    {
-        return Vector2.zero;
     }
 
-    return new Vector2(horizontalInput, verticalInput).normalized;
-}
-    private float Velocity() 
-{
-    if (IsIdle())
+    private Vector2 Direction()
     {
-        return 0f;
-    }
-
-    if (RunPressed())
-    {
-        return velocity * 1.7f;
-    }
-
-    return velocity;
-}
-
-    private int GetVerticalInput()
-    {
-       return Get_Input(upKey, downKey);
-    }
-
-    private int GetHorizontalInput()
-    {
-       return Get_Input(rightKey, leftKey);
-    }
-
-    private int Get_Input(KeyCode firstKey, KeyCode secondKey)
-    {
-        if (Input.GetKey(firstKey))
+        if (IsIdle())
         {
-            return 1;
+            return Vector2.zero;
         }
-        else if (Input.GetKey(secondKey))
+
+        return new Vector2(horizontalInput, verticalInput).normalized;
+    }
+    private float Velocity()
+    {
+        if (IsIdle())
         {
-            return -1;
+            return 0f;
         }
-        return 0;
+
+        if (RunPressed())
+        {
+            return velocity * 1.7f;
+        }
+
+        return velocity;
     }
 
-    private bool IsIdle()
-    {
-        return horizontalInput == 0 && verticalInput == 0;
-    }
 
-    public bool IsMoving()
-    {
-        return horizontalInput != 0 || verticalInput != 0;
-    }
-
-    private void GetComponents() 
+    private void GetComponents()
     {
         if (spriteRenderer == null)
         {
@@ -136,45 +86,6 @@ public class PlayerController : MonoBehaviour
         {
             rigidBody = GetComponent<Rigidbody2D>();
         }
-        if (shirtSpriteRenderer == null)
-        {
-            shirtSpriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
-        }
     }
-
-      public bool PassPressed()
-    {
-        if (!selected) return false;
-
-        return Input.GetKeyDown(passKey);
-    }
-
-    public bool ShootPressed()
-    {
-        if (!selected) return false;
-
-        return Input.GetKeyDown(shootKey);
-    }
-
-    public bool ShootReleased()
-    {
-         if (!selected) return false;
-         return Input.GetKeyUp(shootKey);
-    }
-
-    public bool TacklePressed()
-    {
-         if (!selected) return false;
-         return Input.GetKeyDown(tackleKey);
-    }
-    public bool RunPressed()
-    {
-         if (!selected) return false;
-         return Input.GetKey(runKey);
-    }
-    public bool RunReleased()
-{
-    if (!selected) return false;
-    return Input.GetKeyUp(runKey);
-}
+    
 }
