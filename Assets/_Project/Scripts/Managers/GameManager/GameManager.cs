@@ -12,6 +12,12 @@ public class GameManager : MonoBehaviour
     // Más adelante manejará inicio, pausa, goles, tiempo, reinicio y fin del partido.
    
    public static GameManager Instance { get; private set; }
+<<<<<<< Updated upstream
+=======
+
+   public event Action<float> OnTimeChanged;
+   public event Action<int,int> OnScoreChanged;
+>>>>>>> Stashed changes
     private void Awake()
     {
         // Configuración del Singleton
@@ -24,6 +30,29 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+<<<<<<< Updated upstream
+=======
+        _timeLeft = _intialTimeInSecods;
+        
+    }
+    public GameObject _ball;
+    private TeamController _teamAController;
+    private TeamController _teamBController;
+    private int _goalsTeam_A = 0;
+    private int _goalsTeam_B = 0;
+
+    [Header("Time")]
+    private float _intialTimeInSecods;
+    private float _timeLeft;
+
+
+    void OnEnable()
+    {
+        GameStateManager.Instance.OnMatchStarted += StartMatch;
+        GameStateManager.Instance.OnMatchPaused += PauseMatch;
+        GameStateManager.Instance.OnMatchRestart += RestartGame;
+        GameStateManager.Instance.OnGoalScored += RegisterGoal;
+>>>>>>> Stashed changes
     }
 
    [Header("Estados de Partida")]
@@ -67,6 +96,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+<<<<<<< Updated upstream
         Restart();
     }
 
@@ -74,9 +104,48 @@ public class GameManager : MonoBehaviour
     {  
       // ActualizarTiempo();
        ActualizarMarcadores();
+=======
+         GameStateManager.Instance.OnMatchStarted -= StartMatch;
+        GameStateManager.Instance.OnMatchPaused -= PauseMatch;
+        GameStateManager.Instance.OnMatchRestart -= RestartGame;
+    }
+
+    
+    void Update()
+    {
+        if (GameStateManager.Instance.IsOnPlayState())
+        {
+            _timeLeft -= Time.deltaTime;
+            if(_timeLeft <= 0)
+            {
+                _timeLeft = 0;
+               // GameStateManager.Instance.ChangeState(GameState.End);
+            }
+            OnTimeChanged?.Invoke(_timeLeft);
+        }
+        
+>>>>>>> Stashed changes
     }
     */
 
+<<<<<<< Updated upstream
+=======
+    
+    
+    void PauseMatch()
+    {
+        
+    }
+    void RestartGame()
+    {
+        _goalsTeam_A = 0;
+        _goalsTeam_B = 0;
+    }
+    void FinishMatch()
+    {
+        
+    }
+>>>>>>> Stashed changes
     /*
     void ComenzarPartida()
     {
@@ -104,8 +173,23 @@ public class GameManager : MonoBehaviour
     public void Restart()
     {
         OnMatchRestarted?.Invoke();
+<<<<<<< Updated upstream
         //_gameStatemanager.Restart();
         ReiniciarPartida();
+=======
+        _gameStatemanager.ChangeToRestart();
+    }
+    */
+    
+    public void RegisterGoal()
+    {
+        OnScoreChanged?.Invoke(_goalsTeam_A,_goalsTeam_B);
+    }
+
+    public void RegisterTeam_A_Goal()
+    {
+        _goalsTeam_A += 1;
+>>>>>>> Stashed changes
     }
 
 
