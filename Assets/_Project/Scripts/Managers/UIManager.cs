@@ -16,16 +16,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Canvas _canvasPantallaInicial;
 
     [Header("HUD")]
-    [SerializeField] private TextMeshProUGUI _textoTiempo;
-    [SerializeField] private TextMeshProUGUI _textoMarcadorEquipoA;
-    [SerializeField] private TextMeshProUGUI _textoMarcadorEquipoB;
+    [SerializeField] private TextMeshProUGUI _textTime;
+    [SerializeField] private TextMeshProUGUI _textScoreTeamA;
+    [SerializeField] private TextMeshProUGUI _textScoreTeamB;
 
     [Header("Mensajes")]
     [SerializeField] private GameObject _panelGol;
     [SerializeField] private GameObject _panelPausa;
     [SerializeField] private GameObject _panelPantallaFinal;
-<<<<<<< Updated upstream
-=======
     [SerializeField] private GameObject _panelPantallaInicial;
 
     public static UIManager Instance { get; private set; }
@@ -42,15 +40,12 @@ public class UIManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
->>>>>>> Stashed changes
 
     void Start()
     {
         
     }
 
-<<<<<<< Updated upstream
-=======
     private void OnEnable()
     {
         GameStateManager.Instance.OnMatchStarted += StartMatch;
@@ -68,57 +63,22 @@ public class UIManager : MonoBehaviour
         GameManager.Instance.OnScoreChanged += UpdateScores;
     }
 
->>>>>>> Stashed changes
     // Update is called once per frame
     void Update()
     {
         
     }
 
-    void ActualizarMarcadores()
-    {
-        
-    }
-    void ActualizarTiempo()
+    void ShowPauseMenu()
     {
         
     }
 
-    void MostrarMenuPausa()
-    {
-        
-    }
-
-    void MostrarPantallaInicial()
-    {
-        
-    }
-
-<<<<<<< Updated upstream
-    void MostrarPantallaFinal()
-=======
     void RestartHud()
->>>>>>> Stashed changes
     {
         
     }
 
-<<<<<<< Updated upstream
-     public void OcultarMenuPausa()
-    {
-        _panelPausa.SetActive(false);
-    }
-
-     public void OcultarPantallaFinal()
-    {
-        _panelPantallaFinal.SetActive(false);
-    }
-
-     public void OcultarPantallaInicial()
-    {
-        _panelPantallaFinal.SetActive(false);
-    }
-=======
    
 
  
@@ -141,6 +101,10 @@ public class UIManager : MonoBehaviour
 
     }
 
->>>>>>> Stashed changes
+    public void UpdateScores(int _goalsTeam_A,int _goalsTeam_B)
+    {
+        
+    }
+
 
 }

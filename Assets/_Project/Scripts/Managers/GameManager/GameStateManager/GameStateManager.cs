@@ -2,25 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using System;
 
 public class GameStateManager : MonoBehaviour
 {
-<<<<<<< Updated upstream
-    private GameState _currentGameState;
-
-    private GameManager _gameManager;
-
-    [Header("States")]
-    
-    private PlayState _play;
-    //private RestartState _restart;
-    private PauseGameState _pause;
-    private EndState _end;
-    private MenuState _menu;
-    private GoalState goal;
-
-    void Awake()
-=======
     public IGameState _currentGameState;
     public event Action OnGameStateChanged;
     public event Action OnMatchStarted;
@@ -34,19 +19,10 @@ public class GameStateManager : MonoBehaviour
 
     public event Action OnGoalScored;
      public static GameStateManager Instance { get; private set; }
-    private void Awake()
->>>>>>> Stashed changes
-    {
-        _gameManager = GetComponent<GameManager>();
-        //_play = GetComponent<PlaySta>();
-    }
+  
     void Start()
     {
-<<<<<<< Updated upstream
-        _currentGameState = _menu;
-=======
        ChangeState(new MainMenuState());
->>>>>>> Stashed changes
     }
     public void ChangeState(IGameState newGameState)
     {   
@@ -63,17 +39,6 @@ public class GameStateManager : MonoBehaviour
         {
             return;
         }
-<<<<<<< Updated upstream
-        _currentGameState.Exit();
-        _currentGameState = newGameState;
-        _currentGameState.Enter();
-
-        
-    }
-    void OnEnable()
-    {
-        _gameManager.OnGameStateChanged += ChangeState;
-=======
         _currentGameState?.Exit();
         _currentGameState = newGameState;
         _currentGameState.Enter();
@@ -165,32 +130,8 @@ public class GameStateManager : MonoBehaviour
     public bool IsOnPlayState()
     {
         return _currentGameState.StateType == GameState.Playing;
->>>>>>> Stashed changes
     }
 
-    public void Pause()
-    {
-        ChangeState(_pause);
-    }
-
-    public void Play()
-    {
-        ChangeState(_play);
-    }
-
-   /* public void Restart()
-    {
-         ChangeState(_restart);
-    }*/
-
-    public void End()
-    {
-        ChangeState(_end);
-    }
-
-    public void Menu()
-    {
-        ChangeState(_menu);
-    }
+ 
 
 }

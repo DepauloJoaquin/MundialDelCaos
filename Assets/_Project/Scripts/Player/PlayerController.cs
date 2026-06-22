@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
     public SpriteRenderer bodyspriteRenderer;
+    public TeamController _myTeam;
     public float velocity = 3.5f;
     public bool selected;
     //public InputActionReference move; 
@@ -29,6 +30,8 @@ public class PlayerController : MonoBehaviour
 
     private int verticalInput;
     private int horizontalInput;
+
+    public ControlSlot controlSlot;
 
     private void Awake() 
     {
@@ -173,8 +176,14 @@ public class PlayerController : MonoBehaviour
          return Input.GetKey(runKey);
     }
     public bool RunReleased()
-{
+    {
     if (!selected) return false;
     return Input.GetKeyUp(runKey);
-}
+    }
+    public enum ControlSlot
+    {
+        Bot,
+        Player1,
+        Player2
+    }
 }
