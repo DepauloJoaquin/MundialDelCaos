@@ -28,9 +28,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject _panelPantallaFinal;
     [SerializeField] private GameObject _panelPantallaInicial;
 
-
-
-
     public static UIManager Instance { get; private set; }
     private void Awake()
     {
@@ -53,11 +50,11 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
-       GameStateManager.Instance.OnGameStateChanged += HandleGameStateChanged;
+       GameStateManager.Instance.OnMatchStarted += StartMatch;
     }
     private void OnDisable()
     {
-       GameStateManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
+       GameStateManager.Instance.OnMatchStarted += StartMatch;
     }
 
     // Update is called once per frame
@@ -66,42 +63,28 @@ public class UIManager : MonoBehaviour
         
     }
 
-    void UpdateScores(int scoreA,int scoreB)
-    {
-        // ( _textScoreTeamA).text = scoreA.ToString();
-        // ( _textScoreTeamB).text = scoreB.ToString();
-    }
-   
-
     void ShowPauseMenu()
     {
         
     }
 
-    void HidePauseMenu()
-    {
-        
-    }
-    void ShowMainMenu()
-    {
-        
-    }
-
-    void HideMainMenu()
+    void RestartHud()
     {
         
     }
 
    
 
-    void MostrarPantallaFinal()
-    {
-        
-    }
+ 
 
     void ShowHud()
     {
         
+    }
+
+    public void StartMatch()
+    {
+        //Mostrar Hud y lo que sea necesario
     }
 
     void UpdateTimer(float timeInSeconds)
@@ -112,34 +95,10 @@ public class UIManager : MonoBehaviour
 
     }
 
-     public void OcultarMenuPausa()
+    public void UpdateScores(int _goalsTeam_A,int _goalsTeam_B)
     {
-        _panelPausa.SetActive(false);
+        
     }
 
-     public void OcultarPantallaFinal()
-    {
-        _panelPantallaFinal.SetActive(false);
-    }
-
-     public void OcultarPantallaInicial()
-    {
-        _panelPantallaInicial.SetActive(false);
-    }
-
-    private void HandleGameStateChanged(GameState newGameState)
-    {
-        switch (newGameState)
-        {
-            case GameState.Playing:
-                ShowHud();
-                break;
-            case GameState.MainMenu:
-                ShowMainMenu();
-                break;
-            //etc
-            
-        }
-    }
 
 }

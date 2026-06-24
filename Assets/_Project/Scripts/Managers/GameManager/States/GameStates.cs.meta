@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/_Project/Scripts/Teams/Team.cs.meta
+guid: 37f45a1baf6192d4a8031d27b34de94f
+========
+guid: 981a812e2a9aa654b8c06606c2ba0c13
+>>>>>>>> Funcionalidad-Mejora-del-game-manager-1.0-y-agregado-de-pelota:Assets/_Project/Scripts/Managers/GameManager/States/GameStates.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

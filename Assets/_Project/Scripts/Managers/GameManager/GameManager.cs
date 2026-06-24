@@ -14,7 +14,12 @@ public class GameManager : MonoBehaviour
    
    public static GameManager Instance { get; private set; }
 
+   [Header("Time")]
+    private float _intialTimeInSecods;
+    private float _timeLeft;
+
    public event Action<float> OnTimeChanged;
+   public event Action<int,int> OnScoreChanged;
     private void Awake()
     {
         // Configuración del Singleton
@@ -36,21 +41,47 @@ public class GameManager : MonoBehaviour
     private int _goalsTeam_A = 0;
     private int _goalsTeam_B = 0;
 
-    [Header("Time")]
-    private float _intialTimeInSecods;
-    private float _timeLeft;
+    
 
 
     void OnEnable()
     {
-        GameStateManager.Instance.OnGameStateChanged += HandleGameStateChanged;
+        GameStateManager.Instance.OnMatchStarted += StartMatch;
+        GameStateManager.Instance.OnMatchPaused += PauseMatch;
+        GameStateManager.Instance.OnMatchRestart += RestartGame;
+        GameStateManager.Instance.OnGoalScored += RegisterGoal;
     }
 
-    void OnDisable()
+
+
+
+
+    [Header("Marcadores")]
+    private TextMeshProUGUI _marcadorEquipoA;
+    private TextMeshProUGUI _marcadorEquipoB;
+
+    [Header("Equipos")]
+    //TODO: Realizar el componente TeamController
+
+    //private TeamController _controladorEquipoA;
+    //private TeamController _controladorEquipoB;
+    private int _golesEquipoA = 0;
+    private int _golesEquipoB = 0;
+
+
+
+    [Header("Tiempo")]
+    private float _tiempoInicial;
+    private float _tiempoRestante;
+    private TextMeshProUGUI _textoConValorDeTiempo;
+
+    /*void Start()
     {
-        GameStateManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
+         GameStateManager.Instance.OnMatchStarted -= StartMatch;
+        GameStateManager.Instance.OnMatchPaused -= PauseMatch;
+        GameStateManager.Instance.OnMatchRestart -= RestartGame;
     }
-
+*/
     
     void Update()
     {
@@ -60,31 +91,14 @@ public class GameManager : MonoBehaviour
             if(_timeLeft <= 0)
             {
                 _timeLeft = 0;
-                FinishMatch();
+               // GameStateManager.Instance.ChangeState(GameState.End);
             }
             OnTimeChanged?.Invoke(_timeLeft);
         }
         
     }
 
-    void HandleGameStateChanged(GameState newGameState)
-    {
-       
-        switch(newGameState){
-            case GameState.Start:
-                 RestartGame();
-                 break;
-            case GameState.Pause:
-                PauseMatch();
-                break;
-            case GameState.Playing:
-                StartMatch();
-                break;
-            case GameState.End:
-                FinishMatch();
-                break;
-        }
-    }
+    
     
     void PauseMatch()
     {
@@ -97,63 +111,45 @@ public class GameManager : MonoBehaviour
     }
     void FinishMatch()
     {
-        GameStateManager.Instance.ChangeState(GameState.End);
-    }
-    /*
-    void ComenzarPartida()
-    {
-
-
-        // Más adelante:
-        // UIManager.Instance.MostrarHUD();
-        // AudioManager.Instance.ReproducirSonidoInicio();
         
     }
-    */
+    
+ 
+
     /*
     public void Pause()
     {
-        OnMatchPaused?.Invoke();
-        _gameStatemanager.ChangeToPause();
         
     }
-    */
-    
-    /*
-    public void Restart()
+
+    public void Play()
     {
-        OnMatchRestarted?.Invoke();
-        _gameStatemanager.ChangeToRestart();
+ 
     }
-    */
-    /*
+
+  public void Restart()
+    {
+        
+    }
+    
     public void RegisterGoal()
     {
         OnScoreChanged?.Invoke(_goalsTeam_A,_goalsTeam_B);
-        _gameStatemanager.ChangeToGoal();
-
-    }*/
+    }
 
     public void RegisterTeam_A_Goal()
     {
         _goalsTeam_A += 1;
     }
-
-    public void RegisterTeam_B_Goal()
+    */
+    
+    public void RegisterGoal()
     {
-        _goalsTeam_B += 1;
+       
     }
-
-   
-
-    /*
-    public void ActivateMenuEvent()
+    public void StartMatch()
     {
-        OnMenuActive?.Invoke();
-    }
-    public void ActivatePlayEvent()
-    {
-        OnMatchStarted?.Invoke();
+        
     }
 
     public void ActivateEndEvent()
@@ -161,7 +157,7 @@ public class GameManager : MonoBehaviour
         
     }
 
-    */
+    
 
 
 
@@ -182,10 +178,6 @@ public class GameManager : MonoBehaviour
 
     */
 
-    void StartMatch()
-    {
-        Time.timeScale =1f;
-    }
     /*
     void TerminarPartida()
     {

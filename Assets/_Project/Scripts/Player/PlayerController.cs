@@ -6,11 +6,16 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {   
-    public TeamController _myTeam;
+    private Vector2 moveInput;
+    private bool runInput;
+
+    private float verticalInput;
+    private float horizontalInput;
     public Animator _animator;
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
     public SpriteRenderer bodyspriteRenderer;
+    public TeamController _myTeam;
     public float velocity = 3.5f;
     public bool selected;
     //public InputActionReference move; 
@@ -28,8 +33,10 @@ public class PlayerController : MonoBehaviour
     public KeyCode abilityKey;
     public KeyCode tackleKey;
 
-    private int verticalInput;
-    private int horizontalInput;
+    private int _verticalInput;
+    private int _horizontalInput;
+
+    public ControlSlot controlSlot;
 
     private void Awake() 
     {
@@ -41,13 +48,27 @@ public class PlayerController : MonoBehaviour
         UpdateDirections();
         UpdateAnimations();
     }
-
+    /*
     public void UpdateDirections() 
     {
         if(! selected) return;
         verticalInput = GetVerticalInput();
         horizontalInput = GetHorizontalInput();
     }
+    */
+    public void UpdateDirections() 
+{
+    if (!selected)
+    {
+        moveInput = Vector2.zero;
+        horizontalInput = 0f;
+        verticalInput = 0f;
+        return;
+    }
+
+    horizontalInput = moveInput.x;
+    verticalInput = moveInput.y;
+}
 
     private void FixedUpdate()
     {
@@ -56,7 +77,7 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateAnimations()
     {
-        bool isRunning = !IsIdle();
+       /* bool isRunning = !IsIdle();
       
         if(horizontalInput > 0)
         {
@@ -67,10 +88,29 @@ public class PlayerController : MonoBehaviour
         {
             spriteRenderer.flipX = true;
             bodyspriteRenderer.flipX = true;
-        }
+        }*/
+        if (horizontalInput > 0.1f)
+{
+    spriteRenderer.flipX = false;
+    bodyspriteRenderer.flipX = false;
+}
+else if (horizontalInput < -0.1f)
+{
+    spriteRenderer.flipX = true;
+    bodyspriteRenderer.flipX = true;
+}
     } 
-
+    /*
    private Vector2 Direction()
+{
+    if (IsIdle())
+    {
+        return Vector2.zero;
+    }
+
+    return new Vector2(horizontalInput, verticalInput).normalized;
+}*/
+private Vector2 Direction()
 {
     if (IsIdle())
     {
@@ -116,16 +156,25 @@ public class PlayerController : MonoBehaviour
         }
         return 0;
     }
-
+    /*
     private bool IsIdle()
     {
         return horizontalInput == 0 && verticalInput == 0;
     }
+    */
 
+    private bool IsIdle()
+{
+     return Mathf.Abs(horizontalInput) < 0.01f && Mathf.Abs(verticalInput) < 0.01f;
+}   /*
     public bool IsMoving()
     {
         return horizontalInput != 0 || verticalInput != 0;
-    }
+    }*/
+    public bool IsMoving()
+{
+    return !IsIdle();
+}
 
     private void GetComponents() 
     {
@@ -175,23 +224,22 @@ public class PlayerController : MonoBehaviour
          if (!selected) return false;
          return Input.GetKey(runKey);
     }
-        public bool RunReleased()
+    public bool RunReleased()
     {
-        if (!selected) return false;
-        return Input.GetKeyUp(runKey);
+    if (!selected) return false;
+    return Input.GetKeyUp(runKey);
     }
-
-    public void OnPlayerReceivesBall(PlayerController previousOwner)
-    {
-        _myTeam.SelectPlayerWhoReceiveBall(this,previousOwner);
-    }
-
     public enum ControlSlot
     {
-        None,
+        Bot,
         Player1,
-        Player2,
-        Bot
+        Player2
     }
-    public ControlSlot controlSlot = ControlSlot.Bot;
+
+ public void OnMovement(InputValue value)
+{
+    moveInput = value.Get<Vector2>();
+
+    Debug.Log(gameObject.name + " Movement recibido: " + moveInput);
+}
 }
