@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using System;
 
@@ -44,6 +43,16 @@ public class GameStateManager : MonoBehaviour
         _currentGameState.Enter();
         HandleGameEventByGameState(_currentGameState.StateType);
     }
+    private void Awake()
+{
+    if (Instance != null && Instance != this)
+    {
+        Destroy(gameObject);
+        return;
+    }
+
+    Instance = this;
+}
 
     void HandleGameEventByGameState(GameState state)
     {

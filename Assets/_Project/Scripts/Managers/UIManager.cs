@@ -56,7 +56,7 @@ public class UIManager : MonoBehaviour
     }
     private void OnDisable()
     {
-        GameStateManager.Instance.OnMatchStarted += StartMatch;
+        //GameStateManager.Instance.OnMatchStarted += StartMatch;
         GameStateManager.Instance.OnMatchPaused += ShowPauseMenu;
         GameStateManager.Instance.OnMatchRestart += RestartHud;
         GameManager.Instance.OnTimeChanged += UpdateTimer;

@@ -41,13 +41,13 @@ public class GameManager : MonoBehaviour
     private float _timeLeft;
 
 
-    void OnEnable()
+    /*void OnEnable()
     {
         GameStateManager.Instance.OnMatchStarted += StartMatch;
         GameStateManager.Instance.OnMatchPaused += PauseMatch;
         GameStateManager.Instance.OnMatchRestart += RestartGame;
         GameStateManager.Instance.OnGoalScored += RegisterGoal;
-    }
+    }*/
 
    [Header("Estados de Partida")]
    private GameStateManager _gameStatemanager;
@@ -73,15 +73,15 @@ public class GameManager : MonoBehaviour
     private float _tiempoRestante;
     private TextMeshProUGUI _textoConValorDeTiempo;
 
-    void Start()
+    /*void Start()
     {
          GameStateManager.Instance.OnMatchStarted -= StartMatch;
         GameStateManager.Instance.OnMatchPaused -= PauseMatch;
         GameStateManager.Instance.OnMatchRestart -= RestartGame;
     }
-
+*/
     
-    void Update()
+   /* void Update()
     {
         if (GameStateManager.Instance.IsOnPlayState())
         {
@@ -95,7 +95,7 @@ public class GameManager : MonoBehaviour
         }
         
     }
-    
+    */
 
     
     

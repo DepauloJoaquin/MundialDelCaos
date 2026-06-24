@@ -7,6 +7,9 @@ public class PlayerInputManager : MonoBehaviour
 {
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private Transform[] _spawnPoints;
+    [SerializeField] private TeamController _teamController;
+
+    private HashSet<Gamepad> joinedGamepads = new HashSet<Gamepad>();
 
     private bool wasdJoined = false;
     private bool arrowsJoined = false;
@@ -16,36 +19,30 @@ public class PlayerInputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Keyboard.current == null) return;
-
-        if(!wasdJoined && Keyboard.current.enterKey.wasPressedThisFrame)
+        if (Keyboard.current != null)
+    {
+        if (!wasdJoined && Keyboard.current.enterKey.wasPressedThisFrame)
         {
-            var player = PlayerInput.Instantiate(_playerPrefab,controlScheme: "WASD", pairWithDevice: Keyboard.current);
-
-            if(_spawnPoints.Length > 0)
-            {
-                player.transform.position = _spawnPoints[0].position;
-            }
+            _teamController.AddPlayerToTeam("WASD", Keyboard.current);
             wasdJoined = true;
         }
 
-        if(!arrowsJoined && Keyboard.current.rightCtrlKey.wasPressedThisFrame)
+        if (!arrowsJoined && Keyboard.current.rightCtrlKey.wasPressedThisFrame)
         {
-            var player = PlayerInput.Instantiate(_playerPrefab,controlScheme: "Arrows", pairWithDevice: Keyboard.current);
-
-            if(_spawnPoints.Length > 1)
-            {
-                player.transform.position = _spawnPoints[1].position;
-            }
+            _teamController.AddPlayerToTeam("Arrows", Keyboard.current);
             arrowsJoined = true;
         }
-        
-        foreach(var gamePad in Gamepad.all)
+    }
+
+    foreach (var gamePad in Gamepad.all)
+    {
+        if (!joinedGamepads.Contains(gamePad) && gamePad.startButton.wasPressedThisFrame)
         {
-            if (gamePad.startButton.wasPressedThisFrame)
-            {
-                PlayerInput.Instantiate(_playerPrefab,controlScheme: "Gamepad",pairWithDevice : gamePad);
-            }
+            Debug.Log("Se unió gamepad: " + gamePad.displayName);
+
+            _teamController.AddPlayerToTeam("Gamepad", gamePad);
+            joinedGamepads.Add(gamePad);
         }
+    }
     }
 }

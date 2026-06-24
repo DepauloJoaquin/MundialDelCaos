@@ -1,8 +1,5 @@
-using System.Collections;
+using UnityEngine.InputSystem;
 using System.Collections.Generic;
-using JetBrains.Annotations;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class TeamController : MonoBehaviour
@@ -12,13 +9,13 @@ public class TeamController : MonoBehaviour
     private List<PlayerController> _allPlayersControllers = new List<PlayerController>();
 
     private List<PlayerController> _currentSelectedPlayers = new List<PlayerController>();
-    private List<GameObject> _availablePositions;
+    [SerializeField] private List<GameObject> _availablePositions;
 
     private int _amountHumanPlayers = 0;
 
     public int _amountBots;
 
-    private GameObject _prefabPlayer;
+    [SerializeField] private GameObject _prefabPlayer;
 
     public PlayerController _currentSelectedPlayer1;
     public PlayerController _currentSelectedPlayer2;
@@ -186,7 +183,7 @@ public class TeamController : MonoBehaviour
         }
         */
 
-    public void AddPlayerToTeam()
+    public void AddPlayerToTeam(string controlScheme, InputDevice device)
     {   
         if (_amountHumanPlayers >= 2)
         {
@@ -197,12 +194,11 @@ public class TeamController : MonoBehaviour
         return;
         }
         GameObject spawnPoint = _availablePositions[_currentPositionIndex];
-        GameObject newPlayer = Instantiate(
-        _prefabPlayer,
-        spawnPoint.transform.position,
-        Quaternion.identity
-        );
-        PlayerController playerController = newPlayer.GetComponent<PlayerController>();
+        PlayerInput playerInput = PlayerInput.Instantiate(_prefabPlayer,controlScheme: controlScheme,pairWithDevice: device);
+
+        playerInput.transform.position = spawnPoint.transform.position;
+        playerInput.transform.rotation = Quaternion.identity;
+        PlayerController playerController = playerInput.GetComponent<PlayerController>();
         playerController._myTeam = this;
         _allPlayersControllers.Add(playerController);
         _currentPositionIndex += 1;
