@@ -21,7 +21,7 @@ public abstract class InputHandler : MonoBehaviour
     public int horizontalInput;
     public bool selected;
     
-
+    public abstract bool HasBall();
     public virtual void UpdateDirections()
     {
         verticalInput = GetVerticalInput();

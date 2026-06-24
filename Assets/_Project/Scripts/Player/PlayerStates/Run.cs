@@ -13,6 +13,11 @@ public class RunState : PlayerState
     {
         if (_playerController.PassPressed())
         {
+            if (! _playerController.HasBall())
+            {
+                _playerStateManager.ChangeState(_playerStateManager.tackleState);
+                return;
+            }
             _playerStateManager.ChangeState(_playerStateManager.passState);
             return;
         }

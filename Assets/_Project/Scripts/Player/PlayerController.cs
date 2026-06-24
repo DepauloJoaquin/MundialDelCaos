@@ -7,13 +7,15 @@ using UnityEngine.InputSystem;
 public class PlayerController : InputHandler
 {
     public TeamController _myTeam;
+    public Team team;
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
     public Animator _animator;
-    
-    
+    public ControlSlot controlSlot = ControlSlot.Bot;
     public float velocity = 3.5f;
+    public float kickForce = 2f;
     //public InputActionReference move; 
+    private Ball ball; 
 
     private void Awake()
     {
@@ -24,6 +26,8 @@ public class PlayerController : InputHandler
     {
         UpdateDirections();
         UpdateSpriteFlip();
+        KickBall();
+        PassBall();
     }
 
     public override void UpdateDirections()
@@ -88,8 +92,37 @@ public class PlayerController : InputHandler
         }
     }
 
+    public void setBall(Ball ball)
+    {
+        this.ball = ball;
+    }
+
+    public override bool HasBall() 
+    {
+        return ball != null;
+    }
+
+    public void KickBall()
+    {
+        if (ball == null) { return; }
+        if (!ShootPressed()) { return; }
+        ball.KickBall(this);
+        ball = null;
+    }
+
+    public void PassBall()
+    {
+        if (ball == null) { return; }
+        if (!PassPressed()) { return; }
+        ball.PassBall(this);
+    }
+
     public void OnPlayerReceivesBall(PlayerController previousOwner)
     {
+        if(previousOwner == null) 
+        {
+            _myTeam.SelectPlayerWhoReceiveBall(this); 
+        }
         _myTeam.SelectPlayerWhoReceiveBall(this,previousOwner);
     }
 
@@ -100,5 +133,5 @@ public class PlayerController : InputHandler
         Player2,
         Bot
     }
-    public ControlSlot controlSlot = ControlSlot.Bot;
+    
 }

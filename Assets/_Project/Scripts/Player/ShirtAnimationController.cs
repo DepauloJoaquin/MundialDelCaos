@@ -62,4 +62,14 @@ public class ShirtAnimationController : InputHandler
         abilityKey = playerController.abilityKey;
         tackleKey = playerController.tackleKey;
     }
+
+    public void CambiarColor(Color nuevoColor) 
+    {
+        spriteRenderer.color = nuevoColor;
+    }
+
+    public override bool HasBall() 
+    {
+        return playerController.HasBall();
+    }
 }
