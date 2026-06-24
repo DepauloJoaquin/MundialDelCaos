@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {   
+    public TeamController _myTeam;
     public Animator _animator;
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
@@ -140,6 +141,8 @@ public class PlayerController : MonoBehaviour
         {
             bodyspriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
         }
+    
+     
     }
 
       public bool PassPressed()
@@ -172,9 +175,23 @@ public class PlayerController : MonoBehaviour
          if (!selected) return false;
          return Input.GetKey(runKey);
     }
-    public bool RunReleased()
-{
-    if (!selected) return false;
-    return Input.GetKeyUp(runKey);
-}
+        public bool RunReleased()
+    {
+        if (!selected) return false;
+        return Input.GetKeyUp(runKey);
+    }
+
+    public void OnPlayerReceivesBall(PlayerController previousOwner)
+    {
+        _myTeam.SelectPlayerWhoReceiveBall(this,previousOwner);
+    }
+
+    public enum ControlSlot
+    {
+        None,
+        Player1,
+        Player2,
+        Bot
+    }
+    public ControlSlot controlSlot = ControlSlot.Bot;
 }

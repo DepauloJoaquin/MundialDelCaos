@@ -1539,7 +1539,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3679032773479374603, guid: 37c103e129dacce4d9470ebe7cf3e812, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 980896550}
   m_SourcePrefab: {fileID: 100100000, guid: 37c103e129dacce4d9470ebe7cf3e812, type: 3}
 --- !u!1 &1168049249
 GameObject:
@@ -2604,6 +2607,44 @@ Transform:
   m_Children: []
   m_Father: {fileID: 42449548}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1624386653 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2225486113069478318, guid: 18e6da13c7df2964b87cd27589a06b91, type: 3}
+  m_PrefabInstance: {fileID: 1992689612}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1968342378
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1968342379}
+  m_Layer: 0
+  m_Name: Teams
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1968342379
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1968342378}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.3286104, y: 0.29317838, z: -0.0055353227}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2064325668}
+  - {fileID: 1357934515}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1992689612
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2831,7 +2872,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 980597276}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c5adab2cb899ac449ad0f15f486dc96, type: 3}
+  m_Script: {fileID: 11500000, guid: 647a4e78066f0be46a3a7ee797a4b3c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1992689624
@@ -2843,7 +2884,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 980597276}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b180ee6dcbe62c14684e96fd1e696996, type: 3}
+  m_Script: {fileID: 11500000, guid: 2ea569fe2855d1c4081accb1feebd8b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1992689625
@@ -3259,6 +3300,7 @@ SceneRoots:
   - {fileID: 1565343005}
   - {fileID: 18269191}
   - {fileID: 872786167}
+  - {fileID: 1968342379}
   - {fileID: 557143523}
   - {fileID: 79838465}
   - {fileID: 433401210}
