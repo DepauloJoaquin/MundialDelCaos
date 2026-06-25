@@ -235,11 +235,19 @@ private Vector2 Direction()
         Player1,
         Player2
     }
-
- public void OnMovement(InputValue value)
-{
+    public void OnMovement(InputValue value)
+    {
     moveInput = value.Get<Vector2>();
 
     Debug.Log(gameObject.name + " Movement recibido: " + moveInput);
-}
+    }
+
+    public void OnPlayerReceivesBall(PlayerController previousOwner)
+    {
+        if(previousOwner == null) 
+        {
+            _myTeam.SelectPlayerWhoReceiveBall(this); 
+        }
+        _myTeam.SelectPlayerWhoReceiveBall(this,previousOwner);
+    }
 }

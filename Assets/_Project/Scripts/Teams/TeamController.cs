@@ -216,6 +216,12 @@ public class TeamController : MonoBehaviour
         
     }
 
+    public void SelectPlayerWhoReceiveBall(PlayerController receiver)
+    {
+        AssignPlayer1(receiver);
+        return;
+    }
+
 
     }
 
