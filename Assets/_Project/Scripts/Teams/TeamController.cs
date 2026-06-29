@@ -11,6 +11,8 @@ public class TeamController : MonoBehaviour
     private List<PlayerController> _currentSelectedPlayers = new List<PlayerController>();
     [SerializeField] private List<GameObject> _availablePositions;
 
+    public Team team;
+
     private int _amountHumanPlayers = 0;
 
     public int _amountBots;

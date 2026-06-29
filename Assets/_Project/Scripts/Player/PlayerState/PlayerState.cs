@@ -11,7 +11,7 @@ public abstract class PlayerState : MonoBehaviour
    protected PlayerStateManager _playerStateManager;
    protected float _stateEnterTime;
 
-
+   
     public void Init(PlayerStateManager stateManager,PlayerController controller, GameObject player)
     {
         _playerStateManager = stateManager;

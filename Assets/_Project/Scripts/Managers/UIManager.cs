@@ -35,7 +35,6 @@ public class UIManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Evita que se destruya al cambiar de escena
         }
         else
         {
@@ -54,7 +53,7 @@ public class UIManager : MonoBehaviour
     }
     private void OnDisable()
     {
-       GameStateManager.Instance.OnMatchStarted += StartMatch;
+       GameStateManager.Instance.OnMatchStarted -= StartMatch;
     }
 
     // Update is called once per frame
