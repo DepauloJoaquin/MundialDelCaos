@@ -8,6 +8,7 @@ public class Ball : MonoBehaviour
     private bool rotating;
 
     public GameObject _currentOwner;
+    public PlayerController _currentOwnerController;
     public GameObject _lastOwner;
     public GameObject _lastKickPlayer;
     public GameObject _passTarget;
@@ -37,7 +38,9 @@ public class Ball : MonoBehaviour
         }
         _lastOwner = _currentOwner;
         _currentOwner = collision.gameObject;
+        _currentOwnerController = _currentOwner.GetComponent<PlayerController>();
         receiver.OnPlayerReceivesBall(previousOwnerController);
+        
      }
 
     private void FixedUpdate()

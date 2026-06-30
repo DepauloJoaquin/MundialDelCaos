@@ -1,22 +1,29 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {   
     private Vector2 moveInput;
     private bool runInput;
-
+    public TeamController _myTeamController;
     private float verticalInput;
     private float horizontalInput;
     public Animator _animator;
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
     public SpriteRenderer bodyspriteRenderer;
-    public TeamController _myTeam;
-    public float velocity = 3.5f;
+    public GoalTarget _targetGoal;
+    public ControlSlot _controlSlot;
+    public Team _team;
+    public Role _role;
+    public float _movementSpeed = 3.5f;
+    public Vector2 _movementDirection;
+    public Vector2 _spawnPosition;
+    public Vector2 _position;
+    public float _forceTowardsTheBall;
     public bool selected;
     //public InputActionReference move; 
     [Header("Movement Keys")]
@@ -128,10 +135,10 @@ private Vector2 Direction()
 
     if (RunPressed())
     {
-        return velocity * 1.7f;
+        return _movementSpeed * 1.7f;
     }
 
-    return velocity;
+    return _movementSpeed;
 }
 
     private int GetVerticalInput()
@@ -190,6 +197,9 @@ private Vector2 Direction()
         {
             bodyspriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
         }
+
+        _targetGoal = _myTeamController._targetGoal;
+        _team = _myTeamController.team;
     
      
     }
@@ -246,8 +256,23 @@ private Vector2 Direction()
     {
         if(previousOwner == null) 
         {
-            _myTeam.SelectPlayerWhoReceiveBall(this); 
+            _myTeamController.SelectPlayerWhoReceiveBall(this); 
         }
-        _myTeam.SelectPlayerWhoReceiveBall(this,previousOwner);
+        _myTeamController.SelectPlayerWhoReceiveBall(this,previousOwner);
+    }
+    public  enum Role
+    {
+        GoalKeeper,
+        Forward,
+        MidFilder,
+    }
+
+    public Vector2 DirectionTo(Vector2 someDirection)
+    {
+        
+
+        Vector2 direction = someDirection - _position;
+
+        return direction.normalized;
     }
 }

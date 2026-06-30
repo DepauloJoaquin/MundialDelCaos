@@ -13,6 +13,8 @@ public class TeamController : MonoBehaviour
 
     public Team team;
 
+    public GoalTarget _targetGoal;
+
     private int _amountHumanPlayers = 0;
 
     public int _amountBots;
@@ -68,7 +70,7 @@ public class TeamController : MonoBehaviour
         );
 
         PlayerController playerController = newPlayer.GetComponent<PlayerController>();
-        playerController._myTeam = this;
+        playerController._myTeamController = this;
 
         playerController.selected = false;
         playerController.controlSlot = PlayerController.ControlSlot.Bot;
@@ -196,12 +198,13 @@ public class TeamController : MonoBehaviour
         return;
         }
         GameObject spawnPoint = _availablePositions[_currentPositionIndex];
-        PlayerInput playerInput = PlayerInput.Instantiate(_prefabPlayer,controlScheme: controlScheme,pairWithDevice: device);
-
-        playerInput.transform.position = spawnPoint.transform.position;
-        playerInput.transform.rotation = Quaternion.identity;
-        PlayerController playerController = playerInput.GetComponent<PlayerController>();
-        playerController._myTeam = this;
+        GameObject newPlayer = Instantiate(
+        _prefabPlayer,
+        spawnPoint.transform.position,
+        Quaternion.identity
+        );
+        PlayerController playerController = newPlayer.GetComponent<PlayerController>();
+        playerController._myTeamController = this;
         _allPlayersControllers.Add(playerController);
         _currentPositionIndex += 1;
         _amountHumanPlayers += 1;
@@ -214,9 +217,13 @@ public class TeamController : MonoBehaviour
         {
             AssignPlayer2(playerController);
         }
-       
+         
+        }
         
-    }
+        public bool DoWeHaveTheBall()
+        {
+        return GameManager.Instance._ball._currentOwnerController == _currentSelectedPlayer1 ||GameManager.Instance._ball._currentOwnerController == _currentSelectedPlayer2 ;
+        }
 
     public void SelectPlayerWhoReceiveBall(PlayerController receiver)
     {
