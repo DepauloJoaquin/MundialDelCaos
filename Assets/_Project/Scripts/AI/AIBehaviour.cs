@@ -46,11 +46,11 @@ public class AIBehaviour : MonoBehaviour
     void Perform_AI_Movement()
     {
         Vector2 totalMovement = Vector2.zero;
-        if (_currentPlayer._myTeamController.DoWeHaveTheBall())
+        /*if (_currentPlayer._myTeamController.DoWeHaveTheBall())
         {
-            totalMovement += GetCarrierSteeringforce();
-        }
-        else if(_currentPlayer._role != PlayerController.Role.GoalKeeper)
+            totalMovement += GetMovementTowardsBall();
+        }*/
+         if(_currentPlayer._role != PlayerController.Role.GoalKeeper)
         {
             totalMovement += CalculateMovementToBall();
             if (isBallCarriedByTeamMate())
@@ -71,7 +71,7 @@ public class AIBehaviour : MonoBehaviour
 
     public Vector2 CalculateMovementToBall()
     {
-        return _currentPlayer._forceTowardsTheBall * _currentPlayer.PlayerDirectionToBall();
+        return _currentPlayer._forceTowardsTheBall * _currentPlayer.DirectionTo(GameManager.Instance._ball.transform.position);
     }
 
     public float GetBicircularWeight(Vector2 playerPosition, Vector2 centerTarget,float innerCircleWeight, float innerCircleRadius,float outerCircleWeight,float outerCircleRadius)
@@ -93,24 +93,24 @@ public class AIBehaviour : MonoBehaviour
         }
     }
 
-    public Vector2 GetCarrierSteeringforce()
+    public Vector2 GetMovementTowardsBall()
     {
         Vector2 target = _currentPlayer._targetGoal.get_center_target_position();
-        Vector2 direction = _currentPlayer.DirectonTo(target);
+        Vector2 direction = _currentPlayer.DirectionTo(target);
         float weight = GetBicircularWeight(_currentPlayer._position,target,100,0,150,1);
         return weight * direction;
     }
 
     public bool isBallCarriedByTeamMate()
     {
-        return _ball._carrier != null && _ball._carrier != _currentPlayer && _ball._carrier._team == _currentPlayer._team;
+        return _ball._currentOwner != null && _ball._currentOwner != _currentPlayer && _ball._currentOwnerController._team == _currentPlayer._team;
     }
 
     public Vector2 GetAssistFormationMovement()
     {
-        Vector2 spawn_difference = _ball._carrier._spawnPosition - _currentPlayer._spawnPosition;
-        Vector2 assistDestination = _ball._carrier._position - spawn_difference * spreadAssistFactor;
-        Vector2 direction = _currentPlayer.DirectonTo(assistDestination);
+        Vector2 spawn_difference = _ball._currentOwnerController._spawnPosition - _currentPlayer._spawnPosition;
+        Vector2 assistDestination = _ball._currentOwnerController._position - spawn_difference * spreadAssistFactor;
+        Vector2 direction = _currentPlayer.DirectionTo(assistDestination);
         float weight = GetBicircularWeight(_currentPlayer._position,assistDestination,30,0.2f,60,1);
         return weight * direction;
     }

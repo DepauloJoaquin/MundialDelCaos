@@ -14,6 +14,10 @@ public class TeamController : MonoBehaviour
     private List<PlayerController> _currentSelectedPlayers = new List<PlayerController>();
     private List<GameObject> _availablePositions;
 
+    public Team team;
+
+    public GoalTarget _targetGoal;
+
     private int _amountHumanPlayers = 0;
 
     public int _amountBots;
@@ -69,7 +73,7 @@ public class TeamController : MonoBehaviour
         );
 
         PlayerController playerController = newPlayer.GetComponent<PlayerController>();
-        playerController._myTeam = this;
+        playerController._myTeamController = this;
 
         playerController.selected = false;
         playerController.controlSlot = PlayerController.ControlSlot.Bot;
@@ -206,7 +210,7 @@ public class TeamController : MonoBehaviour
         Quaternion.identity
         );
         PlayerController playerController = newPlayer.GetComponent<PlayerController>();
-        playerController._myTeam = this;
+        playerController._myTeamController = this;
         _allPlayersControllers.Add(playerController);
         _currentPositionIndex += 1;
         _amountHumanPlayers += 1;
@@ -219,9 +223,13 @@ public class TeamController : MonoBehaviour
         {
             AssignPlayer2(playerController);
         }
-       
+         
+        }
         
-    }
+        public bool DoWeHaveTheBall()
+        {
+        return GameManager.Instance._ball._currentOwnerController == _currentSelectedPlayer1 ||GameManager.Instance._ball._currentOwnerController == _currentSelectedPlayer2 ;
+        }
 
 
     }

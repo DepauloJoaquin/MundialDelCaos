@@ -6,12 +6,19 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {   
-    public TeamController _myTeam;
+    public TeamController _myTeamController;
     public Animator _animator;
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
     public SpriteRenderer bodyspriteRenderer;
-    public float velocity = 3.5f;
+    public GoalTarget _targetGoal;
+    public Team _team;
+    public Role _role;
+    public float _movementSpeed = 3.5f;
+    public Vector2 _movementDirection;
+    public Vector2 _spawnPosition;
+    public Vector2 _position;
+    public float _forceTowardsTheBall;
     public bool selected;
     //public InputActionReference move; 
     [Header("Movement Keys")]
@@ -88,10 +95,10 @@ public class PlayerController : MonoBehaviour
 
     if (RunPressed())
     {
-        return velocity * 1.7f;
+        return _movementSpeed * 1.7f;
     }
 
-    return velocity;
+    return _movementSpeed;
 }
 
     private int GetVerticalInput()
@@ -141,6 +148,9 @@ public class PlayerController : MonoBehaviour
         {
             bodyspriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
         }
+
+        _targetGoal = _myTeamController._targetGoal;
+        _team = _myTeamController.team;
     
      
     }
@@ -183,7 +193,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnPlayerReceivesBall(PlayerController previousOwner)
     {
-        _myTeam.SelectPlayerWhoReceiveBall(this,previousOwner);
+        _myTeamController.SelectPlayerWhoReceiveBall(this,previousOwner);
     }
 
     public enum ControlSlot
@@ -194,4 +204,19 @@ public class PlayerController : MonoBehaviour
         Bot
     }
     public ControlSlot controlSlot = ControlSlot.Bot;
+    public  enum Role
+    {
+        GoalKeeper,
+        Forward,
+        MidFilder,
+    }
+
+    public Vector2 DirectionTo(Vector2 someDirection)
+    {
+        
+
+        Vector2 direction = someDirection - _position;
+
+        return direction.normalized;
+    }
 }

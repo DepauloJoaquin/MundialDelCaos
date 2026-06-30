@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
         _timeLeft = _intialTimeInSecods;
         
     }
-    public GameObject _ball;
+    public Ball _ball;
     private TeamController _teamAController;
     private TeamController _teamBController;
     private int _goalsTeam_A = 0;
