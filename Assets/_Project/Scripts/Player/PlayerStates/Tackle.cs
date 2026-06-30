@@ -11,7 +11,7 @@ public class TackleState : PlayerState
     public override void Tick()
     {
        
-        if (AnimationFinished("Tackle"))
+        if(AnimationFinished("Tackle"))
         {
             _playerStateManager.ChangeState(_playerStateManager.idleState);
         }

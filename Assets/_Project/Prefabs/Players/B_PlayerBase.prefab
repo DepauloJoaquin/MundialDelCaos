@@ -110,14 +110,8 @@ GameObject:
   - component: {fileID: 8428326957823883515}
   - component: {fileID: 7582613803393902017}
   - component: {fileID: 1482747286849466689}
-  - component: {fileID: 2194830994027977814}
-  - component: {fileID: 148571014775604279}
-  - component: {fileID: 6959976128724416130}
-  - component: {fileID: 2415673226420204859}
-  - component: {fileID: 8978427857917740198}
-  - component: {fileID: 4084383887814972610}
-  - component: {fileID: 3883749819856250444}
   - component: {fileID: 8426504724015728353}
+  - component: {fileID: 4133395190077375910}
   - component: {fileID: 1221668064207129684}
   - component: {fileID: 5416077623631425197}
   - component: {fileID: 98530774727197348}
@@ -285,117 +279,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93817269a53e69a4d96365b6b3d84af4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upKey: 119
-  downKey: 115
-  leftKey: 97
-  rightKey: 100
-  passKey: 106
-  shootKey: 107
-  runKey: 304
-  abilityKey: 105
-  tackleKey: 108
+  animator: {fileID: 1221668064207129684}
+  playerStateManager: {fileID: 8426504724015728353}
+  pInput: {fileID: 4133395190077375910}
   verticalInput: 0
   horizontalInput: 0
+  isRunning: 0
   selected: 1
   _myTeam: {fileID: 0}
   team: 1
   rigidBody: {fileID: 8428326957823883515}
   spriteRenderer: {fileID: 5765561909447991533}
-  _animator: {fileID: 1221668064207129684}
   controlSlot: 3
   velocity: 3.5
   kickForce: 2
---- !u!114 &2194830994027977814
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2225486113069478318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 500cec7edc87f0b498a223bf12c7c02c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _playerController: {fileID: 0}
-  runState: {fileID: 8978427857917740198}
-  walkState: {fileID: 148571014775604279}
-  idleState: {fileID: 3883749819856250444}
-  passState: {fileID: 4084383887814972610}
-  shootState: {fileID: 2415673226420204859}
-  tackleState: {fileID: 6959976128724416130}
---- !u!114 &148571014775604279
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2225486113069478318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ea569fe2855d1c4081accb1feebd8b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &6959976128724416130
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2225486113069478318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 647a4e78066f0be46a3a7ee797a4b3c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2415673226420204859
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2225486113069478318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7cccb7861b2d9f144995be19219a16fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8978427857917740198
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2225486113069478318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd462b9443b99f0479a538deaf1b5b40, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &4084383887814972610
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2225486113069478318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c5adab2cb899ac449ad0f15f486dc96, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &3883749819856250444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2225486113069478318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b180ee6dcbe62c14684e96fd1e696996, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &8426504724015728353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -408,13 +305,111 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 500cec7edc87f0b498a223bf12c7c02c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerController: {fileID: 0}
+  _playerController: {fileID: 1482747286849466689}
   runState: {fileID: 432407752364593353}
   walkState: {fileID: 5416077623631425197}
   idleState: {fileID: 6418348384729467242}
   passState: {fileID: 2049837926737580764}
   shootState: {fileID: 3894751520834893045}
   tackleState: {fileID: 98530774727197348}
+--- !u!114 &4133395190077375910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2225486113069478318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 05d24416a0bf8314eb9cf01e78701bba, type: 3}
+  m_NotificationBehavior: 2
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a51dad29-6718-4a1a-8a5f-63a7efd5b544
+    m_ActionName: Player/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 99e3f11b-9c7c-46bc-bcec-5e789f0c1eac
+    m_ActionName: Player/Run[/Keyboard/ctrl,/Keyboard/shift]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1482747286849466689}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: PassOrTackle
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8426504724015728353}
+        m_TargetAssemblyTypeName: PlayerStateManager, Assembly-CSharp
+        m_MethodName: TickCurrentState
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Pass
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 0e590ba2-a6d4-47e0-8e80-1c58ad5b0d5f
+    m_ActionName: Player/Pass/Tackle[/Keyboard/numpad2,/Keyboard/k]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1482747286849466689}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: Shoot
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8426504724015728353}
+        m_TargetAssemblyTypeName: PlayerStateManager, Assembly-CSharp
+        m_MethodName: TickCurrentState
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Shoot
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 2ff61cff-8e44-49ff-be1e-a4ef795ac967
+    m_ActionName: Player/Shoot[/Keyboard/numpad1,/Keyboard/j]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3624907d-80d2-4e6e-adec-a2ec308941e0
+    m_ActionName: Player/Ability[/Keyboard/numpad3,/Keyboard/l]
+  m_NeverAutoSwitchControlSchemes: 1
+  m_DefaultControlScheme: Arrows
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!95 &1221668064207129684
 Animator:
   serializedVersion: 5
@@ -613,21 +608,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d416148150879047b3953a3d54372a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upKey: 0
-  downKey: 0
-  leftKey: 0
-  rightKey: 0
-  passKey: 0
-  shootKey: 0
-  runKey: 0
-  abilityKey: 0
-  tackleKey: 0
+  animator: {fileID: 1392290861023720819}
+  playerStateManager: {fileID: 5216941990133279066}
+  pInput: {fileID: 4133395190077375910}
   verticalInput: 0
   horizontalInput: 0
+  isRunning: 0
   selected: 1
   playerController: {fileID: 1482747286849466689}
   spriteRenderer: {fileID: 8780295084891785278}
-  animator: {fileID: 1392290861023720819}
 --- !u!95 &1392290861023720819
 Animator:
   serializedVersion: 5

@@ -7,7 +7,6 @@ public class ShirtAnimationController : InputHandler
     [Header("Must Pass")]
     public PlayerController playerController;
     public SpriteRenderer spriteRenderer;
-    public Animator animator;
     
     void Start()
     {
@@ -15,7 +14,6 @@ public class ShirtAnimationController : InputHandler
         {
             playerController = GetComponent<PlayerController>();
         }
-        ImitatePlayerControllerProperties();
     }
 
     private void Update()
@@ -33,8 +31,6 @@ public class ShirtAnimationController : InputHandler
 
     private void UpdateSpriteFlip()
     {
-        bool isRunning = !IsIdle();
-
         if (horizontalInput > 0)
         {
             spriteRenderer.flipX = false;
@@ -50,20 +46,7 @@ public class ShirtAnimationController : InputHandler
         selected = playerController.selected;
     }
 
-    private void ImitatePlayerControllerProperties()
-    {
-        upKey = playerController.upKey;
-        downKey = playerController.downKey;
-        leftKey = playerController.leftKey;
-        rightKey = playerController.rightKey;
-        passKey = playerController.passKey;
-        shootKey = playerController.shootKey;
-        runKey = playerController.runKey;
-        abilityKey = playerController.abilityKey;
-        tackleKey = playerController.tackleKey;
-    }
-
-    public void CambiarColor(Color nuevoColor) 
+    public void ChangeColor(Color nuevoColor) 
     {
         spriteRenderer.color = nuevoColor;
     }

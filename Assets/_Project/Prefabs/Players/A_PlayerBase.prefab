@@ -279,23 +279,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93817269a53e69a4d96365b6b3d84af4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upKey: 273
-  downKey: 274
-  leftKey: 276
-  rightKey: 275
-  passKey: 257
-  shootKey: 261
-  runKey: 303
-  abilityKey: 258
-  tackleKey: 259
+  animator: {fileID: 6059151333275915411}
+  playerStateManager: {fileID: 727739539802385316}
+  pInput: {fileID: 4298268059283685189}
   verticalInput: 0
   horizontalInput: 0
+  isRunning: 0
+  passPressed: 0
+  shootPressed: 0
   selected: 1
   _myTeam: {fileID: 0}
   team: 0
   rigidBody: {fileID: 9062169989657019609}
   spriteRenderer: {fileID: 2525865851198080052}
-  _animator: {fileID: 0}
   controlSlot: 3
   velocity: 3.5
   kickForce: 2
@@ -325,23 +321,75 @@ MonoBehaviour:
       m_Calls: []
   m_ActionEvents:
   - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a51dad29-6718-4a1a-8a5f-63a7efd5b544
+    m_ActionName: Player/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
+  - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 1
+      - m_Target: {fileID: 513487062495154035}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: PassOrTackle
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_ActionId: a51dad29-6718-4a1a-8a5f-63a7efd5b544
-    m_ActionName: Player/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: Keyboard
+      - m_Target: {fileID: 727739539802385316}
+        m_TargetAssemblyTypeName: PlayerStateManager, Assembly-CSharp
+        m_MethodName: TickCurrentState
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Pass
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 0e590ba2-a6d4-47e0-8e80-1c58ad5b0d5f
+    m_ActionName: Player/Pass/Tackle
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 99e3f11b-9c7c-46bc-bcec-5e789f0c1eac
+    m_ActionName: Player/Run
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 513487062495154035}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: Shoot
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 727739539802385316}
+        m_TargetAssemblyTypeName: PlayerStateManager, Assembly-CSharp
+        m_MethodName: TickCurrentState
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Shoot
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 2ff61cff-8e44-49ff-be1e-a4ef795ac967
+    m_ActionName: Player/Shoot
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3624907d-80d2-4e6e-adec-a2ec308941e0
+    m_ActionName: Player/Hability
+  m_NeverAutoSwitchControlSchemes: 1
+  m_DefaultControlScheme: WASD
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
@@ -378,7 +426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 500cec7edc87f0b498a223bf12c7c02c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerController: {fileID: 0}
+  _playerController: {fileID: 513487062495154035}
   runState: {fileID: 2879395803631722344}
   walkState: {fileID: 1649670282738841869}
   idleState: {fileID: 1291457079385323965}
@@ -562,21 +610,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d416148150879047b3953a3d54372a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upKey: 0
-  downKey: 0
-  leftKey: 0
-  rightKey: 0
-  passKey: 0
-  shootKey: 0
-  runKey: 0
-  abilityKey: 0
-  tackleKey: 0
+  animator: {fileID: 4636627549207701479}
+  playerStateManager: {fileID: 7952746834855766236}
+  pInput: {fileID: 4298268059283685189}
   verticalInput: 0
   horizontalInput: 0
+  isRunning: 0
+  passPressed: 0
+  shootPressed: 0
   selected: 1
   playerController: {fileID: 513487062495154035}
   spriteRenderer: {fileID: 3598471736038176290}
-  animator: {fileID: 4636627549207701479}
 --- !u!95 &4636627549207701479
 Animator:
   serializedVersion: 5

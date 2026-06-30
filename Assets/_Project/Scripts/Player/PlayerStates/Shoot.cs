@@ -10,8 +10,7 @@ public class ShootState : PlayerState
 
     public override void Tick()
     {
-        
-        if ( AnimationFinished("Shoot"))
+        if(AnimationFinished("Shoot"))
         {
             _playerStateManager.ChangeState(_playerStateManager.idleState);
         }

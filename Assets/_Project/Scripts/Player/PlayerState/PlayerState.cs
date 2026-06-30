@@ -7,10 +7,8 @@ public abstract class PlayerState : MonoBehaviour
     private GameObject _currentPlayer;
     protected InputHandler _playerController;
     protected Animator _playerAnimator;
-
     protected PlayerStateManager _playerStateManager;
     protected float _stateEnterTime;
-
 
     public void Init(PlayerStateManager stateManager, InputHandler controller, GameObject player, Animator playerAnimator)
     {
@@ -19,8 +17,6 @@ public abstract class PlayerState : MonoBehaviour
         _playerAnimator = playerAnimator;
         _currentPlayer = player;
     }
-
-
 
     public virtual void Enter()
     {

@@ -121,8 +121,8 @@ public class Ball : MonoBehaviour
 
     private Vector2 GetShootDirection(PlayerController currentOwnerController) //buscar keyword out
     {
-        int verticalDirection = currentOwnerController.verticalInput;
-        int horizontalDirection = currentOwnerController.horizontalInput;
+        float verticalDirection = currentOwnerController.verticalInput;
+        float horizontalDirection = currentOwnerController.horizontalInput;
         return new Vector2(horizontalDirection, verticalDirection).normalized;
     }
 
@@ -172,7 +172,7 @@ public class Ball : MonoBehaviour
     private float RotationSpeedIfRunning(PlayerController pc)
     {
         //print(isMoving);
-        if (pc.RunPressed())
+        if (pc.IsRunning())
         {
             return rotationSpeed + 50f;
         }
@@ -185,7 +185,7 @@ public class Ball : MonoBehaviour
     private float getIntensity()
     {
         PlayerController pc = _currentOwner.GetComponent<PlayerController>();
-        if (pc.RunPressed())
+        if (pc.IsRunning())
         {
             return intensity * 1.5f;
         }
@@ -198,7 +198,7 @@ public class Ball : MonoBehaviour
     private float getFrecuency()
     {
         PlayerController pc = _currentOwner.GetComponent<PlayerController>();
-        if (pc.RunPressed())
+        if (pc.IsRunning())
         {
             return frecuency + 0.15f;
         }
