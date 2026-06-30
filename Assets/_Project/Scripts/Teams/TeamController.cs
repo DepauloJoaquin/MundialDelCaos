@@ -116,6 +116,12 @@ public class TeamController : MonoBehaviour
         }
     }
 
+    public void SelectPlayerWhoReceiveBall(PlayerController receiver)
+    {
+        AssignPlayer1(receiver);
+        return;
+    }
+
     void AssignPlayer1(PlayerController newPlayer)
     {
         if(_currentSelectedPlayer1 != null)

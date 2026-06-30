@@ -4,41 +4,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
-{   
-    private Vector2 moveInput;
-    private bool runInput;
-
-    private float verticalInput;
-    private float horizontalInput;
-    public Animator _animator;
+public class PlayerController : InputHandler
+{
+    public TeamController _myTeam;
+    public Team team;
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
-    public SpriteRenderer bodyspriteRenderer;
-    public TeamController _myTeam;
+    public Animator _animator;
+    public ControlSlot controlSlot = ControlSlot.Bot;
     public float velocity = 3.5f;
-    public bool selected;
+    public float kickForce = 2f;
     //public InputActionReference move; 
-    [Header("Movement Keys")]
-    public KeyCode upKey;
-    public KeyCode downKey;
-    public KeyCode leftKey;
-    public KeyCode rightKey;
+    private Ball ball; 
 
-    [Header("Action Keys")]
-
-    public KeyCode passKey;
-    public KeyCode shootKey;
-    public KeyCode runKey;
-    public KeyCode abilityKey;
-    public KeyCode tackleKey;
-
-    private int _verticalInput;
-    private int _horizontalInput;
-
-    public ControlSlot controlSlot;
-
-    private void Awake() 
+    private void Awake()
     {
         GetComponents();
     }
@@ -46,16 +25,17 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         UpdateDirections();
-        UpdateAnimations();
+        UpdateSpriteFlip();
+        KickBall();
+        PassBall();
     }
-    /*
-    public void UpdateDirections() 
+
+    public override void UpdateDirections()
     {
-        if(! selected) return;
-        verticalInput = GetVerticalInput();
-        horizontalInput = GetHorizontalInput();
+        if (!selected) return;
+        base.UpdateDirections();
     }
-    */
+    
     public void UpdateDirections() 
 {
     if (!selected)
@@ -75,16 +55,15 @@ public class PlayerController : MonoBehaviour
         rigidBody.velocity = Direction() * Velocity();
     }
 
-    private void UpdateAnimations()
+    private void UpdateSpriteFlip()
     {
        /* bool isRunning = !IsIdle();
       
         if(horizontalInput > 0)
         {
             spriteRenderer.flipX = false;
-            bodyspriteRenderer.flipX = false;
         }
-        else if(horizontalInput < 0)
+        else if (horizontalInput < 0)
         {
             spriteRenderer.flipX = true;
             bodyspriteRenderer.flipX = true;
@@ -119,43 +98,15 @@ private Vector2 Direction()
 
     return new Vector2(horizontalInput, verticalInput).normalized;
 }
-    private float Velocity() 
+    private Vector2 Velocity() 
 {
-    if (IsIdle())
-    {
-        return 0f;
-    }
+        if (IsIdle())
+        {
+            return Vector2.zero;
+        }
 
-    if (RunPressed())
-    {
-        return velocity * 1.7f;
-    }
-
-    return velocity;
+        return new Vector2(horizontalInput, verticalInput).normalized;
 }
-
-    private int GetVerticalInput()
-    {
-       return Get_Input(upKey, downKey);
-    }
-
-    private int GetHorizontalInput()
-    {
-       return Get_Input(rightKey, leftKey);
-    }
-
-    private int Get_Input(KeyCode firstKey, KeyCode secondKey)
-    {
-        if (Input.GetKey(firstKey))
-        {
-            return 1;
-        }
-        else if (Input.GetKey(secondKey))
-        {
-            return -1;
-        }
-        return 0;
-    }
     /*
     private bool IsIdle()
     {
@@ -186,60 +137,31 @@ private Vector2 Direction()
         {
             rigidBody = GetComponent<Rigidbody2D>();
         }
-        if (bodyspriteRenderer == null)
-        {
-            bodyspriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
-        }
-    
-     
     }
 
-      public bool PassPressed()
+    public void setBall(Ball ball)
     {
-        if (!selected) return false;
-
-        return Input.GetKeyDown(passKey);
+        this.ball = ball;
     }
 
-    public bool ShootPressed()
+    public override bool HasBall() 
     {
-        if (!selected) return false;
-
-        return Input.GetKeyDown(shootKey);
+        return ball != null;
     }
 
-    public bool ShootReleased()
+    public void KickBall()
     {
-         if (!selected) return false;
-         return Input.GetKeyUp(shootKey);
+        if (ball == null) { return; }
+        if (!ShootPressed()) { return; }
+        ball.KickBall(this);
+        ball = null;
     }
 
-    public bool TacklePressed()
+    public void PassBall()
     {
-         if (!selected) return false;
-         return Input.GetKeyDown(tackleKey);
-    }
-    public bool RunPressed()
-    {
-         if (!selected) return false;
-         return Input.GetKey(runKey);
-    }
-    public bool RunReleased()
-    {
-    if (!selected) return false;
-    return Input.GetKeyUp(runKey);
-    }
-    public enum ControlSlot
-    {
-        Bot,
-        Player1,
-        Player2
-    }
-    public void OnMovement(InputValue value)
-    {
-    moveInput = value.Get<Vector2>();
-
-    Debug.Log(gameObject.name + " Movement recibido: " + moveInput);
+        if (ball == null) { return; }
+        if (!PassPressed()) { return; }
+        ball.PassBall(this);
     }
 
     public void OnPlayerReceivesBall(PlayerController previousOwner)
@@ -250,4 +172,13 @@ private Vector2 Direction()
         }
         _myTeam.SelectPlayerWhoReceiveBall(this,previousOwner);
     }
+
+    public enum ControlSlot
+    {
+        None,
+        Player1,
+        Player2,
+        Bot
+    }
+    
 }
