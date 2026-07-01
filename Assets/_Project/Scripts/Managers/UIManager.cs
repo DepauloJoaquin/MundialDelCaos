@@ -1,0 +1,116 @@
+using UnityEngine;
+using TMPro;
+
+
+public class UIManager : MonoBehaviour
+{
+     // Responsabilidad:
+    // Controla la interfaz del juego.
+    // No decide la lógica de la partida, solo muestra información visual.
+
+    [Header("Canvas principales")]
+    [SerializeField] private Canvas _canvasHUD;
+    [SerializeField] private Canvas _canvasMenuPausa;
+    [SerializeField] private Canvas _canvasPantallaFinal;
+    [SerializeField] private Canvas _canvasPantallaInicial;
+
+    [Header("HUD")]
+    [SerializeField] private TextMeshProUGUI _textTime;
+    [SerializeField] private TextMeshProUGUI _textScoreTeamA;
+    [SerializeField] private TextMeshProUGUI _textScoreTeamB;
+
+    [Header("Mensajes")]
+    [SerializeField] private GameObject _panelGol;
+    [SerializeField] private GameObject _panelPausa;
+    [SerializeField] private GameObject _panelPantallaFinal;
+    [SerializeField] private GameObject _panelPantallaInicial;
+
+    public static UIManager Instance { get; private set; }
+    private void Awake()
+    {
+        // Configuración del Singleton
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // Evita que se destruya al cambiar de escena
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    void Start()
+    {
+        
+    }
+
+    private void OnEnable()
+    {
+        //si el GameStateManager se destruye antes que el UIManager, cuando cambia de escena  hace null  reference
+        //1. Evitamos que un UIManager duplicado intente suscribirse
+        if (Instance != null && Instance != this) return;
+
+        if (GameStateManager.Instance != null)
+        {
+            GameStateManager.Instance.OnMatchStarted += StartMatch;
+        }
+    }
+
+    private void OnDisable()
+    {
+        //Evitamos que un duplicado rompa la suscripción del original
+        if (Instance != this) return;
+
+        // Validamos que el GameStateManager aún exista
+        if (GameStateManager.Instance != null)
+        {
+            GameStateManager.Instance.OnMatchStarted -= StartMatch;
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    void ShowPauseMenu()
+    {
+        
+    }
+
+    void RestartHud()
+    {
+        
+    }
+
+   
+
+ 
+
+    void ShowHud()
+    {
+        
+    }
+
+    public void StartMatch()
+    {
+        //Mostrar Hud y lo que sea necesario
+    }
+
+    void UpdateTimer(float timeInSeconds)
+    {   
+        int minutes = Mathf.FloorToInt(timeInSeconds / 60);
+        int seconds = Mathf.FloorToInt(timeInSeconds % 60);
+        _textTime.text = string.Format("{0:00}:{1:00}",minutes,seconds);
+
+    }
+
+    public void UpdateScores(int _goalsTeam_A,int _goalsTeam_B)
+    {
+        
+    }
+
+
+}

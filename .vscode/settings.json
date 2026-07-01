@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "ProyectoDelJuego.sln"
+    "dotnet.defaultSolution": "MundialDelCaos.sln"
 }
