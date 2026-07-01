@@ -39,17 +39,6 @@ public class Ball : MonoBehaviour
         _currentOwner = collision.gameObject;
         receiver.OnPlayerReceivesBall(previousOwnerController);
      }
-    public void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("ScoreForJ1"))
-        {
-            GameManager.Instance.RegisterTeam_A_Goal();
-        }
-        else if (collision.CompareTag("ScoreForJ2"))
-        {
-            GameManager.Instance.RegisterTeam_B_Goal();
-        }
-    }
 
     private void FixedUpdate()
     {
