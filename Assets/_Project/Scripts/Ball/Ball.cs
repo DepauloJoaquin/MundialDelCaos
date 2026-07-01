@@ -77,6 +77,18 @@ public class Ball : MonoBehaviour
         }
     }
 
+      public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("ScoreForA"))
+        {
+            GameManager.Instance.RegisterTeam_A_Goal();
+        }
+        else if (collision.CompareTag("ScoreForB"))
+        {
+            GameManager.Instance.RegisterTeam_B_Goal();
+        }
+    }
+
     private void RotateBall()
     {
         if(isRotating)

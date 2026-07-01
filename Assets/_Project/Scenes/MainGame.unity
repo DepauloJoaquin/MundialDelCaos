@@ -1401,7 +1401,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1398449307}
-  - {fileID: 305346457}
   - {fileID: 1076842878}
   - {fileID: 760840135}
   m_Father: {fileID: 0}

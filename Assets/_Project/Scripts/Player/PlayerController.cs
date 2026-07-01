@@ -1,17 +1,22 @@
 /*using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {   
+    private Vector2 moveInput;
+    private bool runInput;
     public TeamController _myTeamController;
+    private float verticalInput;
+    private float horizontalInput;
     public Animator _animator;
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
     public SpriteRenderer bodyspriteRenderer;
     public GoalTarget _targetGoal;
+    public ControlSlot _controlSlot;
     public Team _team;
     public Role _role;
     public float _movementSpeed = 3.5f;
@@ -193,17 +198,12 @@ public class PlayerController : MonoBehaviour
 
     public void OnPlayerReceivesBall(PlayerController previousOwner)
     {
+        if(previousOwner == null) 
+        {
+            _myTeamController.SelectPlayerWhoReceiveBall(this); 
+        }
         _myTeamController.SelectPlayerWhoReceiveBall(this,previousOwner);
     }
-
-    public enum ControlSlot
-    {
-        None,
-        Player1,
-        Player2,
-        Bot
-    }
-    public ControlSlot controlSlot = ControlSlot.Bot;
     public  enum Role
     {
         GoalKeeper,
