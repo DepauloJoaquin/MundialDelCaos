@@ -14,6 +14,17 @@ public class GameManager : MonoBehaviour
    
    public static GameManager Instance { get; private set; }
 
+<<<<<<< Updated upstream
+=======
+   [Header("Time")]
+    private float _intialTimeInSecods = 10;
+    private float _timeLeft;
+
+    public event Action OnScoreTeamA;
+    public event Action OnScoreTeamB;
+
+
+>>>>>>> Stashed changes
    public event Action<float> OnTimeChanged;
     private void Awake()
     {
@@ -45,8 +56,40 @@ public class GameManager : MonoBehaviour
     {
         GameStateManager.Instance.OnGameStateChanged += HandleGameStateChanged;
     }
-
     void OnDisable()
+    {
+        GameStateManager.Instance.OnMatchStarted -= StartMatch;
+        GameStateManager.Instance.OnMatchPaused -= PauseMatch;
+        GameStateManager.Instance.OnMatchRestart -= RestartGame;
+        GameStateManager.Instance.OnGoalScored -= RegisterGoal;
+    }
+
+<<<<<<< Updated upstream
+    void OnDisable()
+=======
+
+
+
+
+    [Header("Marcadores")]
+    private TextMeshProUGUI _marcadorEquipoA;
+    private TextMeshProUGUI _marcadorEquipoB;
+
+    [Header("Equipos")]
+    //TODO: Realizar el componente TeamController
+
+    //private TeamController _controladorEquipoA;
+    //private TeamController _controladorEquipoB;
+
+
+
+    [Header("Tiempo")]
+    private float _tiempoInicial;
+    private float _tiempoRestante;
+    private TextMeshProUGUI _textoConValorDeTiempo;
+
+    /*void Start()
+>>>>>>> Stashed changes
     {
         GameStateManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
     }
@@ -54,17 +97,22 @@ public class GameManager : MonoBehaviour
     
     void Update()
     {
+        
         if (GameStateManager.Instance.IsOnPlayState())
         {
             _timeLeft -= Time.deltaTime;
             if(_timeLeft <= 0)
             {
                 _timeLeft = 0;
+<<<<<<< Updated upstream
                 FinishMatch();
+=======
+               GameStateManager.Instance.ChangeState(new EndState());
+>>>>>>> Stashed changes
             }
             OnTimeChanged?.Invoke(_timeLeft);
         }
-        
+    
     }
 
     void HandleGameStateChanged(GameState newGameState)
@@ -117,6 +165,7 @@ public class GameManager : MonoBehaviour
         _gameStatemanager.ChangeToPause();
         
     }
+<<<<<<< Updated upstream
     */
     
     /*
@@ -127,6 +176,19 @@ public class GameManager : MonoBehaviour
     }
     */
     /*
+=======
+
+    public void Play()
+    {
+ 
+    }
+
+  public void Restart()
+    {
+        
+    }
+    */
+>>>>>>> Stashed changes
     public void RegisterGoal()
     {
         OnScoreChanged?.Invoke(_goalsTeam_A,_goalsTeam_B);
@@ -136,8 +198,11 @@ public class GameManager : MonoBehaviour
 
     public void RegisterTeam_A_Goal()
     {
-        _goalsTeam_A += 1;
+        _goalsTeam_A ++;
+        RegisterGoal();
+        OnScoreTeamA?.Invoke();
     }
+<<<<<<< Updated upstream
 
     public void RegisterTeam_B_Goal()
     {
@@ -154,6 +219,21 @@ public class GameManager : MonoBehaviour
     public void ActivatePlayEvent()
     {
         OnMatchStarted?.Invoke();
+=======
+    
+    
+    public void RegisterTeam_B_Goal()
+    {
+        _goalsTeam_B ++;
+        RegisterGoal();
+        OnScoreTeamB?.Invoke();
+    }
+       
+    
+    public void StartMatch()
+    {
+        OnScoreChanged?.Invoke(_goalsTeam_A,_goalsTeam_B);
+>>>>>>> Stashed changes
     }
 
     public void ActivateEndEvent()
