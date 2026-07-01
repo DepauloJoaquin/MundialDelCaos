@@ -213,13 +213,15 @@ public class TeamController : MonoBehaviour
         _amountHumanPlayers += 1;
         
         if (_amountHumanPlayers == 1)
-        {
-        AssignPlayer1(playerController);
-        }
-        if(_amountHumanPlayers == 2)
-        {
-            AssignPlayer2(playerController);
-        }
+    {
+    AssignPlayer1(playerController);
+    playerController.ConfigureInput(PlayerController.ControlSlot.Player1, controlScheme);
+    }
+else if (_amountHumanPlayers == 2)
+{
+    AssignPlayer2(playerController);
+    playerController.ConfigureInput(PlayerController.ControlSlot.Player2, controlScheme);
+}
        
         
     }

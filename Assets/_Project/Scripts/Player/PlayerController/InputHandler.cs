@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,42 +7,58 @@ public abstract class InputHandler : MonoBehaviour
     public Animator animator;
     public PlayerStateManager playerStateManager;
     public PlayerInput pInput;
+
     [Header("Options")]
     public float verticalInput;
     public float horizontalInput;
     public bool isRunning;
-    public bool passPressed = false;
-    public bool shootPressed = false;
     public bool selected;
+
     public abstract bool HasBall();
+
     public virtual void UpdateDirections()
     {
-        GetHorizontalInput();
-        GetVerticalInput();
-        IsRunning();
+        if (pInput == null)
+        {
+            Debug.LogError(name + " no tiene PlayerInput.");
+            ResetInput();
+            return;
+        }
+
+        InputAction movementAction = pInput.actions.FindAction("Movement", false);
+        InputAction runAction = pInput.actions.FindAction("Run", false);
+
+        if (movementAction == null)
+        {
+            ResetInput();
+            return;
+        }
+
+        Vector2 movement = movementAction.ReadValue<Vector2>();
+
+        horizontalInput = movement.x;
+        verticalInput = movement.y;
+
+        isRunning = runAction != null && runAction.IsPressed();
     }
 
-    public float GetHorizontalInput()
+    protected void ResetInput()
     {
-        horizontalInput = pInput.actions["Movement"].ReadValue<Vector2>().x;
-        return horizontalInput;
+        horizontalInput = 0f;
+        verticalInput = 0f;
+        isRunning = false;
     }
 
-    public float GetVerticalInput()
-    {
-        verticalInput = pInput.actions["Movement"].ReadValue<Vector2>().y;
-        return verticalInput;
-    }
-
-    public bool IsRunning()
-    {
-        isRunning = pInput.actions["Run"].IsPressed();
-        return isRunning;
-    }
     public virtual bool IsIdle()
     {
-        return Mathf.Abs(horizontalInput) < 0.01f && Mathf.Abs(verticalInput) < 0.01f;
-    }   
+        return Mathf.Abs(horizontalInput) < 0.01f &&
+               Mathf.Abs(verticalInput) < 0.01f;
+    }
+        public bool IsRunning()
+    {
+        return isRunning;
+    }
+
     public virtual bool IsMoving()
     {
         return !IsIdle();
@@ -53,13 +67,25 @@ public abstract class InputHandler : MonoBehaviour
     public bool PassPressed()
     {
         if (!selected) return false;
-        return pInput.actions["Shoot"].IsPressed();
+        if (pInput == null) return false;
+
+        InputAction passAction = pInput.actions.FindAction("PassTackle", false);
+
+        if (passAction == null) return false;
+
+        return passAction.IsPressed();
     }
 
     public bool ShootPressed()
     {
         if (!selected) return false;
-        return pInput.actions["Shoot"].IsPressed();
+        if (pInput == null) return false;
+
+        InputAction shootAction = pInput.actions.FindAction("Shoot", false);
+
+        if (shootAction == null) return false;
+
+        return shootAction.IsPressed();
     }
 
     public enum KeyPress
