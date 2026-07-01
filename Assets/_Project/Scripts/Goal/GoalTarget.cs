@@ -19,6 +19,6 @@ public class GoalTarget : MonoBehaviour
 
     public Vector2 get_center_target_position()
     {
-        return _targets[1].transform.position;
+        return _targets[0].transform.position;
     }
 }

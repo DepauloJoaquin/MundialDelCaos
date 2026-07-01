@@ -12,6 +12,7 @@ public class PlayerInputManager : MonoBehaviour
 
     private bool wasdJoined = false;
     private bool arrowsJoined = false;
+    private bool botsSpawned = false;
 
 
 
@@ -45,6 +46,12 @@ public class PlayerInputManager : MonoBehaviour
                 AddGamepadToAvailableTeam(gamepad);
                 joinedGamepads.Add(gamepad);
             }
+        }
+
+        if (!botsSpawned && wasdJoined && arrowsJoined)
+        {
+        _teamAController.SpawnBots(3);
+        botsSpawned = true;
         }
      }
 

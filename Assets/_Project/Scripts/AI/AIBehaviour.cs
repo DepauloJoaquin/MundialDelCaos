@@ -15,13 +15,14 @@ public class AIBehaviour : MonoBehaviour
     public float _followSpeed = 15f;
     public float _slowdownDistance = 1f;
 
-    const float spreadAssistFactor = 0.8f;
+    const float spreadAssistFactor = 1f;
 
     Vector2 velocity = Vector2.zero;
     // Start is called before the first frame update
     void Start()
     {
-        
+        _currentPlayer = GetComponent<PlayerController>();
+        _ball = GameManager.Instance._ball;
     }
 
     // Update is called once per frame
@@ -57,7 +58,7 @@ public class AIBehaviour : MonoBehaviour
             {
                 totalMovement += GetAssistFormationMovement();
             }
-            totalMovement = Vector2.ClampMagnitude(totalMovement,0.1f);
+            totalMovement = Vector2.ClampMagnitude(totalMovement,1f);
             _currentPlayer._movementDirection = totalMovement * _currentPlayer._movementSpeed;
         }
       

@@ -57,12 +57,12 @@ public class Ball : MonoBehaviour
         }
         _lastOwner = _currentOwner;
         _currentOwner = collision.gameObject;
-        receiver.OnPlayerReceivesBall(previousOwnerController); // Temporarly deactivated because it was throwing a lot of exceptions
+        _currentOwnerController = receiver;
+        receiver.OnPlayerReceivesBall(previousOwnerController); 
         MakeTheBallControlled();
     }
 
-    // --------------------------------------
-
+    
     private void FlipBallRotation()
     {
         if(_currentOwner == null) { return; }
@@ -102,12 +102,13 @@ public class Ball : MonoBehaviour
         _isFree = true;
         _lastKickPlayer = _currentOwner;
         _currentOwner = null;
+        _currentOwnerController = null;
         rb.AddForce(shootDirection * currentKickForce, ForceMode2D.Impulse);
     }
 
     public void PassBall(PlayerController currentOwnerController)
     {
-        PlayerController nearestPlayer = BallPassZone.GetNearestPlayerPosition(currentOwnerController.team, currentOwnerController);
+        PlayerController nearestPlayer = BallPassZone.GetNearestPlayerPosition(currentOwnerController._team, currentOwnerController);
         if(nearestPlayer == null) { print("NO"); return; }
         currentOwnerController.setBall(null);
         _passTarget = nearestPlayer.gameObject;
@@ -116,6 +117,8 @@ public class Ball : MonoBehaviour
         _isFree = true;
         _lastKickPlayer = _currentOwner;
         _currentOwner = null;
+        _currentOwnerController = null;
+
         float passSpeed = currentOwnerController.kickForce * 0.8f;
         rb.AddForce(shootDirection * passSpeed, ForceMode2D.Impulse);
     }

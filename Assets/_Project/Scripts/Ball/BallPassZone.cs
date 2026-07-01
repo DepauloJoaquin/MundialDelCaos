@@ -61,11 +61,11 @@ public class BallPassZone : MonoBehaviour
         PlayerController player = collision.GetComponent<PlayerController>();
         if (player == null) { return; }
         
-        if (player.team == Team.A)
+        if (player._team == Team.A)
         {
             playersTeamA.Add(player);
         }
-        else if (player.team == Team.B)
+        else if (player._team == Team.B)
         {
             playersTeamB.Add(player);
         }
@@ -76,11 +76,11 @@ public class BallPassZone : MonoBehaviour
         PlayerController player = collision.GetComponent<PlayerController>();
         if (player == null) { return; }
         
-        if (player.team == Team.A)
+        if (player._team == Team.A)
         {
             playersTeamA.Remove(player);
         }
-        else if (player.team == Team.B)
+        else if (player._team == Team.B)
         {
             playersTeamB.Remove(player);
         }

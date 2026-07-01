@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : InputHandler
 {
     public TeamController _myTeamController;
-    public Team team;
+    public AIBehaviour _AIController;
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
     public GoalTarget _targetGoal;
@@ -14,10 +14,11 @@ public class PlayerController : InputHandler
     public Vector2 _movementDirection;
     public Vector2 _spawnPosition;
     public Vector2 _position;
-    public float _forceTowardsTheBall;
+    public float _forceTowardsTheBall = 1f;
     public ControlSlot controlSlot = ControlSlot.Bot;
-    [SerializeField] private string bindingGroup = "Arrows";
+    [SerializeField] private string bindingGroup = "";
     [SerializeField] private bool configureInputOnAwake = true;
+    public int _formationSlot;
 
     public float velocity = 3.5f;
     public float kickForce = 2f;
@@ -30,18 +31,25 @@ public class PlayerController : InputHandler
     }
 
     private void Update()
-    {
+    {   _position = transform.position;
         UpdateDirections();
         UpdateSpriteFlip();
     }
 
     private void FixedUpdate()
     {
-        if (!CanBeControlled())
+        
+        if(controlSlot == ControlSlot.Bot)
         {
-            rigidBody.velocity = Vector2.zero;
+            rigidBody.velocity = _movementDirection;
             return;
         }
+        if (!CanBeControlled())
+        {
+        rigidBody.velocity = Vector2.zero;
+        return;
+        }
+
 
         rigidBody.velocity = GetMoveDirection() * GetMoveSpeed();
     }
@@ -84,16 +92,26 @@ public class PlayerController : InputHandler
 }
 
     private void UpdateSpriteFlip()
-    {
-        if (horizontalInput > 0.1f)
+    {   
+        float horizontalMovement;
+
+        if (controlSlot == ControlSlot.Bot)
+        {
+            horizontalMovement = _movementDirection.x;
+        }
+        else
+        {
+            horizontalMovement = horizontalInput;
+        }
+        if (horizontalMovement > 0.1f)
         {
             spriteRenderer.flipX = false;
         }
-        else if (horizontalInput < -0.1f)
+        else if (horizontalMovement < -0.1f)
         {
             spriteRenderer.flipX = true;
         }
-    }
+    }  
 
     private void GetComponents()
     {
@@ -138,8 +156,9 @@ public class PlayerController : InputHandler
         }
 
         pInput.ActivateInput();
+        pInput.actions = Instantiate(pInput.actions);
         pInput.SwitchCurrentActionMap("Player");
-        pInput.SwitchCurrentControlScheme(newBindingGroup, device);
+       
 
         pInput.actions.bindingMask = InputBinding.MaskByGroup(newBindingGroup);
 
@@ -227,5 +246,23 @@ public class PlayerController : InputHandler
         Vector2 direction = someDirection - _position;
 
         return direction.normalized;
+    }
+
+    public void SetControlSlot(ControlSlot newslot)
+    {
+        controlSlot = newslot;
+        if(_AIController == null)
+        {
+            _AIController = GetComponent<AIBehaviour>();
+        }
+        if (_AIController != null)
+        {
+        _AIController.enabled = controlSlot == ControlSlot.Bot;
+        }
+        if (controlSlot != ControlSlot.Bot)
+        {
+        _movementDirection = Vector2.zero;
+        }
+
     }
 }
