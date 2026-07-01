@@ -3,10 +3,18 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : InputHandler
 {
-    public TeamController _myTeam;
+    public TeamController _myTeamController;
     public Team team;
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
+    public GoalTarget _targetGoal;
+    public Team _team;
+    public Role _role;
+    public float _movementSpeed = 3.5f;
+    public Vector2 _movementDirection;
+    public Vector2 _spawnPosition;
+    public Vector2 _position;
+    public float _forceTowardsTheBall;
     public ControlSlot controlSlot = ControlSlot.Bot;
     [SerializeField] private string bindingGroup = "Arrows";
     [SerializeField] private bool configureInputOnAwake = true;
@@ -19,11 +27,6 @@ public class PlayerController : InputHandler
     private void Awake()
     {
         GetComponents();
-
-        if (configureInputOnAwake)
-        {
-            ConfigureInput(controlSlot, bindingGroup);
-        }
     }
 
     private void Update()
@@ -110,7 +113,7 @@ public class PlayerController : InputHandler
         }
     }
 
-    public void ConfigureInput(ControlSlot newSlot, string newBindingGroup)
+    public void ConfigureInput(ControlSlot newSlot, string newBindingGroup, InputDevice device)
     {
         controlSlot = newSlot;
         bindingGroup = newBindingGroup;
@@ -136,15 +139,7 @@ public class PlayerController : InputHandler
 
         pInput.ActivateInput();
         pInput.SwitchCurrentActionMap("Player");
-
-        if (newBindingGroup == "WASD" || newBindingGroup == "Arrows")
-        {
-            pInput.SwitchCurrentControlScheme(newBindingGroup, Keyboard.current);
-        }
-        else if (newBindingGroup == "Gamepad" && Gamepad.current != null)
-        {
-            pInput.SwitchCurrentControlScheme(newBindingGroup, Gamepad.current);
-        }
+        pInput.SwitchCurrentControlScheme(newBindingGroup, device);
 
         pInput.actions.bindingMask = InputBinding.MaskByGroup(newBindingGroup);
 
@@ -199,11 +194,11 @@ public class PlayerController : InputHandler
     {
         if (previousOwner == null)
         {
-            _myTeam.SelectPlayerWhoReceiveBall(this);
+            _myTeamController.SelectPlayerWhoReceiveBall(this);
             return;
         }
 
-        _myTeam.SelectPlayerWhoReceiveBall(this, previousOwner);
+        _myTeamController.SelectPlayerWhoReceiveBall(this, previousOwner);
     }
     public void setBall(Ball newBall)
     {
@@ -218,5 +213,19 @@ public class PlayerController : InputHandler
         Player3,
         Player4,
         Bot
+    }
+         public  enum Role
+    {
+        GoalKeeper,
+        Forward,
+        MidFilder,
+    }
+      public Vector2 DirectionTo(Vector2 someDirection)
+    {
+        
+
+        Vector2 direction = someDirection - _position;
+
+        return direction.normalized;
     }
 }

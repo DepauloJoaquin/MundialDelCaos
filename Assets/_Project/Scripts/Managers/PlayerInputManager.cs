@@ -5,8 +5,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerInputManager : MonoBehaviour
 {
-    [SerializeField] private GameObject _playerPrefab;
-    [SerializeField] private Transform[] _spawnPoints;
     [SerializeField] private TeamController _teamAController;
     [SerializeField] private TeamController _teamBController;
 
@@ -20,30 +18,50 @@ public class PlayerInputManager : MonoBehaviour
     
      void Update()
      {
-         if(Keyboard.current == null) return;
-
-        if (!wasdJoined && Keyboard.current.enterKey.wasPressedThisFrame)
+        if (Keyboard.current != null)
         {
+            if (!wasdJoined && Keyboard.current.enterKey.wasPressedThisFrame)
+            {
                 _teamAController.AddPlayerToTeam("WASD", Keyboard.current);
                 wasdJoined = true;
-        }
-        if(!arrowsJoined && Keyboard.current.rightCtrlKey.wasPressedThisFrame)
-         {
-             var player = PlayerInput.Instantiate(_playerPrefab,controlScheme: "Arrows", pairWithDevice: Keyboard.current);
+            }
 
-             if(_spawnPoints.Length > 1)
-             {
-                 player.transform.position = _spawnPoints[1].position;
-             }
-             arrowsJoined = true;
-         }
+            if (!arrowsJoined && Keyboard.current.numpad7Key.wasPressedThisFrame)
+            {
+                _teamAController.AddPlayerToTeam("Arrows", Keyboard.current);
+                arrowsJoined = true;
+            }
+        }
         
-         foreach(var gamePad in Gamepad.all)
-         {
-             if (gamePad.startButton.wasPressedThisFrame)
-             {
-                 PlayerInput.Instantiate(_playerPrefab,controlScheme: "Gamepad",pairWithDevice : gamePad);
-             }
-         }
+          foreach (Gamepad gamepad in Gamepad.all)
+        {
+            if (joinedGamepads.Contains(gamepad))
+            {
+                continue;
+            }
+
+            if (gamepad.startButton.wasPressedThisFrame)
+            {
+                AddGamepadToAvailableTeam(gamepad);
+                joinedGamepads.Add(gamepad);
+            }
+        }
      }
+
+     private void AddGamepadToAvailableTeam(Gamepad gamepad)
+    {
+        if (_teamAController.HasFreeHumanSlot())
+        {
+            _teamAController.AddPlayerToTeam("Gamepad", gamepad);
+            return;
+        }
+
+        if (_teamBController.HasFreeHumanSlot())
+        {
+            _teamBController.AddPlayerToTeam("Gamepad", gamepad);
+            return;
+        }
+
+        Debug.Log("Ya hay 4 jugadores humanos en total.");
+    }
 }

@@ -12,13 +12,8 @@ public class TeamController : MonoBehaviour
     [SerializeField] private List<GameObject> _availablePositions;
 
     public Team team;
-
-    public Team team;
-
     public GoalTarget _targetGoal;
-
     private int _amountHumanPlayers = 0;
-
     public int _amountBots;
 
     [SerializeField] private GameObject _prefabPlayer;
@@ -206,39 +201,57 @@ public class TeamController : MonoBehaviour
         return;
         }
         GameObject spawnPoint = _availablePositions[_currentPositionIndex];
-        PlayerInput playerInput = PlayerInput.Instantiate(_prefabPlayer,controlScheme: controlScheme,pairWithDevice: device);
+
+        PlayerInput playerInput = PlayerInput.Instantiate(
+        _prefabPlayer,
+        controlScheme: controlScheme,
+        pairWithDevice: device);
 
         playerInput.transform.position = spawnPoint.transform.position;
+
+        if (team == Team.B)
+        {
+        playerInput.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+        }
+        else
+        {
         playerInput.transform.rotation = Quaternion.identity;
+        }
+
         PlayerController playerController = playerInput.GetComponent<PlayerController>();
-        playerController._myTeam = this;
+
+        playerController._myTeamController = this;
+        playerController.team = team;
         _allPlayersControllers.Add(playerController);
         _currentPositionIndex += 1;
         _amountHumanPlayers += 1;
         
         if (_amountHumanPlayers == 1)
-    {
-    AssignPlayer1(playerController);
-    playerController.ConfigureInput(PlayerController.ControlSlot.Player1, controlScheme);
-    }
-else if (_amountHumanPlayers == 2)
-{
-    AssignPlayer2(playerController);
-    playerController.ConfigureInput(PlayerController.ControlSlot.Player2, controlScheme);
-}
-       
-        
-        public bool DoWeHaveTheBall()
         {
-        return GameManager.Instance._ball._currentOwnerController == _currentSelectedPlayer1 ||GameManager.Instance._ball._currentOwnerController == _currentSelectedPlayer2 ;
+        AssignPlayer1(playerController);
+        playerController.ConfigureInput(PlayerController.ControlSlot.Player1, controlScheme,device);
         }
-
-
+    else if (_amountHumanPlayers == 2)
+    {
+        AssignPlayer2(playerController);
+        playerController.ConfigureInput(PlayerController.ControlSlot.Player2, controlScheme,device);
+    }
+    }  
+        
+    public bool DoWeHaveTheBall()
+    {
+        return GameManager.Instance._ball._currentOwnerController == _currentSelectedPlayer1 ||GameManager.Instance._ball._currentOwnerController == _currentSelectedPlayer2 ;
+    }
+    public bool HasFreeHumanSlot()
+    {
+    return _amountHumanPlayers < 2;
     }
 
-   
 
-   
+}
+
+ 
+
 
 
 
