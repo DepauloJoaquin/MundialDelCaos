@@ -1,58 +1,105 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
 
-public class PlayerStateManager : MonoBehaviour
-{
-    private PlayerState _currentState;
-    private PlayerController _playerController;
-    private GameObject _player;
-
-    [Header("States")]
-    public RunState runState ;
-    public WalkState walkState;
-    public IdleState idleState;
-    public PassState passState;
-    public ShootState shootState;
-    public TackleState tackleState;
-
-    void Awake()
+    public class PlayerStateManager : MonoBehaviour
     {
-        _playerController = GetComponent<PlayerController>();
-        _player = gameObject;
-        idleState.Init(this, _playerController,_player);
-        walkState.Init(this, _playerController,_player);
-        runState.Init(this, _playerController,_player);
-        passState.Init(this, _playerController,_player);
-        shootState.Init(this, _playerController,_player);
-        tackleState.Init(this, _playerController,_player);
-    }
-       
-    void Start()
-    {
-        ChangeState(idleState);
-    }
+        private PlayerState _currentState;
+        public InputHandler _playerController;
+        private GameObject _player;
+        protected Animator _playerAnimator;
 
-    // Update is called once per frame
-    private void Update()
-    {
-        if (_currentState != null)
+        [Header("States")]
+        public RunState runState;
+        public WalkState walkState;
+        public IdleState idleState;
+        public PassState passState;
+        public ShootState shootState;
+        public TackleState tackleState;
+
+        void Awake()
         {
-            _currentState.Tick();
+            if(_playerController == null)
+            {
+                _playerController = GetComponent<PlayerController>();
+            } 
+            _player = gameObject;
+            _playerAnimator = _playerController.animator;
+            idleState.Init(this, _playerController,_player,_playerAnimator);
+            walkState.Init(this, _playerController,_player,_playerAnimator);
+            runState.Init(this, _playerController,_player,_playerAnimator);
+            passState.Init(this, _playerController,_player,_playerAnimator);
+            shootState.Init(this, _playerController,_player,_playerAnimator);
+            tackleState.Init(this, _playerController,_player,_playerAnimator);
         }
-    }
-    public void ChangeState(PlayerState stateTochange)
-    {
         
-        if (_currentState == stateTochange)
+        void Start()
         {
-        return;
+            ChangeState(idleState);
         }
-          if (_currentState != null)
+        private void Update()
         {
-            _currentState.Exit();
+            if (_currentState != null)
+            {
+                _currentState.Tick();
+            }
         }
-        _currentState = stateTochange;
-        _currentState.Enter();
+        public void ChangeState(PlayerState stateTochange)
+        {
+            
+            if (_currentState == stateTochange)
+            {
+            return;
+            }
+            if (_currentState != null)
+            {
+                _currentState.Exit();
+            }
+            _currentState = stateTochange;
+            _currentState.Enter();
+        }
+
+        // public void TickCurrentState(InputHandler.KeyPress key)
+        // {
+        //    if (_currentState == null) { return; }
+        //     _currentState.Tick(key);
+        // }
+
+        // public void TickCurrentState(string key)
+        // {
+        //     InputHandler.KeyPress localKey;
+        //     switch (key)
+        //     {
+        //         case "Pass":
+        //         {
+        //             localKey = InputHandler.KeyPress.Pass;
+        //             break;
+        //         }
+        //         case "Tackle":
+        //         {
+        //             localKey = InputHandler.KeyPress.Tackle;
+        //             break;
+        //         }
+        //         case "Run":
+        //         {
+        //             localKey = InputHandler.KeyPress.Run;
+        //             break;
+        //         }
+        //         case "Ability":
+        //         {
+        //             localKey = InputHandler.KeyPress.Ability;
+        //             break;
+        //         }
+        //         case "Shoot":
+        //         {
+        //             localKey = InputHandler.KeyPress.Shoot;
+        //             break;
+        //         } 
+        //         default:
+        //         {
+        //             return;
+        //         }
+        //     }
+        //     TickCurrentState(localKey);
+        // }
     }
-}

@@ -10,10 +10,9 @@ public class PassState : PlayerState
 
     public override void Tick()
     {
-        if (AnimationFinished("Pass"))
+        if(AnimationFinished("Pass"))
         {
             _playerStateManager.ChangeState(_playerStateManager.idleState);
         }
-        
     }
 }

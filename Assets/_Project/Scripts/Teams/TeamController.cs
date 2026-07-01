@@ -1,8 +1,5 @@
-using System.Collections;
+using UnityEngine.InputSystem;
 using System.Collections.Generic;
-using JetBrains.Annotations;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class TeamController : MonoBehaviour
@@ -12,7 +9,9 @@ public class TeamController : MonoBehaviour
     private List<PlayerController> _allPlayersControllers = new List<PlayerController>();
 
     private List<PlayerController> _currentSelectedPlayers = new List<PlayerController>();
-    private List<GameObject> _availablePositions;
+    [SerializeField] private List<GameObject> _availablePositions;
+
+    public Team team;
 
     public Team team;
 
@@ -22,7 +21,7 @@ public class TeamController : MonoBehaviour
 
     public int _amountBots;
 
-    private GameObject _prefabPlayer;
+    [SerializeField] private GameObject _prefabPlayer;
 
     public PlayerController _currentSelectedPlayer1;
     public PlayerController _currentSelectedPlayer2;
@@ -33,15 +32,15 @@ public class TeamController : MonoBehaviour
 
     void OnEnable()
     {
-        GameStateManager.Instance.OnGameStateChanged += HandleGameStateChanged;
+       // GameStateManager.Instance.OnGameStateChanged += HandleGameStateChanged;
     }
 
     void OnDisable()
     {
-        GameStateManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
+       // GameStateManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
     }
 
-    void HandleGameStateChanged(GameState newGameState)
+    /*void HandleGameStateChanged(GameState newGameState)
     {
         switch (newGameState)
         {
@@ -58,7 +57,7 @@ public class TeamController : MonoBehaviour
                  ResetAllPlayers();
                  break;
         }
-    }
+    }*/
     public void SpawnBots(int amountBots)
     {
         for (int i = 0; i < amountBots; i++)
@@ -121,6 +120,12 @@ public class TeamController : MonoBehaviour
         }
     }
 
+    public void SelectPlayerWhoReceiveBall(PlayerController receiver)
+    {
+        AssignPlayer1(receiver);
+        return;
+    }
+
     void AssignPlayer1(PlayerController newPlayer)
     {
         if(_currentSelectedPlayer1 != null)
@@ -144,9 +149,6 @@ public class TeamController : MonoBehaviour
         _currentSelectedPlayer2.selected = true;
         _currentSelectedPlayer2.controlSlot = PlayerController.ControlSlot.Player2;
     }
-
-
-
 
     private void SelectCurrentPlayersOnStart()
     {
@@ -193,7 +195,7 @@ public class TeamController : MonoBehaviour
         }
         */
 
-    public void AddPlayerToTeam()
+    public void AddPlayerToTeam(string controlScheme, InputDevice device)
     {   
         if (_amountHumanPlayers >= 2)
         {
@@ -204,27 +206,27 @@ public class TeamController : MonoBehaviour
         return;
         }
         GameObject spawnPoint = _availablePositions[_currentPositionIndex];
-        GameObject newPlayer = Instantiate(
-        _prefabPlayer,
-        spawnPoint.transform.position,
-        Quaternion.identity
-        );
-        PlayerController playerController = newPlayer.GetComponent<PlayerController>();
-        playerController._myTeamController = this;
+        PlayerInput playerInput = PlayerInput.Instantiate(_prefabPlayer,controlScheme: controlScheme,pairWithDevice: device);
+
+        playerInput.transform.position = spawnPoint.transform.position;
+        playerInput.transform.rotation = Quaternion.identity;
+        PlayerController playerController = playerInput.GetComponent<PlayerController>();
+        playerController._myTeam = this;
         _allPlayersControllers.Add(playerController);
         _currentPositionIndex += 1;
         _amountHumanPlayers += 1;
         
         if (_amountHumanPlayers == 1)
-        {
-        AssignPlayer1(playerController);
-        }
-        if(_amountHumanPlayers == 2)
-        {
-            AssignPlayer2(playerController);
-        }
-         
-        }
+    {
+    AssignPlayer1(playerController);
+    playerController.ConfigureInput(PlayerController.ControlSlot.Player1, controlScheme);
+    }
+else if (_amountHumanPlayers == 2)
+{
+    AssignPlayer2(playerController);
+    playerController.ConfigureInput(PlayerController.ControlSlot.Player2, controlScheme);
+}
+       
         
         public bool DoWeHaveTheBall()
         {

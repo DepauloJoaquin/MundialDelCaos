@@ -10,7 +10,8 @@ public enum GameState
     End,
     MainMenu,
     SelectTeamMenu,
-    Pause,
+    Paused,
     OptionsMenu,
+    Goal
 
 }
