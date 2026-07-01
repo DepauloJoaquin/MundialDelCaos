@@ -219,11 +219,11 @@ public class TeamController : MonoBehaviour
         }
          
         }
-        
+        /*
         public bool DoWeHaveTheBall()
         {
         return GameManager.Instance._ball._currentOwnerController == _currentSelectedPlayer1 ||GameManager.Instance._ball._currentOwnerController == _currentSelectedPlayer2 ;
-        }
+        }*/
 
     public void SelectPlayerWhoReceiveBall(PlayerController receiver)
     {

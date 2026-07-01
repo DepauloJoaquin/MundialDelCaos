@@ -24,7 +24,7 @@ public class Ball : MonoBehaviour
     }
 
     void OnCollisionEnter2D(Collision2D collision)
-     {
+    {
          PlayerController receiver = collision.gameObject.GetComponent<PlayerController>();
          if (receiver == null)
         {
@@ -41,7 +41,18 @@ public class Ball : MonoBehaviour
         _currentOwnerController = _currentOwner.GetComponent<PlayerController>();
         receiver.OnPlayerReceivesBall(previousOwnerController);
         
-     }
+    }
+     public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("ScoreForA"))
+        {
+            GameManager.Instance.RegisterTeam_A_Goal();
+        }
+        else if (collision.CompareTag("ScoreForB"))
+        {
+            GameManager.Instance.RegisterTeam_B_Goal();
+        }
+    }
 
     private void FixedUpdate()
     {
