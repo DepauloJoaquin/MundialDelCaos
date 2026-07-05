@@ -12,7 +12,13 @@
         [SerializeField] private List<GameObject> _availablePositions;
 
         public Team team;
-        public GoalTarget _targetGoal;
+        
+        public GameObject _thisTeamGoal;
+
+        public GoalScript _OurGoalScript;
+
+        public GameObject _OurScoreZone;
+
         private int _amountHumanPlayers = 0;
         public int _amountBots;
 
@@ -20,12 +26,21 @@
 
         public PlayerController _currentSelectedPlayer1;
         public PlayerController _currentSelectedPlayer2;
+        private string _player1ControlScheme;
+        private InputDevice _player1Device;
+
+        private string _player2ControlScheme;
+        private InputDevice _player2Device;
 
         private int _currentBotPositionIndex = 0;
 
-        
+        void Awake()
+        {
+            _OurGoalScript = _thisTeamGoal.GetComponent<GoalScript>();
+            _OurScoreZone = _thisTeamGoal.transform.GetChild(0).gameObject;
+        }
 
-        void OnEnable()
+    void OnEnable()
         {
         // GameStateManager.Instance.OnGameStateChanged += HandleGameStateChanged;
         }
@@ -68,7 +83,7 @@
             PlayerController playerController = newPlayer.GetComponent<PlayerController>();
             playerController._myTeamController = this;
             playerController._team = team;
-            playerController._targetGoal = _targetGoal;
+            playerController._targetGoal = _OurGoalScript.GetEnemyGoalFirstTargetPosition();
             playerController._spawnPosition = spawnPoint.transform.position;
             playerController._position = spawnPoint.transform.position;
             playerController._formationSlot = _currentBotPositionIndex;
@@ -111,49 +126,59 @@
         }
         public void SelectPlayerWhoReceiveBall(PlayerController receiver,PlayerController previousOwner)
         {
+            if(receiver == null)
+            {
+            return;
+            }
+            
+            if(receiver == _currentSelectedPlayer1 || receiver == _currentSelectedPlayer2)
+            {
+            return;
+            }
+            if(receiver._role == PlayerController.Role.GoalKeeper)
+            {
+            return;
+            }
+
             if(previousOwner == null)
             {
                 AssignPlayer1(receiver);
                 return;
             }
+           
             if(previousOwner == _currentSelectedPlayer1)
             {
                 AssignPlayer1(receiver);
+                return;
             }
             else if(previousOwner == _currentSelectedPlayer2)
             {
                 AssignPlayer2(receiver);
+                return;
             }
-        }
-
-        public void SelectPlayerWhoReceiveBall(PlayerController receiver)
-        {
-            AssignPlayer1(receiver);
-            return;
-        }
-
+        } 
         void AssignPlayer1(PlayerController newPlayer)
         {
-            if(_currentSelectedPlayer1 != null)
+            if(_currentSelectedPlayer1 != null && _currentSelectedPlayer1 != newPlayer)
             {
                 _currentSelectedPlayer1.selected = false;
                 _currentSelectedPlayer1.SetControlSlot(PlayerController.ControlSlot.Bot);
             }
             _currentSelectedPlayer1 = newPlayer;
             _currentSelectedPlayer1.selected = true;
-        _currentSelectedPlayer1.SetControlSlot(PlayerController.ControlSlot.Player1);
+            _currentSelectedPlayer1.ConfigureInput(PlayerController.ControlSlot.Player1,_player1ControlScheme,_player1Device);
         }
 
         void AssignPlayer2(PlayerController newPlayer)
         {
-            if(_currentSelectedPlayer2 != null)
+            if(_currentSelectedPlayer2 != null && _currentSelectedPlayer2 != newPlayer)
             {
                 _currentSelectedPlayer2.selected = false;
                 _currentSelectedPlayer2.SetControlSlot(PlayerController.ControlSlot.Bot);
             }
             _currentSelectedPlayer2 = newPlayer;
             _currentSelectedPlayer2.selected = true;
-            _currentSelectedPlayer2.SetControlSlot(PlayerController.ControlSlot.Player2);
+            _currentSelectedPlayer2.ConfigureInput(PlayerController.ControlSlot.Player2,_player2ControlScheme,_player2Device);
         
         }
 
@@ -234,7 +259,7 @@
 
             playerController._myTeamController = this;
             playerController._team = team;
-            playerController._targetGoal = _targetGoal;
+            playerController._targetGoal = _OurGoalScript.GetEnemyGoalFirstTargetPosition();
             playerController._spawnPosition = spawnPoint.transform.position;
             playerController._position = spawnPoint.transform.position;
             playerController._role = PlayerController.Role.Forward;
@@ -244,25 +269,28 @@
             
             if (_amountHumanPlayers == 1)
             {
-            AssignPlayer1(playerController);
-            playerController.ConfigureInput(PlayerController.ControlSlot.Player1, controlScheme,device);
+                _player1ControlScheme = controlScheme;
+                _player1Device = device;
+                AssignPlayer1(playerController);
             }
             else if (_amountHumanPlayers == 2)
             {
-            AssignPlayer2(playerController);
-            playerController.ConfigureInput(PlayerController.ControlSlot.Player2, controlScheme,device);
+                _player2ControlScheme = controlScheme;
+                _player2Device = device;
+                AssignPlayer2(playerController);
             }
         }  
             
             public bool DoWeHaveTheBall()
             {
-                return GameManager.Instance._ball._currentOwnerController == _currentSelectedPlayer1 ||GameManager.Instance._ball._currentOwnerController == _currentSelectedPlayer2 ;
+                return GameManager.Instance._ballController._currentOwnerController == _currentSelectedPlayer1 ||GameManager.Instance._ballController._currentOwnerController == _currentSelectedPlayer2 ;
             }
             public bool HasFreeHumanSlot()
             {
             return _amountHumanPlayers < 2;
             }
 
+            
 
     }
 

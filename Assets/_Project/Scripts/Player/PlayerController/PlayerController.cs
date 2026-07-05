@@ -5,9 +5,10 @@ public class PlayerController : InputHandler
 {
     public TeamController _myTeamController;
     public AIBehaviour _AIController;
+    public AIGoalKeeperBehaviour _GoalKeeperController;
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
-    public GoalTarget _targetGoal;
+    public Vector2 _targetGoal;
     public Team _team;
     public Role _role;
     public float _movementSpeed = 3.5f;
@@ -15,11 +16,11 @@ public class PlayerController : InputHandler
     public Vector2 _spawnPosition;
     public Vector2 _position;
     public float _forceTowardsTheBall = 1f;
+    public bool _isBotRunning;
     public ControlSlot controlSlot = ControlSlot.Bot;
     [SerializeField] private string bindingGroup = "";
     [SerializeField] private bool configureInputOnAwake = true;
     public int _formationSlot;
-
     public float velocity = 3.5f;
     public float kickForce = 2f;
 
@@ -133,7 +134,7 @@ public class PlayerController : InputHandler
 
     public void ConfigureInput(ControlSlot newSlot, string newBindingGroup, InputDevice device)
     {
-        controlSlot = newSlot;
+        SetControlSlot(newSlot);
         bindingGroup = newBindingGroup;
 
         if (pInput == null)
@@ -183,7 +184,7 @@ public class PlayerController : InputHandler
 
         Debug.Log(name + " pateó");
 
-        animator.SetTrigger("Shoot");
+        playerStateManager.ChangeState(playerStateManager.shootState);
 
         ball.KickBall(this);
         ball = null;
@@ -211,13 +212,7 @@ public class PlayerController : InputHandler
 
     public void OnPlayerReceivesBall(PlayerController previousOwner)
     {
-        if (previousOwner == null)
-        {
-            _myTeamController.SelectPlayerWhoReceiveBall(this);
-            return;
-        }
-
-        _myTeamController.SelectPlayerWhoReceiveBall(this, previousOwner);
+        _myTeamController.SelectPlayerWhoReceiveBall(this,previousOwner);
     }
     public void setBall(Ball newBall)
     {
@@ -251,18 +246,59 @@ public class PlayerController : InputHandler
     public void SetControlSlot(ControlSlot newslot)
     {
         controlSlot = newslot;
+
         if(_AIController == null)
         {
             _AIController = GetComponent<AIBehaviour>();
         }
+
+         if (_GoalKeeperController == null)
+        {
+            _GoalKeeperController = GetComponent<AIGoalKeeperBehaviour>();
+        }
+
+        bool isBot = controlSlot == ControlSlot.Bot;
+        bool isGoalKeeper = _role == Role.GoalKeeper;
         if (_AIController != null)
         {
-        _AIController.enabled = controlSlot == ControlSlot.Bot;
+            _AIController.enabled = isBot && !isGoalKeeper;
+        }
+
+        if (_GoalKeeperController != null)
+        {
+            _GoalKeeperController.enabled = isBot && isGoalKeeper;
         }
         if (controlSlot != ControlSlot.Bot)
         {
         _movementDirection = Vector2.zero;
         }
 
+    }
+
+    public override bool IsIdle()
+    {   if(controlSlot == ControlSlot.Bot)
+        {
+            return _movementDirection.magnitude <= 0.01f;
+        }
+        return base.IsIdle();
+    }
+    public override bool IsMoving()
+    {   if(controlSlot == ControlSlot.Bot)
+        {
+            return _movementDirection.magnitude >= 0.01f;
+        }
+        return base.IsMoving();
+    }
+    public override bool IsRunning()
+    {   if(controlSlot == ControlSlot.Bot)
+        {
+            return _isBotRunning;
+        }
+        return base.IsRunning();
+    }
+
+    public float DistanceTo(Vector2 targetPosition)
+    {
+        return Vector2.Distance(_position,targetPosition);
     }
 }

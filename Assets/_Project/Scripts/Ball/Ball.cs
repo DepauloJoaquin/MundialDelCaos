@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
@@ -18,6 +19,11 @@ public class Ball : MonoBehaviour
     private Rigidbody2D rb;
     private float time;
     private bool isRotating;
+    private Vector2 lastRayDirection = Vector2.right;
+    [Header("Raycast Visual")]
+    public LineRenderer rayLine;
+    public float rayDistance = 5f;
+    [SerializeField] private float goalkeeperBounceForce = 10f;
 
     // Unity Methods
     void Awake()
@@ -27,12 +33,14 @@ public class Ball : MonoBehaviour
     }
 
     private void Update() 
-    {
+    {   Debug.DrawRay(transform.position,rb.velocity.normalized *2f,Color.red);
         FlipBallRotation();
         if(_currentOwner != null) 
-        { 
+        {   
             Debug.DrawRay(transform.position, GetShootDirection(GetCurrentOwnerController()), Color.green); 
         }
+        DrawRaycastInGame();
+        
         
     }
 
@@ -47,7 +55,11 @@ public class Ball : MonoBehaviour
     {
         PlayerController receiver = collision.gameObject.GetComponent<PlayerController>();
         if (receiver == null) { return; }
-        
+        if (receiver._role == PlayerController.Role.GoalKeeper)
+        {
+            BounceFromGoalkeeper(receiver);
+            return;
+        }
         receiver.setBall(this);
         isRotating = true;
         PlayerController previousOwnerController = null;
@@ -233,4 +245,84 @@ public class Ball : MonoBehaviour
     {
         return _currentOwner.GetComponent<PlayerController>();
     }
+
+    private void DrawRaycastInGame()
+    {
+    Vector2 direction = Vector2.zero;
+
+    if (_currentOwner != null)
+    {
+        direction = GetShootDirection(GetCurrentOwnerController());
+
+        if (direction == Vector2.zero)
+        {
+            direction = GetOwnerFacingDirection();
+        }
+    }
+    else if (rb.velocity.sqrMagnitude > 0.01f)
+    {
+        direction = rb.velocity.normalized;
+    }
+
+    if (direction == Vector2.zero)
+    {
+        rayLine.enabled = false;
+        return;
+    }
+
+    rayLine.enabled = true;
+
+    Vector3 startPosition = transform.position;
+    Vector3 endPosition = startPosition + (Vector3)(direction * rayDistance);
+
+    rayLine.positionCount = 2;
+    rayLine.SetPosition(0, startPosition);
+    rayLine.SetPosition(1, endPosition);
+}
+
+private Vector2 GetOwnerFacingDirection()
+{
+    PlayerController pc = GetCurrentOwnerController();
+
+    if (pc.spriteRenderer.flipX)
+    {
+        return Vector2.left;
+    }
+    else
+    {
+        return Vector2.right;
+    }
+}   
+public Vector2 velocityNormalized()
+    {
+        return rb.velocity.normalized;
+    }
+
+    /*public Vector2 HeadingDirection()
+    {
+        if (_currentOwner != null)
+    {
+        direction = GetShootDirection(GetCurrentOwnerController());
+
+        if (direction == Vector2.zero)
+        {
+            direction = GetOwnerFacingDirection();
+        }
+    }
+    else if (rb.velocity.sqrMagnitude > 0.01f)
+    {
+        direction = rb.velocity.normalized;
+    }
+    return direction;
+    }*/
+
+    private void BounceFromGoalkeeper(PlayerController goalkeeper)
+    {
+    Vector2 direction = (
+        (Vector2)transform.position -
+        (Vector2)goalkeeper.transform.position
+    ).normalized;
+
+    rb.velocity = direction * goalkeeperBounceForce;
+        }  
 }

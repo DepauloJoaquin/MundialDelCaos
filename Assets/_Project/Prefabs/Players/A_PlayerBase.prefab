@@ -285,14 +285,25 @@ MonoBehaviour:
   verticalInput: 0
   horizontalInput: 0
   isRunning: 0
-  passPressed: 0
-  shootPressed: 0
   selected: 1
-  _myTeam: {fileID: 0}
-  team: 0
+  _myTeamController: {fileID: 0}
+  _AIController: {fileID: 0}
+  _GoalKeeperController: {fileID: 0}
   rigidBody: {fileID: 9062169989657019609}
   spriteRenderer: {fileID: 2525865851198080052}
+  _targetGoal: {x: 0, y: 0}
+  _team: 0
+  _role: 0
+  _movementSpeed: 3.5
+  _movementDirection: {x: 0, y: 0}
+  _spawnPosition: {x: 0, y: 0}
+  _position: {x: 0, y: 0}
+  _forceTowardsTheBall: 1
+  _isBotRunning: 0
   controlSlot: 3
+  bindingGroup: 
+  configureInputOnAwake: 1
+  _formationSlot: 0
   velocity: 3.5
   kickForce: 2
 --- !u!114 &4298268059283685189
@@ -433,6 +444,7 @@ MonoBehaviour:
   passState: {fileID: 5381239611236545104}
   shootState: {fileID: 8190903908935271074}
   tackleState: {fileID: 3698812972829530256}
+  diveState: {fileID: 0}
 --- !u!114 &1291457079385323965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -616,8 +628,6 @@ MonoBehaviour:
   verticalInput: 0
   horizontalInput: 0
   isRunning: 0
-  passPressed: 0
-  shootPressed: 0
   selected: 1
   playerController: {fileID: 513487062495154035}
   spriteRenderer: {fileID: 3598471736038176290}
@@ -661,6 +671,7 @@ MonoBehaviour:
   passState: {fileID: 5456168463240991660}
   shootState: {fileID: 879423654322279294}
   tackleState: {fileID: 8500480369630048644}
+  diveState: {fileID: 0}
 --- !u!114 &7209420737974496527
 MonoBehaviour:
   m_ObjectHideFlags: 0

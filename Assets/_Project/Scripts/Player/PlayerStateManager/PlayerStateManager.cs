@@ -16,22 +16,53 @@
         public PassState passState;
         public ShootState shootState;
         public TackleState tackleState;
+        public Dive diveState;
 
         void Awake()
-        {
-            if(_playerController == null)
-            {
-                _playerController = GetComponent<PlayerController>();
-            } 
-            _player = gameObject;
-            _playerAnimator = _playerController.animator;
-            idleState.Init(this, _playerController,_player,_playerAnimator);
-            walkState.Init(this, _playerController,_player,_playerAnimator);
-            runState.Init(this, _playerController,_player,_playerAnimator);
-            passState.Init(this, _playerController,_player,_playerAnimator);
-            shootState.Init(this, _playerController,_player,_playerAnimator);
-            tackleState.Init(this, _playerController,_player,_playerAnimator);
-        }
+{
+    if (_playerController == null)
+    {
+        _playerController = GetComponent<PlayerController>();
+    }
+
+    if (_playerController == null)
+    {
+        Debug.LogError(name + " no tiene PlayerController.");
+        return;
+    }
+
+    _player = gameObject;
+
+    if (_playerController.animator == null)
+    {
+        Debug.LogError(name + " no tiene Animator asignado en PlayerController.");
+        return;
+    }
+
+    _playerAnimator = _playerController.animator;
+
+    if (idleState == null) Debug.LogError(name + " no tiene IdleState.");
+    if (walkState == null) Debug.LogError(name + " no tiene WalkState.");
+    if (runState == null) Debug.LogError(name + " no tiene RunState.");
+    if (passState == null) Debug.LogError(name + " no tiene PassState.");
+    if (shootState == null) Debug.LogError(name + " no tiene ShootState.");
+    if (tackleState == null) Debug.LogError(name + " no tiene TackleState.");
+    if (diveState == null) Debug.LogError(name + " no tiene DiveState.");
+
+    if (idleState == null || walkState == null || runState == null ||
+        passState == null || shootState == null || tackleState == null || diveState == null)
+    {
+        return;
+    }
+
+    idleState.Init(this, _playerController, _player, _playerAnimator);
+    walkState.Init(this, _playerController, _player, _playerAnimator);
+    runState.Init(this, _playerController, _player, _playerAnimator);
+    passState.Init(this, _playerController, _player, _playerAnimator);
+    shootState.Init(this, _playerController, _player, _playerAnimator);
+    tackleState.Init(this, _playerController, _player, _playerAnimator);
+    diveState.Init(this, _playerController, _player, _playerAnimator);
+}
         
         void Start()
         {
@@ -58,48 +89,8 @@
             _currentState = stateTochange;
             _currentState.Enter();
         }
-
-        // public void TickCurrentState(InputHandler.KeyPress key)
-        // {
-        //    if (_currentState == null) { return; }
-        //     _currentState.Tick(key);
-        // }
-
-        // public void TickCurrentState(string key)
-        // {
-        //     InputHandler.KeyPress localKey;
-        //     switch (key)
-        //     {
-        //         case "Pass":
-        //         {
-        //             localKey = InputHandler.KeyPress.Pass;
-        //             break;
-        //         }
-        //         case "Tackle":
-        //         {
-        //             localKey = InputHandler.KeyPress.Tackle;
-        //             break;
-        //         }
-        //         case "Run":
-        //         {
-        //             localKey = InputHandler.KeyPress.Run;
-        //             break;
-        //         }
-        //         case "Ability":
-        //         {
-        //             localKey = InputHandler.KeyPress.Ability;
-        //             break;
-        //         }
-        //         case "Shoot":
-        //         {
-        //             localKey = InputHandler.KeyPress.Shoot;
-        //             break;
-        //         } 
-        //         default:
-        //         {
-        //             return;
-        //         }
-        //     }
-        //     TickCurrentState(localKey);
-        // }
+        public bool IsCurrentState(PlayerState state)
+    {
+    return _currentState == state;
+    }
     }

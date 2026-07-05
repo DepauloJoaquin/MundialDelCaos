@@ -40,11 +40,16 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
         _timeLeft = _intialTimeInSecods;
+        _ballController = _ball.GetComponent<Ball>();
+        _teamAController = _Team_A.GetComponent<TeamController>();
+        _teamBController = _Team_B.GetComponent<TeamController>();
         
     }
     public GameObject _ball;
-    private TeamController _teamAController;
-    private TeamController _teamBController;
+    public Ball _ballController;
+
+    public TeamController _teamAController;
+    public TeamController _teamBController;
     private int _goalsTeam_A = 0;
     private int _goalsTeam_B = 0;
 
@@ -74,7 +79,8 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI _marcadorEquipoB;
 
     [Header("Equipos")]
-    //TODO: Realizar el componente TeamController
+    public GameObject _Team_A;
+    public GameObject _Team_B;
 
     //private TeamController _controladorEquipoA;
     //private TeamController _controladorEquipoB;
@@ -107,27 +113,8 @@ public class GameManager : MonoBehaviour
         }
     
     }
-    /*
-    void HandleGameStateChanged(GameState newGameState)
-    {
-       
-        switch(newGameState){
-            case GameState.Start:
-                 RestartGame();
-                 break;
-            case GameState.Pause:
-                PauseMatch();
-                break;
-            case GameState.Playing:
-                StartMatch();
-                break;
-            case GameState.End:
-                FinishMatch();
-                break;
-        }
-    }
-    */
-    
+
+
     void PauseMatch()
     {
         
@@ -204,6 +191,8 @@ public class GameManager : MonoBehaviour
     {
         
     }
+
+  
 
     /*
     void ReanudarPartida()

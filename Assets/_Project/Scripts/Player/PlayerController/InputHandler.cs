@@ -54,7 +54,7 @@ public abstract class InputHandler : MonoBehaviour
         return Mathf.Abs(horizontalInput) < 0.01f &&
                Mathf.Abs(verticalInput) < 0.01f;
     }
-        public bool IsRunning()
+        public virtual bool IsRunning()
     {
         return isRunning;
     }

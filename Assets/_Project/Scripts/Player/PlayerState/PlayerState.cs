@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class PlayerState : MonoBehaviour
 {
-    private GameObject _currentPlayer;
+    protected GameObject _currentPlayer;
     protected InputHandler _playerController;
     protected Animator _playerAnimator;
     protected PlayerStateManager _playerStateManager;

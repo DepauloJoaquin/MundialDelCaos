@@ -53,6 +53,7 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
+
        GameManager.Instance.OnDrawGame += DrawFinish;
        GameManager.Instance.OnScoreTeamA += ScoreTeamA;
        GameManager.Instance.OnScoreTeamB += ScoreTeamB;
@@ -62,7 +63,7 @@ public class UIManager : MonoBehaviour
     }
     private void OnDisable()
     {
-       GameManager.Instance.OnDrawGame += DrawFinish;
+       GameManager.Instance.OnDrawGame -= DrawFinish;
        GameManager.Instance.OnScoreTeamA -= ScoreTeamA;
        GameManager.Instance.OnScoreTeamA -= ScoreTeamB;
        GameManager.Instance.OnTimeChanged -= UpdateTimer;
@@ -127,7 +128,7 @@ public class UIManager : MonoBehaviour
     }
 
     public void UpdateTimer(float timeInSeconds)
-    {   
+    {   Debug.Log("Timer activado");
         int minutes = Mathf.FloorToInt(timeInSeconds / 60);
         int seconds = Mathf.FloorToInt(timeInSeconds % 60);
         _textTime.text = string.Format("{0:00}:{1:00}",minutes,seconds);
