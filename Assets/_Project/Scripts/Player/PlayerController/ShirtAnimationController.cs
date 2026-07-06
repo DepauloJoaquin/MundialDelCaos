@@ -55,4 +55,16 @@ public class ShirtAnimationController : InputHandler
     {
         return playerController.HasBall();
     }
+
+    public void ChangeState(string state)
+    {
+        if (state == "Pass")
+        {
+            playerStateManager.ChangeState(playerStateManager.passState);
+        }
+        else
+        {
+            playerStateManager.ChangeState(playerStateManager.tackleState);
+        }
+    }
 }

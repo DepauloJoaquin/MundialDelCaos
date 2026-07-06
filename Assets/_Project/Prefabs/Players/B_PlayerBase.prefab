@@ -290,7 +290,9 @@ MonoBehaviour:
   team: 1
   rigidBody: {fileID: 8428326957823883515}
   spriteRenderer: {fileID: 5765561909447991533}
-  controlSlot: 3
+  controlSlot: 2
+  bindingGroup: Arrows
+  configureInputOnAwake: 1
   velocity: 3.5
   kickForce: 2
 --- !u!114 &8426504724015728353

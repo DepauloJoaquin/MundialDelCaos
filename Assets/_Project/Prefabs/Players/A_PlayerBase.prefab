@@ -285,14 +285,14 @@ MonoBehaviour:
   verticalInput: 0
   horizontalInput: 0
   isRunning: 0
-  passPressed: 0
-  shootPressed: 0
   selected: 1
   _myTeam: {fileID: 0}
   team: 0
   rigidBody: {fileID: 9062169989657019609}
   spriteRenderer: {fileID: 2525865851198080052}
-  controlSlot: 3
+  controlSlot: 1
+  bindingGroup: WASD
+  configureInputOnAwake: 1
   velocity: 3.5
   kickForce: 2
 --- !u!114 &4298268059283685189
@@ -616,8 +616,6 @@ MonoBehaviour:
   verticalInput: 0
   horizontalInput: 0
   isRunning: 0
-  passPressed: 0
-  shootPressed: 0
   selected: 1
   playerController: {fileID: 513487062495154035}
   spriteRenderer: {fileID: 3598471736038176290}

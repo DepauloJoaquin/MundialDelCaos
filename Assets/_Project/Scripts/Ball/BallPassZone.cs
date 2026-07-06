@@ -109,7 +109,7 @@ public class BallPassZone : MonoBehaviour
                 nearestPlayer = playerInList;
             }
         }
-
+        
         return nearestPlayer;
     }
 }

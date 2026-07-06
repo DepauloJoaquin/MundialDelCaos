@@ -24,7 +24,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Pass/Tackle",
+                    "name": "PassTackle",
                     "type": "Button",
                     "id": "0e590ba2-a6d4-47e0-8e80-1c58ad5b0d5f",
                     "expectedControlType": "",
@@ -55,7 +55,7 @@
                 {
                     "name": "2D Vector",
                     "id": "e6fdcae2-5d7a-48f0-aa86-db8f6752c8ec",
-                    "path": "2DVector",
+                    "path": "2DVector(mode=1)",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -235,7 +235,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";WASD",
-                    "action": "Pass/Tackle",
+                    "action": "PassTackle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -246,14 +246,14 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Arrows",
-                    "action": "Pass/Tackle",
+                    "action": "PassTackle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "6eb8c7a8-b645-41a9-a911-4a9cca161f7e",
-                    "path": "<Keyboard>/ctrl",
+                    "path": "<Keyboard>/shift",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Arrows",
@@ -264,7 +264,7 @@
                 {
                     "name": "",
                     "id": "de619816-fe41-4306-949b-cd7d6c82ea1a",
-                    "path": "<Keyboard>/ctrl",
+                    "path": "<Keyboard>/shift",
                     "interactions": "",
                     "processors": "",
                     "groups": ";WASD",

@@ -171,7 +171,7 @@ public class PlayerController : InputHandler
 
         animator.SetTrigger("Shoot");
 
-        ball.KickBall(this);
+        ball.OnKick(this);
         ball = null;
     }
 
@@ -185,12 +185,13 @@ public class PlayerController : InputHandler
             Debug.Log(name + " hizo pase");
 
             playerStateManager.ChangeState(playerStateManager.passState);
+            transform.GetChild(0).GetComponent<ShirtAnimationController>().ChangeState("Pass");
             ball.PassBall(this);
         }
         else
         {
             Debug.Log(name + " hizo barrida");
-
+            transform.GetChild(0).GetComponent<ShirtAnimationController>().ChangeState("Tackle");
             playerStateManager.ChangeState(playerStateManager.tackleState);
         }
     }
@@ -218,5 +219,53 @@ public class PlayerController : InputHandler
         Player3,
         Player4,
         Bot
+    }
+
+    public void Action(InputAction.CallbackContext callbackContext)
+    {
+        print("movimiento de " + name); 
+        print(callbackContext);
+    }
+
+    public Vector2 GetShootDirection() {
+        if(bindingGroup == "Arrows" || bindingGroup == "WASD")
+        {
+            return GetShootDirectionKeyboard();
+        }
+        else
+        {
+            return GetShootDirectionGamepad();
+        }
+    }
+
+    private Vector2 GetShootDirectionKeyboard()
+    {
+        float verticalDirection = verticalInput; //- GetShootOffset(verticalInput); //(1, 0, -1)
+        float horizontalDirection = horizontalInput; //(1, 0, -1)
+        return new Vector2(horizontalDirection, verticalDirection);
+    }
+
+    private Vector2 GetShootDirectionGamepad()
+    {
+        float verticalDirection = verticalInput; 
+        float horizontalDirection = horizontalInput; 
+        return new Vector2(horizontalDirection, verticalDirection);
+    }
+
+    private float GetShootOffset(float input)
+    {
+        if(Mathf.Sign(input) > 0)
+        {
+            return 0.4f;
+        }
+        else if (Mathf.Sign(input) < 0)
+        {
+            return -0.4f;
+        }
+        else
+        {
+            return 0f;
+        }
+        
     }
 }
