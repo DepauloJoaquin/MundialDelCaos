@@ -26,6 +26,11 @@ public class PlayerController : InputHandler
     public float kickForce = 2f;
     private Ball ball;
 
+    [Header("Habilidad Súper Simplificada")]
+    public bool _habilidadActiva = false;
+    private float _tiempoRestanteHabilidad = 0f;
+    [SerializeField] private float _extraVelocidad = 2f;
+
 
     private void Awake()
     {
@@ -33,9 +38,44 @@ public class PlayerController : InputHandler
     }
 
     private void Update()
-    {   _position = transform.position;
+    {
+        _position = transform.position;
         UpdateDirections();
         UpdateSpriteFlip();
+        ActivateHabilidad();
+        CountDown();
+
+
+    }
+
+    public void ActivateHabilidad()
+    {
+        // Falta el condicional si tiene la barra de  energia completa
+        // El jugador presiona el botón de 'Ability':
+        if (pInput != null && pInput.actions["Ability"].triggered && !_habilidadActiva && CanBeControlled())
+        {
+            Debug.Log(name + " activó su habilidad especial.");
+            _habilidadActiva = true;
+            _tiempoRestanteHabilidad = 4f; 
+
+            if (AudioManager.Instancia != null)
+            {
+                AudioManager.Instancia.ReproducirActivarHabilidad();
+            }
+        }
+    }
+
+    public void CountDown()
+    {
+        // Cuenta regresiva del tiempo
+        if (_habilidadActiva)
+        {
+            _tiempoRestanteHabilidad -= Time.deltaTime;
+            if (_tiempoRestanteHabilidad <= 0)
+            {
+                _habilidadActiva = false; // Se apaga sola cuando llega a 0
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -87,11 +127,19 @@ public class PlayerController : InputHandler
     }
 
     private float GetMoveSpeed()
-{
-    if (IsIdle()) return 0f;
+    {
+        if (IsIdle()) return 0f;
 
-    return isRunning ? velocity * 1.7f : velocity;
-}
+        float velocidadFinal = isRunning ? velocity * 1.7f : velocity;
+
+        // Si el booleano es verdadero, le sumamos la velocidad extra
+        if (_habilidadActiva)
+        {
+            velocidadFinal += _extraVelocidad;
+        }
+
+        return velocidadFinal;
+    }
 
     private void UpdateSpriteFlip()
     {   
