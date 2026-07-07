@@ -13,6 +13,11 @@ public class RunState : PlayerState
     {
         if (_playerController.PassPressed())
         {
+            if (! _playerController.HasBall())
+            {
+                _playerStateManager.ChangeState(_playerStateManager.tackleState);
+                return;
+            }
             _playerStateManager.ChangeState(_playerStateManager.passState);
             return;
         }
@@ -23,19 +28,13 @@ public class RunState : PlayerState
             return;
         }
 
-        if (_playerController.TacklePressed())
-        {
-            _playerStateManager.ChangeState(_playerStateManager.tackleState);
-            return;
-        }
-
         if (!_playerController.IsMoving())
         {
             _playerStateManager.ChangeState(_playerStateManager.idleState);
             return;
         }
 
-        if (!_playerController.RunPressed())
+        if (!_playerController.IsRunning())
         {
             _playerStateManager.ChangeState(_playerStateManager.walkState);
             return;

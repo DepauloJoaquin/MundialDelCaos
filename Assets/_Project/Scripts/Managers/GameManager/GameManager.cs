@@ -15,11 +15,18 @@ public class GameManager : MonoBehaviour
    public static GameManager Instance { get; private set; }
 
    [Header("Time")]
-    private float _intialTimeInSecods;
+    private float _intialTimeInSecods = 180;
     private float _timeLeft;
 
-   public event Action<float> OnTimeChanged;
+    public event Action<int,int> OnDrawGame;
+
+    public event Action OnScoreTeamA;
+    public event Action OnScoreTeamB;
+
+    public event Action<int,int> OnEnded;
+
    public event Action<int,int> OnScoreChanged;
+   public event Action<float> OnTimeChanged;
     private void Awake()
     {
         // Configuración del Singleton
@@ -33,24 +40,34 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
         _timeLeft = _intialTimeInSecods;
+        _ballController = _ball.GetComponent<Ball>();
+        _teamAController = _Team_A.GetComponent<TeamController>();
+        _teamBController = _Team_B.GetComponent<TeamController>();
         
     }
     public GameObject _ball;
-    private TeamController _teamAController;
-    private TeamController _teamBController;
+    public Ball _ballController;
+
+    public TeamController _teamAController;
+    public TeamController _teamBController;
     private int _goalsTeam_A = 0;
     private int _goalsTeam_B = 0;
 
-    
-
-
     void OnEnable()
-    {   // Evitamos que un GameManager duplicado intente suscribirse ya que se destrruye al final del frame
-        if (Instance != null && Instance != this) return;
+    {
+        GameStateManager.Instance.OnMatchEnded += FinishMatch;
         GameStateManager.Instance.OnMatchStarted += StartMatch;
         GameStateManager.Instance.OnMatchPaused += PauseMatch;
         GameStateManager.Instance.OnMatchRestart += RestartGame;
         GameStateManager.Instance.OnGoalScored += RegisterGoal;
+    }
+    void OnDisable()
+    {
+        GameStateManager.Instance.OnMatchEnded -= FinishMatch;
+        GameStateManager.Instance.OnMatchStarted -= StartMatch;
+        GameStateManager.Instance.OnMatchPaused -= PauseMatch;
+        GameStateManager.Instance.OnMatchRestart -= RestartGame;
+        GameStateManager.Instance.OnGoalScored -= RegisterGoal;
     }
 
 
@@ -62,58 +79,42 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI _marcadorEquipoB;
 
     [Header("Equipos")]
-    //TODO: Realizar el componente TeamController
+    public GameObject _Team_A;
+    public GameObject _Team_B;
 
     //private TeamController _controladorEquipoA;
     //private TeamController _controladorEquipoB;
-    private int _golesEquipoA = 0;
-    private int _golesEquipoB = 0;
 
 
 
     [Header("Tiempo")]
-    private bool terminoLaPartida = false;
-    private bool seReprodujoLaCuentaAtras = false;
     private float _tiempoInicial;
     private float _tiempoRestante;
     private TextMeshProUGUI _textoConValorDeTiempo;
 
     /*void Start()
     {
-         GameStateManager.Instance.OnMatchStarted -= StartMatch;
-        GameStateManager.Instance.OnMatchPaused -= PauseMatch;
-        GameStateManager.Instance.OnMatchRestart -= RestartGame;
+        GameStateManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
     }
-*/
+    */
     
     void Update()
     {
-        // Si el GameStateManager no está listo, salimos del Update
-        if (GameStateManager.Instance == null) return;
+        
         if (GameStateManager.Instance.IsOnPlayState())
         {
             _timeLeft -= Time.deltaTime;
-            if(_tiempoRestante <= 10 && !seReprodujoLaCuentaAtras)
-            {
-                seReprodujoLaCuentaAtras = true;
-                AudioManager.Instancia.ReproducirCuentaRegresiva();
-            }
-            if(_timeLeft <= 0 && !terminoLaPartida)
+            if(_timeLeft <= 0)
             {
                 _timeLeft = 0;
-                terminoLaPartida = true;
-
-                AudioManager.Instancia.ReproducirSilvatoFinal();
-                AudioManager.Instancia.DetenerMusica();
-                // GameStateManager.Instance.ChangeState(GameState.End);
+               GameStateManager.Instance.ChangeState(new EndState());
             }
             OnTimeChanged?.Invoke(_timeLeft);
         }
-        
+    
     }
 
-    
-    
+
     void PauseMatch()
     {
         
@@ -123,16 +124,29 @@ public class GameManager : MonoBehaviour
         _goalsTeam_A = 0;
         _goalsTeam_B = 0;
     }
+    
     void FinishMatch()
     {
         
+
+        //GameStateManager.Instance.ChangeState(GameState.End);
     }
-    
- 
+    /*
+    void ComenzarPartida()
+    {
+
+
+        // Más adelante:
+        // UIManager.Instance.MostrarHUD();
+        // AudioManager.Instance.ReproducirSonidoInicio();
+        
+    }
 
     /*
     public void Pause()
     {
+        OnMatchPaused?.Invoke();
+        _gameStatemanager.ChangeToPause();
         
     }
 
@@ -145,41 +159,32 @@ public class GameManager : MonoBehaviour
     {
         
     }
-    
+    */
     public void RegisterGoal()
     {
         OnScoreChanged?.Invoke(_goalsTeam_A,_goalsTeam_B);
+
     }
 
     public void RegisterTeam_A_Goal()
     {
-        _goalsTeam_A += 1;
+        _goalsTeam_A ++;
+        RegisterGoal();
+        OnScoreTeamA?.Invoke();
     }
-    */
     
-    public async void RegisterGoal()
+    
+    public void RegisterTeam_B_Goal()
     {
-        
-        AudioManager.Instancia.ReproducirGol();
-        await System.Threading.Tasks.Task.Delay(1000); // Simula un retraso
-        AudioManager.Instancia.ReproducirSilvatoInicial();
+        _goalsTeam_B ++;
+        RegisterGoal();
+        OnScoreTeamB?.Invoke();
     }
+       
+    
     public void StartMatch()
     {
-        //Hinchada del partido de fondo
-        // Al iniciar la escena del partido (en el Start)
-        AudioManager.Instancia.ActivarMusicaPartida();
-        AudioManager.Instancia.ReproducirSilvatoInicial();
-    }
-    void TerminarPartida()
-    {
-        // UIManager.Instance.MostrarPantallaFinal();
-        // En la cuenta regresiva del final
-        AudioManager.Instancia.ReproducirCuentaRegresiva();
-        //luego cuando finaliza la cuenta regresiva, se reproduce el silbato final y la música de victoria
-        AudioManager.Instancia.ReproducirSilvatoFinal();
-        AudioManager.Instancia.ReproducirPantallaFinalVictoria();
-
+        OnScoreChanged?.Invoke(_goalsTeam_A,_goalsTeam_B);
     }
 
     public void ActivateEndEvent()
@@ -187,9 +192,7 @@ public class GameManager : MonoBehaviour
         
     }
 
-    
-
-
+  
 
     /*
     void ReanudarPartida()
@@ -206,11 +209,20 @@ public class GameManager : MonoBehaviour
 
     }
 
-    */
 
-  
+    void StartMatch()
+    {
+        Time.timeScale =1f;
+    }
     
-  
+    void TerminarPartida()
+    {
+
+
+        // Más adelante:
+        // UIManager.Instance.MostrarPantallaFinal();
+        // AudioManager.Instance.ReproducirSonidoFinPartida();
+   }
  
 
     

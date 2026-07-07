@@ -6,15 +6,13 @@ public class PassState : PlayerState
     public override void Enter()
     {        base.Enter();
         _playerAnimator.Play("Pass",0,0f);
-        AudioManager.Instancia.ReproducirPase();
     }
 
     public override void Tick()
     {
-        if (AnimationFinished("Pass"))
+        if(AnimationFinished("Pass"))
         {
             _playerStateManager.ChangeState(_playerStateManager.idleState);
         }
-        
     }
 }

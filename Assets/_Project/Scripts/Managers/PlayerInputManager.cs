@@ -5,44 +5,70 @@ using UnityEngine.InputSystem;
 
 public class PlayerInputManager : MonoBehaviour
 {
-    [SerializeField] private GameObject _playerPrefab;
-    [SerializeField] private Transform[] _spawnPoints;
-    [SerializeField] private TeamController _teamController;
+    [SerializeField] private TeamController _teamAController;
+    [SerializeField] private TeamController _teamBController;
 
     private HashSet<Gamepad> joinedGamepads = new HashSet<Gamepad>();
 
     private bool wasdJoined = false;
     private bool arrowsJoined = false;
+    private bool botsSpawned = false;
 
 
 
-    // Update is called once per frame
-    void Update()
-    {
+    
+     void Update()
+     {
         if (Keyboard.current != null)
+        {
+            if (!wasdJoined && Keyboard.current.enterKey.wasPressedThisFrame)
+            {
+                _teamAController.AddPlayerToTeam("WASD", Keyboard.current);
+                wasdJoined = true;
+            }
+
+            if (!arrowsJoined && Keyboard.current.numpad7Key.wasPressedThisFrame)
+            {
+                _teamAController.AddPlayerToTeam("Arrows", Keyboard.current);
+                arrowsJoined = true;
+            }
+        }
+        
+          foreach (Gamepad gamepad in Gamepad.all)
+        {
+            if (joinedGamepads.Contains(gamepad))
+            {
+                continue;
+            }
+
+            if (gamepad.startButton.wasPressedThisFrame)
+            {
+                AddGamepadToAvailableTeam(gamepad);
+                joinedGamepads.Add(gamepad);
+            }
+        }
+
+        if (!botsSpawned && wasdJoined && arrowsJoined)
+        {
+        _teamAController.SpawnBots(3);
+        botsSpawned = true;
+        }
+     }
+
+     private void AddGamepadToAvailableTeam(Gamepad gamepad)
     {
-        if (!wasdJoined && Keyboard.current.enterKey.wasPressedThisFrame)
+        if (_teamAController.HasFreeHumanSlot())
         {
-            _teamController.AddPlayerToTeam("WASD", Keyboard.current);
-            wasdJoined = true;
+            _teamAController.AddPlayerToTeam("Gamepad", gamepad);
+            return;
         }
 
-        if (!arrowsJoined && Keyboard.current.rightCtrlKey.wasPressedThisFrame)
+        if (_teamBController.HasFreeHumanSlot())
         {
-            _teamController.AddPlayerToTeam("Arrows", Keyboard.current);
-            arrowsJoined = true;
+            _teamBController.AddPlayerToTeam("Gamepad", gamepad);
+            return;
         }
-    }
 
-    foreach (var gamePad in Gamepad.all)
-    {
-        if (!joinedGamepads.Contains(gamePad) && gamePad.startButton.wasPressedThisFrame)
-        {
-            Debug.Log("Se unió gamepad: " + gamePad.displayName);
-
-            _teamController.AddPlayerToTeam("Gamepad", gamePad);
-            joinedGamepads.Add(gamePad);
-        }
-    }
+        Debug.Log("Ya hay 4 jugadores humanos en total.");
     }
 }

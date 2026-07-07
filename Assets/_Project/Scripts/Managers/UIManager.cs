@@ -1,6 +1,9 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-
+using UnityEngine.InputSystem.Controls;
+using Unity.Collections;
 
 public class UIManager : MonoBehaviour
 {
@@ -9,18 +12,22 @@ public class UIManager : MonoBehaviour
     // No decide la lógica de la partida, solo muestra información visual.
 
     [Header("Canvas principales")]
-    [SerializeField] private Canvas _canvasHUD;
-    [SerializeField] private Canvas _canvasMenuPausa;
-    [SerializeField] private Canvas _canvasPantallaFinal;
-    [SerializeField] private Canvas _canvasPantallaInicial;
+    [SerializeField] private GameObject _canvasHUD;
+    [SerializeField] private GameObject _canvasMenuPausa;
+    [SerializeField] private GameObject _canvasPantallaFinal;
+    [SerializeField] private GameObject _canvasPantallaInicial;
 
     [Header("HUD")]
     [SerializeField] private TextMeshProUGUI _textTime;
     [SerializeField] private TextMeshProUGUI _textScoreTeamA;
     [SerializeField] private TextMeshProUGUI _textScoreTeamB;
 
+    [SerializeField] private TextMeshProUGUI _textScoreTeamADraw;
+    [SerializeField] private TextMeshProUGUI _textScoreTeamBDraw;
+
     [Header("Mensajes")]
-    [SerializeField] private GameObject _panelGol;
+    [SerializeField] private GameObject _panelGolA;
+    [SerializeField] private GameObject _panelGolB;
     [SerializeField] private GameObject _panelPausa;
     [SerializeField] private GameObject _panelPantallaFinal;
     [SerializeField] private GameObject _panelPantallaInicial;
@@ -32,7 +39,6 @@ public class UIManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Evita que se destruya al cambiar de escena
         }
         else
         {
@@ -47,26 +53,22 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
-        //si el GameStateManager se destruye antes que el UIManager, cuando cambia de escena  hace null  reference
-        //1. Evitamos que un UIManager duplicado intente suscribirse
-        if (Instance != null && Instance != this) return;
 
-        if (GameStateManager.Instance != null)
-        {
-            GameStateManager.Instance.OnMatchStarted += StartMatch;
-        }
+       GameManager.Instance.OnDrawGame += DrawFinish;
+       GameManager.Instance.OnScoreTeamA += ScoreTeamA;
+       GameManager.Instance.OnScoreTeamB += ScoreTeamB;
+       GameManager.Instance.OnTimeChanged += UpdateTimer;
+       GameManager.Instance.OnScoreChanged += UpdateScores;
+       GameStateManager.Instance.OnMatchStarted += StartMatch;
     }
-
     private void OnDisable()
     {
-        //Evitamos que un duplicado rompa la suscripción del original
-        if (Instance != this) return;
-
-        // Validamos que el GameStateManager aún exista
-        if (GameStateManager.Instance != null)
-        {
-            GameStateManager.Instance.OnMatchStarted -= StartMatch;
-        }
+       GameManager.Instance.OnDrawGame -= DrawFinish;
+       GameManager.Instance.OnScoreTeamA -= ScoreTeamA;
+       GameManager.Instance.OnScoreTeamA -= ScoreTeamB;
+       GameManager.Instance.OnTimeChanged -= UpdateTimer;
+       GameManager.Instance.OnScoreChanged -= UpdateScores;
+       GameStateManager.Instance.OnMatchStarted -= StartMatch;
     }
 
     // Update is called once per frame
@@ -84,12 +86,38 @@ public class UIManager : MonoBehaviour
     {
         
     }
+    private IEnumerator PanelGolA()
+    {
+       _panelGolA.SetActive(true);
+       yield return new WaitForSeconds(3f);
+       _panelGolA.SetActive(false);
+    }
+    private IEnumerator PanelGolB()
+    {
+       _panelGolB.SetActive(true);
+       yield return new WaitForSeconds(3f);
+       _panelGolB.SetActive(false);
+    }
+    void ScoreTeamA()
+    {
+        StartCoroutine(PanelGolA());
+    }
+    void ScoreTeamB()
+    {
+        StartCoroutine(PanelGolB());
+    }
+    void MatchEnd()
+    {
+        
+    }
 
-   
-
- 
 
     void ShowHud()
+    {
+        
+    }
+
+    void DrawFinish(int TeamA,int TeamB)
     {
         
     }
@@ -99,8 +127,8 @@ public class UIManager : MonoBehaviour
         //Mostrar Hud y lo que sea necesario
     }
 
-    void UpdateTimer(float timeInSeconds)
-    {   
+    public void UpdateTimer(float timeInSeconds)
+    {  // Debug.Log("Timer activado");
         int minutes = Mathf.FloorToInt(timeInSeconds / 60);
         int seconds = Mathf.FloorToInt(timeInSeconds % 60);
         _textTime.text = string.Format("{0:00}:{1:00}",minutes,seconds);
@@ -109,7 +137,8 @@ public class UIManager : MonoBehaviour
 
     public void UpdateScores(int _goalsTeam_A,int _goalsTeam_B)
     {
-        
+        _textScoreTeamA.text = _goalsTeam_A.ToString();
+        _textScoreTeamB.text = _goalsTeam_B.ToString();
     }
 
 
