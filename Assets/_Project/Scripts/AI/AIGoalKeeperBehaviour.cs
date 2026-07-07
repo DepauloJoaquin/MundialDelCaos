@@ -12,6 +12,7 @@ public class AIGoalKeeperBehaviour : MonoBehaviour
     [SerializeField] private float diveCooldown = 1.2f;
     private float _lastDiveTime = -999f;
 
+
     public void Initialize()
     {
         _currentPlayer = GetComponent<PlayerController>();
@@ -43,7 +44,7 @@ public class AIGoalKeeperBehaviour : MonoBehaviour
         {
         return;
         }
-        Perform_AI_Decisions2();
+        Perform_AI_Decisions();
         if (_currentPlayer.playerStateManager.IsCurrentState(_currentPlayer.playerStateManager.diveState))
     {
         return;
@@ -52,10 +53,16 @@ public class AIGoalKeeperBehaviour : MonoBehaviour
     }
 
    void Perform_AI_Movement()
-    {
-    Vector2 totalMovement = GetGoalkeeperMovement();
-
-    _currentPlayer._movementDirection = totalMovement * _currentPlayer.velocity;
+    {   Vector2 totalMovement;
+        if (ShouldGoalkeeperMove())
+        {
+            totalMovement = GetGoalkeeperMovement();
+        }
+        else
+        {
+            totalMovement = GetGoalKeeperReturnToCenterMovement();
+        }
+        _currentPlayer._movementDirection = totalMovement * _currentPlayer.velocity;
     }
 
    void Perform_AI_Decisions()
@@ -65,25 +72,13 @@ public class AIGoalKeeperBehaviour : MonoBehaviour
     {
         return;
     }
-    bool dangerous = BallIsDangerous();
+  
 
-    Debug.Log("BallIsDangerous = " + dangerous);
+    //Debug.Log("BallIsDangerous = " + dangerous);
 
     if (BallIsDangerous())
     {
-         Debug.Log("CAMBIO A DIVE");
         _lastDiveTime = Time.time;
-
-        _currentPlayer.playerStateManager.ChangeState(
-            _currentPlayer.playerStateManager.diveState
-        );
-    }
-}
-void Perform_AI_Decisions2()
-{
-    if (Input.GetKeyDown(KeyCode.K))
-    {
-        Debug.Log("TEST: CAMBIO FORZADO A DIVE");
 
         _currentPlayer.playerStateManager.ChangeState(
             _currentPlayer.playerStateManager.diveState
@@ -124,24 +119,62 @@ private bool BallIsDangerous()
         return _ball._currentOwner == null && distanceBetweenBallAndGoal <= 5f;
     }
 
-    private  bool IsBallHeadedTowardsMyGoal()
-    {
+    private bool IsBallHeadedTowardsMyGoal()
+{
+    Vector2 direction = _ball.GetRaycastDirection();
 
-        RaycastHit2D hit =  Physics2D.Raycast(_ball.transform.position,_ball.velocityNormalized() , 1.5f,LayerMask.GetMask("Arco"));
-         if (hit.collider == null)
+    //Debug.Log("Ball velocity direction = " + direction);
+
+    if (direction.magnitude < 0.01f)
+    {
+       // Debug.Log("La pelota no tiene velocidad suficiente para raycast.");
         return false;
-        return hit.collider.gameObject == _currentPlayer._myTeamController._OurScoreZone;
     }
 
-
-
-    /*private bool ShouldGoalKeeperMove()
+    RaycastHit2D hit = Physics2D.Raycast(
+        _ball.transform.position,
+        direction.normalized,
+        _ball.RayDistance,
+        LayerMask.GetMask("Arco")
+    );
+     
+    if (hit.collider == null)
     {
-        
-    }*/
+        return false;
+    }
+    Transform hitTransform = hit.collider.transform;
+    Transform myGoalTransform = _currentPlayer._myTeamController._OurScoreZone.transform;
 
-    //private 
+    Debug.Log("Raycast tocó: " + hit.collider.gameObject.name);
+    Debug.Log("OurScoreZone es: " + _currentPlayer._myTeamController._OurScoreZone.name);
 
-    // HACER COMO UN TIMER EN PELOTA PRA SABER SI FUE PATEADA O NO PARA EL REYCAST
-    //SEGUIR MAÑANA EL COMPORTAMIENTO
+    return hitTransform == myGoalTransform ;
+}
+
+
+
+    private bool ShouldGoalkeeperMove()
+    {
+    if (IsBallFreeAndNearMyGoal())
+    {
+        return true;
+    }
+
+    if (IsBallHeadedTowardsMyGoal())
+    {
+        return true;
+    }
+
+    return false;
+    }
+    public Vector2 GetGoalKeeperReturnToCenterMovement()
+    {
+        Vector2 centerPoint = _MyGoalPositions[1].transform.position;
+        Vector2 direction = _currentPlayer.DirectionTo(centerPoint);
+        float distanceToDestination = _currentPlayer.DistanceTo(centerPoint);
+        float weight = Mathf.Clamp01(distanceToDestination / arriveDistance);
+        return weight * direction;
+
+    }
+
 }

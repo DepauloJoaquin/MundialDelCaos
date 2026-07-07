@@ -35,7 +35,7 @@ public abstract class PlayerState : MonoBehaviour
             return false;
         }
         AnimatorStateInfo info = _playerAnimator.GetCurrentAnimatorStateInfo(0);
-        Debug.Log(info.fullPathHash + " " + info.normalizedTime + " " + info.IsName(animationName));
+       // Debug.Log(info.fullPathHash + " " + info.normalizedTime + " " + info.IsName(animationName));
         return info.IsName(animationName) && info.normalizedTime >= 1f;
     }
 }

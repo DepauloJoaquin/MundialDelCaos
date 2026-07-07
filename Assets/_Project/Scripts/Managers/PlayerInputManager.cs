@@ -2,21 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Linq;
 
 public class PlayerInputManager : MonoBehaviour
 {
     [SerializeField] private TeamController _teamAController;
     [SerializeField] private TeamController _teamBController;
-
+    
     private HashSet<Gamepad> joinedGamepads = new HashSet<Gamepad>();
 
     private bool wasdJoined = false;
     private bool arrowsJoined = false;
-    private bool botsSpawned = false;
+    private bool botsTeamASpawned = false;
+    private bool botsTeamBSpawned = false;
 
 
 
-    
+    void Start()
+    {
+        _teamAController.SpawnBots(_teamAController._amountBots);
+        _teamBController.SpawnBots(_teamBController._amountBots);
+
+        botsTeamASpawned = true;
+        botsTeamBSpawned = true;
+    }
      void Update()
      {
         if (Keyboard.current != null)
@@ -48,11 +57,6 @@ public class PlayerInputManager : MonoBehaviour
             }
         }
 
-        if (!botsSpawned && wasdJoined && arrowsJoined)
-        {
-        _teamAController.SpawnBots(3);
-        botsSpawned = true;
-        }
      }
 
      private void AddGamepadToAvailableTeam(Gamepad gamepad)

@@ -156,12 +156,20 @@ public class PlayerController : InputHandler
             return;
         }
 
-        pInput.ActivateInput();
+     
         pInput.actions = Instantiate(pInput.actions);
+        pInput.neverAutoSwitchControlSchemes = true;
+
+        pInput.ActivateInput();
         pInput.SwitchCurrentActionMap("Player");
        
 
         pInput.actions.bindingMask = InputBinding.MaskByGroup(newBindingGroup);
+
+            if (device != null)
+        {
+            pInput.actions.devices = new InputDevice[] { device };
+        }
 
         Debug.Log(name + " configurado como " + controlSlot + " usando grupo " + bindingGroup);
     }

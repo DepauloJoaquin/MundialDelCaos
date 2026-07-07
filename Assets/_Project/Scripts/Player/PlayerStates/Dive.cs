@@ -8,7 +8,6 @@ public class Dive : PlayerState
     private float _diveTimer;
      public override void Enter()
     {   base.Enter();
-       Debug.Log("ENTRÓ AL DIVE STATE");
         _currentPlayerController = _currentPlayer.GetComponent<PlayerController>();
         _ballPosition =GameManager.Instance._ball.transform.position;
 
@@ -17,11 +16,11 @@ public class Dive : PlayerState
         Vector2 direction = _currentPlayerController.DirectionTo(target_Dive);
         if(direction.y > 0)
         {
-            _playerAnimator.Play("Dive_Down");
+            _playerAnimator.Play("Dive_up");
         }
         else
         {
-            _playerAnimator.Play("Dive_up");
+            _playerAnimator.Play("Dive_Down");
         }
         _currentPlayerController._movementDirection = direction * _currentPlayerController.velocity;
         _diveTimer = diveDuration;

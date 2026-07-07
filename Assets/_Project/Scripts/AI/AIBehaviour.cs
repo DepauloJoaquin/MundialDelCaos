@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Linq;
 
 public class AIBehaviour : MonoBehaviour
 {   
@@ -43,35 +44,28 @@ public class AIBehaviour : MonoBehaviour
        
     void Process_AI()
     {
-        
+      
         Perform_AI_Movement();
-        //Perform_AI_Decisions();
+       // Perform_AI_Decisions();
     }
     void Perform_AI_Movement()
     {
         if (_currentPlayer._role == PlayerController.Role.GoalKeeper)
         {
+            StopBot();
+            return;
+        }
+        if (!TeamHasPlayer1AndPlayer2())
+        {
         _currentPlayer._movementDirection = Vector2.zero;
         _currentPlayer._isBotRunning = false;
         return;
         }
-         Vector2 totalMovement = Vector2.zero;
-         bool shouldRun = false;
-        
-            if (isBallCarriedByTeamMate())
-            {
-                totalMovement += GetAssistFormationMovement();
-                PlayerController ballOwner = _ball._currentOwnerController;
-                shouldRun = ballOwner.IsRunning();
+        Vector2 totalMovement = GetBotMovement();
+        bool shouldRun = ShouldBotRun();
 
-            }
-            else
-            {
-                totalMovement += CalculateMovementToBall();
-                shouldRun = _currentPlayer.DistanceTo(_ball.transform.position) > runDistance;
-            }
-            totalMovement = Vector2.ClampMagnitude(totalMovement,1f);
-            ApplyBotMovement(totalMovement,shouldRun);
+        totalMovement = Vector2.ClampMagnitude(totalMovement, 1f);
+        ApplyBotMovement(totalMovement, shouldRun);
         
       
     }
@@ -106,13 +100,13 @@ public class AIBehaviour : MonoBehaviour
         }
     }
 
-    /*public Vector2 GetMovementTowardsBall()
+    public Vector2 GetMovementTowardsGoal()
     {
-        Vector2 target = _currentPlayer._targetGoal.get_center_target_position();
+        Vector2 target = _currentPlayer._myTeamController._OurGoalScript.GetEnemyGoalFirstTargetPosition();
         Vector2 direction = _currentPlayer.DirectionTo(target);
         float weight = GetBicircularWeight(_currentPlayer._position,target,100,0,150,1);
         return weight * direction;
-    }*/
+    }
 
     public bool isBallCarriedByTeamMate()
     {
@@ -152,6 +146,64 @@ public class AIBehaviour : MonoBehaviour
         _currentPlayer._movementDirection = direction * _currentPlayer.velocity;
 
     }
+
+    private bool TeamHasPlayer1AndPlayer2()
+    {
+    if (_currentPlayer == null) return false;
+    if (_currentPlayer._myTeamController == null) return false;
+
+    return _currentPlayer._myTeamController._currentSelectedPlayer1 != null &&
+           _currentPlayer._myTeamController._currentSelectedPlayer2 != null;
+    }
+
+    private bool AmIClosestBotSpawnToBall()
+    {
+        return _currentPlayer._myTeamController.SortedListOfPlayersByClosestToBall()[0] == _currentPlayer.GetComponent<PlayerController>();
+    }
+    private Vector2 GetBotMovement()
+    {
+    if (isBallCarriedByTeamMate())
+    {
+        return GetAssistFormationMovement();
+    }
+
+    if (AmIClosestBotSpawnToBall())
+    {
+        return CalculateMovementToBall();
+    }
+
+    return Vector2.zero;
+    }
+
+    void StopBot()
+    {   _currentPlayer._movementDirection = Vector2.zero;
+        _currentPlayer._isBotRunning = false;
+    }
+
+    private bool ShouldBotRun()
+    {
+    if (isBallCarriedByTeamMate())
+    {
+        PlayerController ballOwner = _ball._currentOwnerController;
+
+        if (ballOwner == null)
+        {
+            return false;
+        }
+
+        return ballOwner.IsRunning();
+    }
+
+    if (AmIClosestBotSpawnToBall())
+    {
+        return _currentPlayer.DistanceTo(_ball.transform.position) > runDistance;
+    }
+
+    return false;
+    }
+ 
+
+
 
 
 }

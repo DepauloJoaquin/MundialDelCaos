@@ -1,12 +1,13 @@
     using UnityEngine.InputSystem;
     using System.Collections.Generic;
     using UnityEngine;
+    using System.Linq;
 
     public class TeamController : MonoBehaviour
     {   
-        //private List<GameObject> _players;
+        [SerializeField] private float forceFalloff = 0.5f;
 
-        private List<PlayerController> _allPlayersControllers = new List<PlayerController>();
+        public List<PlayerController> _allPlayersControllers = new List<PlayerController>();
 
         private List<PlayerController> _currentSelectedPlayers = new List<PlayerController>();
         [SerializeField] private List<GameObject> _availablePositions;
@@ -26,11 +27,13 @@
 
         public PlayerController _currentSelectedPlayer1;
         public PlayerController _currentSelectedPlayer2;
-        private string _player1ControlScheme;
+        private string _player1BindingGroup;
         private InputDevice _player1Device;
 
-        private string _player2ControlScheme;
+        private string _player2BindingGroup;
         private InputDevice _player2Device;
+        [SerializeField] private float forceUpdateInterval = 0.15f;
+        private float forceUpdateTimer = 0f;
 
         private int _currentBotPositionIndex = 0;
 
@@ -40,69 +43,60 @@
             _OurScoreZone = _thisTeamGoal.transform.GetChild(0).gameObject;
         }
 
-    void OnEnable()
+        void OnEnable()
         {
-        // GameStateManager.Instance.OnGameStateChanged += HandleGameStateChanged;
+ 
         }
 
         void OnDisable()
         {
-        // GameStateManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
+        
         }
-
-        /*void HandleGameStateChanged(GameState newGameState)
+        void Update()
         {
-            switch (newGameState)
+            forceUpdateTimer += Time.deltaTime;
+
+            if (forceUpdateTimer >= forceUpdateInterval)
             {
-                case GameState.Pause:
-                    DeselectAllPlayers();
-                    break;
-                case GameState.Start:
-                    SpawnBots(_amountBots);
-                    break;
-                case GameState.Playing:
-                    SelectCurrentPlayersOnStart();
-                    break;
-                case GameState.Restart:
-                    ResetAllPlayers();
-                    break;
+                forceUpdateTimer = 0f;
+                ApplyBaseForceTowardsBall();
             }
-        }*/
+        }
     public void SpawnBots(int amountBots)
-    {   
-        for (int i = 0; i < amountBots; i++)
-        {
-            GameObject spawnPoint = _availablePositions[_currentBotPositionIndex];
-
-            GameObject newPlayer = Instantiate(
-                _prefabPlayer,
-                spawnPoint.transform.position,
-                Quaternion.identity
-            );
-
-            PlayerController playerController = newPlayer.GetComponent<PlayerController>();
-            playerController._myTeamController = this;
-            playerController._team = team;
-            playerController._targetGoal = _OurGoalScript.GetEnemyGoalFirstTargetPosition();
-            playerController._spawnPosition = spawnPoint.transform.position;
-            playerController._position = spawnPoint.transform.position;
-            playerController._formationSlot = _currentBotPositionIndex;
-            if(_currentBotPositionIndex == 0)
+        {   
+            for (int i = 0; i < amountBots; i++)
             {
-                playerController._role = PlayerController.Role.GoalKeeper;
-            }
-            else
-            {
-                playerController._role = PlayerController.Role.MidFilder;
-            }
-            playerController.selected = false;
-            playerController.SetControlSlot(PlayerController.ControlSlot.Bot);
+                GameObject spawnPoint = _availablePositions[_currentBotPositionIndex];
 
-            _allPlayersControllers.Add(playerController);
+                GameObject newPlayer = Instantiate(
+                    _prefabPlayer,
+                    spawnPoint.transform.position,
+                    Quaternion.identity
+                );
 
-            _currentBotPositionIndex += 1;
+                PlayerController playerController = newPlayer.GetComponent<PlayerController>();
+                playerController._myTeamController = this;
+                playerController._team = team;
+                playerController._targetGoal = _OurGoalScript.GetEnemyGoalFirstTargetPosition();
+                playerController._spawnPosition = spawnPoint.transform.position;
+                playerController._position = spawnPoint.transform.position;
+                playerController._formationSlot = _currentBotPositionIndex;
+                if(_currentBotPositionIndex == 0)
+                {
+                    playerController._role = PlayerController.Role.GoalKeeper;
+                }
+                else
+                {
+                    playerController._role = PlayerController.Role.MidFilder;
+                }
+                playerController.selected = false;
+                playerController.SetControlSlot(PlayerController.ControlSlot.Bot);
+
+                _allPlayersControllers.Add(playerController);
+
+                _currentBotPositionIndex += 1;
+            }
         }
-    }
         public (PlayerController,PlayerController) CurrentPlayers()
         {    PlayerController firstPlayer = null;
             PlayerController secondPlayer = null;
@@ -130,7 +124,6 @@
             {
             return;
             }
-            
             if(receiver == _currentSelectedPlayer1 || receiver == _currentSelectedPlayer2)
             {
             return;
@@ -140,22 +133,21 @@
             return;
             }
 
-            if(previousOwner == null)
+            if (previousOwner == _currentSelectedPlayer1)
             {
                 AssignPlayer1(receiver);
                 return;
             }
-           
-            if(previousOwner == _currentSelectedPlayer1)
-            {
-                AssignPlayer1(receiver);
-                return;
-            }
-            else if(previousOwner == _currentSelectedPlayer2)
+
+            if (previousOwner == _currentSelectedPlayer2)
             {
                 AssignPlayer2(receiver);
                 return;
             }
+
+            AssignReceiverToClosestHumanSlot(receiver);
+
+            
         } 
         void AssignPlayer1(PlayerController newPlayer)
         {
@@ -166,7 +158,7 @@
             }
             _currentSelectedPlayer1 = newPlayer;
             _currentSelectedPlayer1.selected = true;
-            _currentSelectedPlayer1.ConfigureInput(PlayerController.ControlSlot.Player1,_player1ControlScheme,_player1Device);
+            _currentSelectedPlayer1.ConfigureInput(PlayerController.ControlSlot.Player1,_player1BindingGroup,_player1Device);
         }
 
         void AssignPlayer2(PlayerController newPlayer)
@@ -178,7 +170,7 @@
             }
             _currentSelectedPlayer2 = newPlayer;
             _currentSelectedPlayer2.selected = true;
-            _currentSelectedPlayer2.ConfigureInput(PlayerController.ControlSlot.Player2,_player2ControlScheme,_player2Device);
+            _currentSelectedPlayer2.ConfigureInput(PlayerController.ControlSlot.Player2,_player2BindingGroup,_player2Device);
         
         }
 
@@ -227,7 +219,7 @@
             }
             */
 
-        public void AddPlayerToTeam(string controlScheme, InputDevice device)
+        public void AddPlayerToTeam(string bindingGroup, InputDevice device)
         {   
             if (_amountHumanPlayers >= 2)
             {
@@ -269,29 +261,67 @@
             
             if (_amountHumanPlayers == 1)
             {
-                _player1ControlScheme = controlScheme;
+                _player1BindingGroup = bindingGroup;
                 _player1Device = device;
                 AssignPlayer1(playerController);
             }
             else if (_amountHumanPlayers == 2)
             {
-                _player2ControlScheme = controlScheme;
+                _player2BindingGroup = bindingGroup;
                 _player2Device = device;
                 AssignPlayer2(playerController);
             }
         }  
             
-            public bool DoWeHaveTheBall()
-            {
-                return GameManager.Instance._ballController._currentOwnerController == _currentSelectedPlayer1 ||GameManager.Instance._ballController._currentOwnerController == _currentSelectedPlayer2 ;
-            }
-            public bool HasFreeHumanSlot()
-            {
-            return _amountHumanPlayers < 2;
-            }
+        public bool DoWeHaveTheBall()
+        {
+            return GameManager.Instance._ballController._currentOwnerController == _currentSelectedPlayer1 ||GameManager.Instance._ballController._currentOwnerController == _currentSelectedPlayer2 ;
+        }
+        public bool HasFreeHumanSlot()
+        {
+        return _amountHumanPlayers < 2;
+        }
 
-            
+        public List<PlayerController> SortedListOfPlayersByClosestToBall()
+        {
+        return BotsThatAreNotGoalkeepers().OrderBy(player => player.DistanceTo(GameManager.Instance._ballController.transform.position)).ToList();
+        }
+        private List<PlayerController> BotsThatAreNotGoalkeepers(){
+        return _allPlayersControllers.Where(player => player.controlSlot == PlayerController.ControlSlot.Bot && player._role !=PlayerController.Role.GoalKeeper).ToList();
+        }
+        public void ApplyBaseForceTowardsBall()
+        {
+        List<PlayerController> bots = BotsThatAreNotGoalkeepers();
+        List<PlayerController> sortedBots = SortedListOfPlayersByClosestToBall();
 
+        for (int i = 0; i < sortedBots.Count; i++)
+        {
+            float force = Mathf.Pow(forceFalloff, i);
+            sortedBots[i]._forceTowardsTheBall = force;
+        }
+        }
+
+        void AssignReceiverToClosestHumanSlot(PlayerController receiver)
+        {
+        float distanceToPlayer1 = Vector2.Distance(
+            receiver.transform.position,
+            _currentSelectedPlayer1.transform.position
+        );
+
+        float distanceToPlayer2 = Vector2.Distance(
+            receiver.transform.position,
+            _currentSelectedPlayer2.transform.position
+        );
+
+        if (distanceToPlayer1 <= distanceToPlayer2)
+        {
+            AssignPlayer1(receiver);
+        }
+        else
+        {
+            AssignPlayer2(receiver);
+        }
+        }
     }
 
     
