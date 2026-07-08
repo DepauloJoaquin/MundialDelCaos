@@ -26,11 +26,15 @@ public class Ball : MonoBehaviour
     [SerializeField] private float goalkeeperBounceForce = 10f;
     public float RayDistance => rayDistance;
 
+    private Vector2 startPosition;
+    private bool goalAlreadyProcessed = false;
+
     // Unity Methods
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         time = Time.deltaTime;
+        startPosition = transform.position;
     }
 
     private void Update() 
@@ -43,6 +47,15 @@ public class Ball : MonoBehaviour
         DrawRaycastInGame();
         
         
+    }
+
+    void OnEnable()
+    {
+        GameStateManager.Instance.OnGoalScored += ResetBallPosition;
+    }
+    void Oisable()
+    {
+        GameStateManager.Instance.OnGoalScored -= ResetBallPosition;        
     }
 
     private void FixedUpdate()
@@ -84,21 +97,34 @@ public class Ball : MonoBehaviour
         }
     }
 
-      public void OnTriggerEnter2D(Collider2D collision)
+    public void OnTriggerEnter2D(Collider2D collision)
+{
+    if (goalAlreadyProcessed)
     {
-        if (collision.CompareTag("ScoreForA"))
-        {
-            AudioManager.Instancia.ReproducirGol();
-            GameManager.Instance.RegisterTeam_A_Goal();
-            //ahora deberia resetear la posicion de la pelota y de los jugadores y tocar el silvato el arbitro
-        }
-        else if (collision.CompareTag("ScoreForB"))
-        {
-            AudioManager.Instancia.ReproducirGol();
-            GameManager.Instance.RegisterTeam_B_Goal();
-            //ahora deberia resetear la posicion de la pelota y de los jugadores y tocar el silvato el arbitro
-        }
+        return;
     }
+
+    if (collision.CompareTag("ScoreForA"))
+    {
+        goalAlreadyProcessed = true;
+
+        AudioManager.Instancia.ReproducirGol();
+
+        GameManager.Instance.RegisterTeam_A_Goal();
+
+        GameStateManager.Instance.GoalScored();
+    }
+    else if (collision.CompareTag("ScoreForB"))
+    {
+        goalAlreadyProcessed = true;
+
+        AudioManager.Instancia.ReproducirGol();
+
+        GameManager.Instance.RegisterTeam_B_Goal();
+
+        GameStateManager.Instance.GoalScored();
+    }
+}
 
     private void RotateBall()
     {
@@ -347,4 +373,29 @@ public Vector2 velocityNormalized()
 
     MakeTheBallControlled();
     }
+
+    private void ResetBallPosition()
+{
+    _currentOwner = null;
+    _currentOwnerController = null;
+    _lastOwner = null;
+    _lastKickPlayer = null;
+    _passTarget = null;
+
+    _isFree = true;
+    isRotating = false;
+    goalAlreadyProcessed = false;
+
+    rb.velocity = Vector2.zero;
+    rb.angularVelocity = 0f;
+    rb.isKinematic = false;
+
+    transform.position = startPosition;
+    transform.rotation = Quaternion.identity;
+
+    if (rayLine != null)
+    {
+        rayLine.enabled = false;
+    }
+}
 }

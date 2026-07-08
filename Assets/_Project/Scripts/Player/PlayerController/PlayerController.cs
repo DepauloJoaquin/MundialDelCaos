@@ -358,40 +358,19 @@ public class PlayerController : InputHandler
         {
             _movementDirection = Vector2.zero;
         }
-        if (_indicadorControl != null)
-        {
-            bool esJugadorHumano = controlSlot != ControlSlot.Bot && controlSlot != ControlSlot.None;
-            if(controlSlot==ControlSlot.Player1)
-            {
-                _indicadorControl.enabled = esJugadorHumano;
-                _textoIndicador.enabled = esJugadorHumano;
-            }
-            else if(controlSlot==ControlSlot.Player2)
-            {
-                if (ColorUtility.TryParseHtmlString("#F8A139", out Color colorP2))
-                {
-                    _indicadorControl.color = colorP2;
-                }
-                _textoIndicador.text = "J2";
-                _indicadorControl.enabled = esJugadorHumano;
-                _textoIndicador.enabled = esJugadorHumano;
-            }
-            else if (controlSlot == ControlSlot.Player4)
-            {
-                if (ColorUtility.TryParseHtmlString("#39EEF8", out Color colorP2))
-                {
-                    _indicadorControl.color = colorP2;
-                }
-                _textoIndicador.text = "J4";
-                _indicadorControl.enabled = esJugadorHumano;
-                _textoIndicador.enabled = esJugadorHumano;
-            }
-            else
-            {
-                _indicadorControl.enabled = false;
-                if (_textoIndicador != null) _textoIndicador.enabled = false;
-            }
-        }
+        if (_indicadorControl == null)
+{
+    return;
+}
+
+if (controlSlot == ControlSlot.Bot || controlSlot == ControlSlot.None)
+{
+    DesactivateIndicatorIfBot(_indicadorControl);
+    return;
+}
+
+ActivateIndicatorAndChangeTextByTeam(_indicadorControl);
+
           
     }
 
@@ -421,4 +400,112 @@ public class PlayerController : InputHandler
     {
         return Vector2.Distance(_position,targetPosition);
     }
+    private bool ImFromTeamA()
+    {
+        return _myTeamController.team == Team.A;
+    }
+
+    void DesactivateIndicatorIfBot(SpriteRenderer indicator)
+    {
+        if(controlSlot != ControlSlot.Player1 &&controlSlot != ControlSlot.Player2)
+        {
+            indicator.enabled = false;
+
+        if (_textoIndicador != null)
+        {
+            _textoIndicador.enabled = false;
+        }
+
+        return;
+        }
+    }
+
+    void ActivateIndicator(SpriteRenderer indicator)
+    {
+        indicator.enabled = true;
+
+        if (_textoIndicador != null)
+        {
+            _textoIndicador.enabled = true;
+        }
+    }
+
+    private void ActivateIndicatorAndChangeTextByTeam(SpriteRenderer indicator)
+{
+    if (indicator == null)
+    {
+        return;
+    }
+
+    if (_myTeamController.team == Team.A)
+    {
+        ActivateIndicatorByTeamA(indicator);
+        return;
+    }
+
+    if (_myTeamController.team == Team.B)
+    {
+        ActivateIndicatorByTeamB(indicator);
+        return;
+    }
+}
+private void ActivateIndicatorByTeamA(SpriteRenderer indicator)
+{
+    if (controlSlot == ControlSlot.Player1)
+    {
+        ActivateIndicatorPlayer1(indicator, "#FF0000", "J1");
+        return;
+    }
+
+    if (controlSlot == ControlSlot.Player2)
+    {
+        ActivateIndicatorPlayer2(indicator, "#F8A139", "J2");
+        return;
+    }
+}
+private void ActivateIndicatorByTeamB(SpriteRenderer indicator)
+{
+    if (controlSlot == ControlSlot.Player1)
+    {
+        ActivateIndicatorPlayer1(indicator, "#39EEF8", "J3");
+        return;
+    }
+
+    if (controlSlot == ControlSlot.Player2)
+    {
+        ActivateIndicatorPlayer2(indicator, "#F246F3", "J4");
+        return;
+    }
+}
+
+    private void ActivateIndicatorPlayer1(SpriteRenderer indicator, string hexColor, string text)
+{
+    indicator.enabled = true;
+
+    if (ColorUtility.TryParseHtmlString(hexColor, out Color color))
+    {
+        indicator.color = color;
+    }
+
+    if (_textoIndicador != null)
+    {
+        _textoIndicador.enabled = true;
+        _textoIndicador.text = text;
+    }
+}
+    private void ActivateIndicatorPlayer2(SpriteRenderer indicator, string hexColor, string text)
+{
+    indicator.enabled = true;
+
+    if (ColorUtility.TryParseHtmlString(hexColor, out Color color))
+    {
+        indicator.color = color;
+    }
+
+    if (_textoIndicador != null)
+    {
+        _textoIndicador.enabled = true;
+        _textoIndicador.text = text;
+    }
+}
 }

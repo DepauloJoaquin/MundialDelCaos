@@ -134,6 +134,14 @@ public class GameStateManager : MonoBehaviour
     public void GoalScored()
     {
         ChangeState(new GoalState());
+        StartCoroutine(ReturnToPlayingAfterGoal());
+    }
+
+    private IEnumerator ReturnToPlayingAfterGoal()
+    {
+    yield return new WaitForSeconds(1f);
+
+    ChangeState(new PlayingState());
     }
 
 

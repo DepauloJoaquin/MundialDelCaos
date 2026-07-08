@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
    public static GameManager Instance { get; private set; }
 
    [Header("Time")]
-    private float _intialTimeInSecods = 180;
+    [SerializeField] private float _intialTimeInSecods = 180;
     private float _timeLeft;
 
     public event Action<int,int> OnDrawGame;
@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
     public event Action<Sprite,Sprite> OnSelectedTeams;
    public event Action<int,int> OnScoreChanged;
    public event Action<float> OnTimeChanged;
+   public event Action<Sprite,Sprite> OnResults;
     private void Awake()
     {
         // Configuración del Singleton
@@ -145,39 +146,9 @@ public class GameManager : MonoBehaviour
     
     void FinishMatch()
     {
-        
-
-        //GameStateManager.Instance.ChangeState(GameState.End);
+        OnResults?.Invoke(TeamCountryWinnerSprite(),TeamCountryLoserSprite());
     }
-    /*
-    void ComenzarPartida()
-    {
-
-
-        // Más adelante:
-        // UIManager.Instance.MostrarHUD();
-        // AudioManager.Instance.ReproducirSonidoInicio();
-        
-    }
-
-    /*
-    public void Pause()
-    {
-        OnMatchPaused?.Invoke();
-        _gameStatemanager.ChangeToPause();
-        
-    }
-
-    public void Play()
-    {
- 
-    }
-
-  public void Restart()
-    {
-        
-    }
-    */
+    
 
     public void ChangedCountryUpTeamA()
     {
@@ -325,54 +296,58 @@ public class GameManager : MonoBehaviour
         return color;
     }
 
-
-    
-
-
-
-
-
-    
-
-    
-
-
-    /*
-    void HandleGameEventByGameState(GameState state)
-    {
-        switch (state)
+    public Team WhoIsTheWinner()
+    {   Team winner;
+        if(_goalsTeam_A > _goalsTeam_B)
         {
-            case GameState.MainMenu:
-                 OnMainMenu?.Invoke();
-                 break;
-            case GameState.Paused:
-                OnMatchPaused?.Invoke();
-                break;
-            case GameState.Start:
-                OnMatchStarted?.Invoke();
-                break;
-            case GameState.Restart:
-                OnMatchRestart?.Invoke();
-                break;
-            case GameState.OptionsMenu:
-                 OnOptionsMenu?.Invoke();
-                 break;
-            case GameState.End:
-                OnMatchEnded?.Invoke();
-                break;
-            case GameState.SelectTeamMenu:
-                OnMainSelectedTeamMenu?.Invoke();
-                break;
-            case GameState.Playing:
-                OnMatchResumed?.Invoke();
-                break;
-            case GameState.Goal:
-                OnGoalScored?.Invoke();
-                break;            
+            winner = Team.A;
         }
-    }*/
+        else
+        {
+            winner = Team.B;
+        }
+        return winner;
+    } 
+
+    public Sprite TeamCountryWinnerSprite()
+    {
+        if(WhoIsTheWinner() == Team.A)
+        {
+            return Flags[CountrySelectedTeamA];
+        }
+        else
+        {
+            return Flags[CountrySelectedTeamB];
+        }
+    }
+
+    public Sprite TeamCountryLoserSprite()
+    {   if(WhoIsLoser() == Team.A){ 
+
+        return Flags[CountrySelectedTeamA] ;
+        }
+        else
+        {
+            return Flags[CountrySelectedTeamB]; 
+        }
+         
+    }
+
+    public Team WhoIsLoser()
+    {
+        Team loser;
+        if(_goalsTeam_B > _goalsTeam_A)
+        {
+            loser = Team.A;
+        }
+        else
+        {
+            loser = Team.B;
+        }
+        return loser;
+    }
+
 
     
-
 
 }

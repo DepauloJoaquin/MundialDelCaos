@@ -37,6 +37,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject _flagTeamBHub;
     [SerializeField] private GameObject _flagGoalTeamA;
     [SerializeField] private GameObject _flagGoalTeamB;
+    [SerializeField] private GameObject _flagWinnerTeam;
+    [SerializeField] private GameObject _flagLoserTeam;
+    
     public static UIManager Instance { get; private set; }
     private void Awake()
     {
@@ -68,6 +71,8 @@ public class UIManager : MonoBehaviour
        GameManager.Instance.OnTimeChanged += UpdateTimer;
        GameManager.Instance.OnScoreChanged += UpdateScores;
        GameManager.Instance.OnSelectedTeams += SelectedTeams;
+       GameManager.Instance.OnResults += MatchEnd;
+       
     }
     private void OnDisable()
     {
@@ -81,6 +86,7 @@ public class UIManager : MonoBehaviour
        GameManager.Instance.OnTimeChanged -= UpdateTimer;
        GameManager.Instance.OnScoreChanged -= UpdateScores;
        GameManager.Instance.OnSelectedTeams -= SelectedTeams;
+       GameManager.Instance.OnResults -= MatchEnd;
     }
 
     // Update is called once per frame
@@ -109,6 +115,11 @@ public class UIManager : MonoBehaviour
     {
         
     }
+
+    void ShowEndMenu()
+    {
+        _panelPantallaFinal.SetActive(true);
+    }
     private IEnumerator PanelGolA()
     {
        _panelGolA.SetActive(true);
@@ -129,9 +140,12 @@ public class UIManager : MonoBehaviour
     {
         StartCoroutine(PanelGolB());
     }
-    void MatchEnd()
-    {
+    void MatchEnd(Sprite winnerTeam,Sprite loserTeam)
+    {   ShowEndMenu();
+        _flagWinnerTeam.GetComponent<Image>().sprite = winnerTeam;
+        _flagLoserTeam.GetComponent<Image>().sprite = loserTeam;
         
+
     }
     void SelectedTeams(Sprite TeamADefaut, Sprite TeamBDefaut)
     {

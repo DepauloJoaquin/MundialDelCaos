@@ -44,8 +44,17 @@
             _OurScoreZone = _thisTeamGoal.transform.GetChild(0).gameObject;
         }
 
-        
-        void Update()
+    void OnEnable()
+    {
+        GameStateManager.Instance.OnGoalScored += ResetAllPlayers;
+    }
+    void OnDisable()
+    {
+         GameStateManager.Instance.OnGoalScored -= ResetAllPlayers;
+    }
+
+
+    void Update()
         {
             forceUpdateTimer += Time.deltaTime;
 
@@ -197,22 +206,21 @@
             }
         }
 
-        public void ResetAllPlayers()
-        {
-        for (int i = 2; i < _allPlayersControllers.Count  ; i++)
-        {
+       public void ResetAllPlayers()
+{
+    foreach (PlayerController player in _allPlayersControllers)
+    {
+        player.transform.position = player._spawnPosition;
+        player.transform.rotation = Quaternion.identity;
 
-            PlayerController player = _allPlayersControllers[i];
+        player.rigidBody.velocity = Vector2.zero;
+        player.rigidBody.angularVelocity = 0f;
 
-            player.transform.position = _availablePositions[i].transform.position;
-            player.transform.rotation = Quaternion.identity;
+        player.selected = false;
+    }
 
-            player.rigidBody.velocity = Vector2.zero;
-            player.rigidBody.angularVelocity = 0f;
-
-            player.selected = false;
-        }
-        }
+    SelectCurrentPlayersOnStart();
+}
 
         /*void ApplyAbilityToCurrentPlayer()
             {
