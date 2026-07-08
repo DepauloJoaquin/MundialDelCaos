@@ -4,19 +4,14 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem.Controls;
 using Unity.Collections;
+using System;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
      // Responsabilidad:
     // Controla la interfaz del juego.
     // No decide la lógica de la partida, solo muestra información visual.
-
-    [Header("Canvas principales")]
-    [SerializeField] private GameObject _canvasHUD;
-    [SerializeField] private GameObject _canvasMenuPausa;
-    [SerializeField] private GameObject _canvasPantallaFinal;
-    [SerializeField] private GameObject _canvasPantallaInicial;
-
     [Header("HUD")]
     [SerializeField] private TextMeshProUGUI _textTime;
     [SerializeField] private TextMeshProUGUI _textScoreTeamA;
@@ -25,6 +20,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _textScoreTeamADraw;
     [SerializeField] private TextMeshProUGUI _textScoreTeamBDraw;
 
+    [SerializeField] private Sprite EquipoA;
+    [SerializeField] private Sprite EquipoB;
+
     [Header("Mensajes")]
     [SerializeField] private GameObject _panelGolA;
     [SerializeField] private GameObject _panelGolB;
@@ -32,6 +30,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject _panelPantallaFinal;
     [SerializeField] private GameObject _panelPantallaInicial;
 
+    [Header("Country")]
+    [SerializeField] private GameObject _shirtTeamA;
+    [SerializeField] private GameObject _shirtTeamB;
+    [SerializeField] private GameObject _flagTeamAHub;
+    [SerializeField] private GameObject _flagTeamBHub;
+    [SerializeField] private GameObject _flagGoalTeamA;
+    [SerializeField] private GameObject _flagGoalTeamB;
     public static UIManager Instance { get; private set; }
     private void Awake()
     {
@@ -53,28 +58,46 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
-
+       GameManager.Instance.OnChangeCountryTeamA += UpdateShirtTeamA;
+       GameManager.Instance.OnChangeCountryTeamB += UpdateShirtTeamB;
+       GameManager.Instance.OnChangeFlagTeamA += UpdateFlagsTeamA;
+       GameManager.Instance.OnChangeFlagTeamB += UpdateFlagsTeamB;
        GameManager.Instance.OnDrawGame += DrawFinish;
        GameManager.Instance.OnScoreTeamA += ScoreTeamA;
        GameManager.Instance.OnScoreTeamB += ScoreTeamB;
        GameManager.Instance.OnTimeChanged += UpdateTimer;
        GameManager.Instance.OnScoreChanged += UpdateScores;
-       GameStateManager.Instance.OnMatchStarted += StartMatch;
+       GameManager.Instance.OnSelectedTeams += SelectedTeams;
     }
     private void OnDisable()
     {
+       GameManager.Instance.OnChangeCountryTeamA -= UpdateShirtTeamA;
+       GameManager.Instance.OnChangeCountryTeamB -= UpdateShirtTeamB;
+       GameManager.Instance.OnChangeFlagTeamA -= UpdateFlagsTeamA;
+       GameManager.Instance.OnChangeFlagTeamB -= UpdateFlagsTeamB;
        GameManager.Instance.OnDrawGame -= DrawFinish;
        GameManager.Instance.OnScoreTeamA -= ScoreTeamA;
        GameManager.Instance.OnScoreTeamA -= ScoreTeamB;
        GameManager.Instance.OnTimeChanged -= UpdateTimer;
        GameManager.Instance.OnScoreChanged -= UpdateScores;
-       GameStateManager.Instance.OnMatchStarted -= StartMatch;
+       GameManager.Instance.OnSelectedTeams -= SelectedTeams;
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    void UpdateFlagsTeamA(Sprite SpriteTeamA)
+    {
+        _flagTeamAHub.GetComponent<Image>().sprite = SpriteTeamA;
+        _flagGoalTeamA.GetComponent<Image>().sprite = SpriteTeamA;
+    }
+    void UpdateFlagsTeamB(Sprite SpriteTeamB)
+    {
+        _flagTeamBHub.GetComponent<Image>().sprite = SpriteTeamB;
+        _flagGoalTeamB.GetComponent<Image>().sprite = SpriteTeamB;
     }
 
     void ShowPauseMenu()
@@ -110,6 +133,19 @@ public class UIManager : MonoBehaviour
     {
         
     }
+    void SelectedTeams(Sprite TeamADefaut, Sprite TeamBDefaut)
+    {
+        _shirtTeamA.GetComponent<Image>().sprite = TeamADefaut;
+        _shirtTeamB.GetComponent<Image>().sprite = TeamBDefaut;
+    }
+    void UpdateShirtTeamA(Sprite TeamA)
+    {
+        _shirtTeamA.GetComponent<Image>().sprite = TeamA;
+    }
+    void UpdateShirtTeamB(Sprite TeamB)
+    {
+        _shirtTeamB.GetComponent<Image>().sprite = TeamB;
+    }
 
 
     void ShowHud()
@@ -124,11 +160,11 @@ public class UIManager : MonoBehaviour
 
     public void StartMatch()
     {
-        //Mostrar Hud y lo que sea necesario
+        
     }
 
     public void UpdateTimer(float timeInSeconds)
-    {   Debug.Log("Timer activado");
+    {   
         int minutes = Mathf.FloorToInt(timeInSeconds / 60);
         int seconds = Mathf.FloorToInt(timeInSeconds % 60);
         _textTime.text = string.Format("{0:00}:{1:00}",minutes,seconds);

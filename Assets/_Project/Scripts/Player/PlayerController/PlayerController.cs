@@ -23,7 +23,11 @@ public class PlayerController : InputHandler
     public int _formationSlot;
     public float velocity = 3.5f;
     public float kickForce = 2f;
-
+    [Header("Visual Player Indicator")]
+    [SerializeField] private TextMesh playerIndicator;
+    [SerializeField] private Vector3 indicatorLocalPosition = new Vector3(0f, 1.2f, 0f);
+    private bool _AbilityActive = false;
+    private float _AbilityLeftTime;
     private Ball ball;
 
     private void Awake()
@@ -280,6 +284,7 @@ public class PlayerController : InputHandler
         {
         _movementDirection = Vector2.zero;
         }
+         UpdatePlayerIndicator();
 
     }
 
@@ -308,5 +313,89 @@ public class PlayerController : InputHandler
     public float DistanceTo(Vector2 targetPosition)
     {
         return Vector2.Distance(_position,targetPosition);
+    }
+    private void CreatePlayerIndicatorIfNeeded()
+{
+    if (playerIndicator != null)
+    {
+        return;
+    }
+
+    GameObject indicatorObject = new GameObject("Player Indicator");
+    indicatorObject.transform.SetParent(transform);
+    indicatorObject.transform.localPosition = indicatorLocalPosition;
+    indicatorObject.transform.localRotation = Quaternion.identity;
+    indicatorObject.transform.localScale = Vector3.one * 0.25f;
+
+    playerIndicator = indicatorObject.AddComponent<TextMesh>();
+    playerIndicator.anchor = TextAnchor.MiddleCenter;
+    playerIndicator.alignment = TextAlignment.Center;
+    playerIndicator.characterSize = 1f;
+    playerIndicator.fontSize = 40;
+
+    MeshRenderer meshRenderer = indicatorObject.GetComponent<MeshRenderer>();
+    meshRenderer.sortingOrder = 20;
+}
+
+private void UpdatePlayerIndicator()
+{
+    CreatePlayerIndicatorIfNeeded();
+
+    if (controlSlot == ControlSlot.Bot || controlSlot == ControlSlot.None)
+    {
+        playerIndicator.gameObject.SetActive(false);
+        return;
+    }
+
+    playerIndicator.gameObject.SetActive(true);
+
+    string teamText = _team == Team.A ? "A" : "B";
+
+    if (controlSlot == ControlSlot.Player1)
+    {
+        playerIndicator.text = teamText + "1";
+    }
+    else if (controlSlot == ControlSlot.Player2)
+    {
+        playerIndicator.text = teamText + "2";
+    }
+    else if (controlSlot == ControlSlot.Player3)
+    {
+        playerIndicator.text = teamText + "3";
+    }
+    else if (controlSlot == ControlSlot.Player4)
+    {
+        playerIndicator.text = teamText + "4";
+    }
+}
+
+    public void ActivateAbility()
+    {
+        // Falta el condicional si tiene la barra de  energia completa
+        // El jugador presiona el botón de 'Ability':
+        //if (pInput != null && pInput.actions["Ability"].triggered && !_habilidadActiva && CanBeControlled())
+        {
+            Debug.Log(name + " activó su habilidad especial.");
+            _AbilityActive = false;
+            _AbilityLeftTime = 4f; 
+
+            /*if (AudioManager.Instancia != null)
+            {
+                AudioManager.Instancia.ReproducirActivarHabilidad();
+            }*/
+        }
+    }
+
+    public void CountDown()
+    {
+        // Cuenta regresiva del tiempo
+        if (_AbilityActive)
+        {
+            _AbilityLeftTime -= Time.deltaTime;
+            if (_AbilityLeftTime <= 0)
+            {
+                _AbilityActive = false; // Se apaga sola cuando llega a 0
+            }
+        }
     }
 }

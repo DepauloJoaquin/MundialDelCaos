@@ -88,6 +88,14 @@ public abstract class InputHandler : MonoBehaviour
         return shootAction.IsPressed();
     }
 
+    public bool AbilityPressed(){
+        if (!selected) return false;
+        if (pInput == null) return false;
+        InputAction AbilityAction = pInput.actions.FindAction("Ability", false);
+        if (AbilityAction == null) return false;
+        return AbilityAction.IsPressed();
+    }
+
     public enum KeyPress
     {
         Pass,

@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     public event Action OnScoreTeamB;
 
     public event Action<int,int> OnEnded;
-
+    public event Action<Sprite,Sprite> OnSelectedTeams;
    public event Action<int,int> OnScoreChanged;
    public event Action<float> OnTimeChanged;
     private void Awake()
@@ -47,6 +47,20 @@ public class GameManager : MonoBehaviour
     }
     public GameObject _ball;
     public Ball _ballController;
+    
+    [Header("Flags")]
+    public List<Sprite> Shirt;
+    public List<Sprite> Flags;
+    public int CountrySelectedTeamA = 1;
+    public int CountrySelectedTeamB = 0;
+    private Sprite SpriteShirtTeamA;
+    private Sprite SpriteShirtTeamB;
+    private Sprite SpriteFlagTeamA;
+    private Sprite SpriteFlagTeamB;
+    public event Action<Sprite> OnChangeFlagTeamA;
+    public event Action<Sprite> OnChangeCountryTeamA;
+    public event Action<Sprite> OnChangeFlagTeamB;
+    public event Action<Sprite> OnChangeCountryTeamB;
 
     public TeamController _teamAController;
     public TeamController _teamBController;

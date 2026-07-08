@@ -54,25 +54,19 @@ public class Ball : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        PlayerController receiver = collision.gameObject.GetComponent<PlayerController>();
-        if (receiver == null) { return; }
-        if (receiver._role == PlayerController.Role.GoalKeeper)
-        {
-            BounceFromGoalkeeper(receiver);
-            return;
-        }
-        receiver.setBall(this);
-        isRotating = true;
-        PlayerController previousOwnerController = null;
-        if (! CurrentOwnerIsNull())
-        {
-            previousOwnerController = _currentOwner.GetComponent<PlayerController>();
-        }
-        _lastOwner = _currentOwner;
-        _currentOwner = collision.gameObject;
-        _currentOwnerController = receiver;
-        receiver._myTeamController.SelectPlayerWhoReceiveBall(receiver, previousOwnerController);
-        MakeTheBallControlled();
+         PlayerController receiver = collision.gameObject.GetComponent<PlayerController>();
+
+    if (receiver == null)
+    {
+        return;
+    }
+
+    if (_currentOwner == receiver.gameObject)
+    {
+        return;
+    }
+
+    GiveBallTo(receiver);
     }
 
     
@@ -317,5 +311,36 @@ public Vector2 velocityNormalized()
     ).normalized;
 
     rb.velocity = direction * goalkeeperBounceForce;
-        }  
+    }  
+
+    public void GiveBallTo(PlayerController receiver)
+    {
+    if (receiver == null)
+    {
+        return;
+    }
+
+    if (receiver._role == PlayerController.Role.GoalKeeper)
+    {
+        BounceFromGoalkeeper(receiver);
+        return;
+    }
+
+    PlayerController previousOwnerController = _currentOwnerController;
+
+    if (_currentOwnerController != null)
+    {
+        _currentOwnerController.setBall(null);
+    }
+
+    receiver.setBall(this);
+
+    _lastOwner = _currentOwner;
+    _currentOwner = receiver.gameObject;
+    _currentOwnerController = receiver;
+
+    receiver._myTeamController.SelectPlayerWhoReceiveBall(receiver, previousOwnerController);
+
+    MakeTheBallControlled();
+    }
 }

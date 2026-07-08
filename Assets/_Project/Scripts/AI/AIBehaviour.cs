@@ -15,11 +15,12 @@ public class AIBehaviour : MonoBehaviour
 
     public float _followSpeed = 15f;
     public float _slowdownDistance = 1f;
-
+    [SerializeField] private float stopChasingBallDistance = 0.5f;
     const float spreadAssistFactor = 1f;
     [SerializeField] private float runDistance = 2.5f;
     [SerializeField] private float arriveDistance = 0.3f;
     [SerializeField] private float runMultiplier = 1.7f;
+    [SerializeField] private float stealDistance = 0.5f;
 
     Vector2 velocity = Vector2.zero;
     // Start is called before the first frame update
@@ -46,7 +47,8 @@ public class AIBehaviour : MonoBehaviour
     {
       
         Perform_AI_Movement();
-       // Perform_AI_Decisions();
+       Perform_AI_Decisions();
+       
     }
     void Perform_AI_Movement()
     {
@@ -72,14 +74,24 @@ public class AIBehaviour : MonoBehaviour
 
     void Perform_AI_Decisions()
     {
-   
-
+        TryStealBall();
     }
 
-    public Vector2 CalculateMovementToBall()
+   public Vector2 CalculateMovementToBall()
+{
+    float distanceToBall = _currentPlayer.DistanceTo(GameManager.Instance._ball.transform.position);
+
+    Vector2 directionToBall = _currentPlayer.DirectionTo(GameManager.Instance._ball.transform.position);
+
+    float speedFactor = 1f;
+
+    if (distanceToBall <= stopChasingBallDistance)
     {
-        return _currentPlayer._forceTowardsTheBall * _currentPlayer.DirectionTo(GameManager.Instance._ball.transform.position);
+        speedFactor = Mathf.Clamp(distanceToBall / stopChasingBallDistance, 0.25f, 1f);
     }
+
+    return _currentPlayer._forceTowardsTheBall * speedFactor * directionToBall;
+}
 
     public float GetBicircularWeight(Vector2 playerPosition, Vector2 centerTarget,float innerCircleWeight, float innerCircleRadius,float outerCircleWeight,float outerCircleRadius)
     {
@@ -100,13 +112,13 @@ public class AIBehaviour : MonoBehaviour
         }
     }
 
-    public Vector2 GetMovementTowardsGoal()
+    /*public Vector2 GetMovementTowardsGoal()
     {
         Vector2 target = _currentPlayer._myTeamController._OurGoalScript.GetEnemyGoalFirstTargetPosition();
         Vector2 direction = _currentPlayer.DirectionTo(target);
         float weight = GetBicircularWeight(_currentPlayer._position,target,100,0,150,1);
         return weight * direction;
-    }
+    }*/
 
     public bool isBallCarriedByTeamMate()
     {
@@ -166,6 +178,10 @@ public class AIBehaviour : MonoBehaviour
     {
         return GetAssistFormationMovement();
     }
+    if (IsBallCarriedByEnemy())
+    {
+        return GetEnemyPossessionMovement();
+    }
 
     if (AmIClosestBotSpawnToBall())
     {
@@ -182,24 +198,117 @@ public class AIBehaviour : MonoBehaviour
 
     private bool ShouldBotRun()
     {
-    if (isBallCarriedByTeamMate())
-    {
-        PlayerController ballOwner = _ball._currentOwnerController;
-
-        if (ballOwner == null)
+        if (isBallCarriedByTeamMate())
         {
-            return false;
+            return _ball._currentOwnerController.IsRunning();   
+        }
+        if (IsBallCarriedByEnemy())
+        {
+            return ShouldRunDuringEnemyPossession();
         }
 
-        return ballOwner.IsRunning();
-    }
+        if (AmIClosestBotSpawnToBall())
+        {
+            float distanceToBall = _currentPlayer.DistanceTo(_ball.transform.position);
 
-    if (AmIClosestBotSpawnToBall())
+            if (distanceToBall <= stopChasingBallDistance)
+            {
+                return false;
+            }
+
+            return distanceToBall > runDistance;
+        }
+
+        return false;
+    }
+    private bool IsBallCarriedByEnemy()
     {
-        return _currentPlayer.DistanceTo(_ball.transform.position) > runDistance;
+    return _ball._currentOwnerController != null &&
+           _ball._currentOwnerController._team != _currentPlayer._team;
+    }
+    private Vector2 GetMovementToEnemyBallOwner()
+    {   
+    PlayerController enemyOwner = _ball._currentOwnerController;
+
+    if (enemyOwner == null)
+    {
+        return Vector2.zero;
     }
 
-    return false;
+    float distanceToEnemy = _currentPlayer.DistanceTo(enemyOwner._position);
+
+    if (distanceToEnemy <= arriveDistance)
+    {
+        return Vector2.zero;
+    }
+
+    return _currentPlayer.DirectionTo(enemyOwner._position);
+    }
+    private void TryStealBall()
+    {
+    if (!IsBallCarriedByEnemy())
+    {
+        return;
+    }
+     if (!AmIClosestBotToEnemyOwner())
+    {
+        return;
+    }
+
+    PlayerController enemyOwner = _ball._currentOwnerController;
+
+    float distanceToEnemy = _currentPlayer.DistanceTo(enemyOwner._position);
+
+    if (distanceToEnemy > stealDistance)
+    {
+        return;
+    }
+
+    _ball.GiveBallTo(_currentPlayer);
+    }
+    private Vector2 GetMovementToSpawnPosition()
+    {
+        float distanceToSpawn = _currentPlayer.DistanceTo(_currentPlayer._spawnPosition);
+
+        if (distanceToSpawn <= arriveDistance)
+        {
+            return Vector2.zero;
+        }
+
+        return _currentPlayer.DirectionTo(_currentPlayer._spawnPosition);
+    }
+
+    private bool AmIClosestBotToEnemyOwner()
+    {
+    PlayerController enemyOwner = _ball._currentOwnerController;
+
+
+    if (enemyOwner == null)
+    {
+        return false;
+    }
+    List<PlayerController> botsClosestsToEnemy = _currentPlayer._myTeamController.BotsThatAreNotGoalkeepers().OrderBy(bot => bot.DistanceTo(enemyOwner._position)).ToList();
+    return botsClosestsToEnemy[0] == _currentPlayer;
+}
+
+    private Vector2 GetEnemyPossessionMovement()
+    {
+        if (AmIClosestBotToEnemyOwner())
+        {
+            return GetMovementToEnemyBallOwner();
+        }
+
+        return GetMovementToSpawnPosition();
+    }
+
+    private bool  ShouldRunDuringEnemyPossession()
+    {
+        if (AmIClosestBotToEnemyOwner())
+        {
+        PlayerController enemyOwner = _ball._currentOwnerController;
+        return _currentPlayer.DistanceTo(enemyOwner._position) > runDistance;
+        }
+        return _currentPlayer.DistanceTo(_currentPlayer._spawnPosition) > runDistance;
     }
  
 

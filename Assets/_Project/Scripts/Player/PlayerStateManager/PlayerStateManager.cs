@@ -8,6 +8,8 @@
         public InputHandler _playerController;
         private GameObject _player;
         protected Animator _playerAnimator;
+        private Animator shirtAnimator;
+
 
         [Header("States")]
         public RunState runState;
@@ -32,6 +34,15 @@
     }
 
     _player = gameObject;
+    if (shirtAnimator == null)
+{
+    ShirtAnimationController shirtController = GetComponentInChildren<ShirtAnimationController>();
+
+    if (shirtController != null)
+    {
+        shirtAnimator = shirtController.GetComponent<Animator>();
+    }
+}
 
     if (_playerController.animator == null)
     {
@@ -88,9 +99,46 @@
             }
             _currentState = stateTochange;
             _currentState.Enter();
+            UpdateShirtAnimation(stateTochange);
         }
         public bool IsCurrentState(PlayerState state)
     {
     return _currentState == state;
     }
+    private void UpdateShirtAnimation(PlayerState state)
+{
+    if (shirtAnimator == null)
+    {
+        return;
+    }
+
+    if (state == idleState)
+    {
+        shirtAnimator.Play("Idle");
+    }
+    else if (state == walkState)
+    {
+        shirtAnimator.Play("Walk");
+    }
+    else if (state == runState)
+    {
+        shirtAnimator.Play("Run");
+    }
+    else if (state == passState)
+    {
+        shirtAnimator.Play("Pass");
+    }
+    else if (state == shootState)
+    {
+        shirtAnimator.Play("Shoot");
+    }
+    else if (state == tackleState)
+    {
+        shirtAnimator.Play("Tackle");
+    }
+    else if (state == diveState)
+    {
+        shirtAnimator.Play("Dive");
+    }
+}
     }

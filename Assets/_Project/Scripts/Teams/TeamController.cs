@@ -81,6 +81,15 @@
                 playerController._spawnPosition = spawnPoint.transform.position;
                 playerController._position = spawnPoint.transform.position;
                 playerController._formationSlot = _currentBotPositionIndex;
+                if(team == Team.B)
+                {
+                   playerController.spriteRenderer.flipX = true;
+                   ShirtAnimationController shirtAnimationController =
+                   newPlayer.GetComponentInChildren<ShirtAnimationController>();
+                   shirtAnimationController.playerController = playerController;
+                   shirtAnimationController.ChangeColor(Color.red);
+                }
+               
                 if(_currentBotPositionIndex == 0)
                 {
                     playerController._role = PlayerController.Role.GoalKeeper;
@@ -238,16 +247,15 @@
             Quaternion.identity
             );
 
-            if (team == Team.B)
-            {
-            newPlayer.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-            }
-            else
-            {
-            newPlayer.transform.rotation = Quaternion.identity;
-            }
-
             PlayerController playerController = newPlayer.GetComponent<PlayerController>();
+            if(team == Team.B)
+            {
+                playerController.spriteRenderer.flipX = true;
+                ShirtAnimationController shirtAnimationController =
+                newPlayer.GetComponentInChildren<ShirtAnimationController>();
+                shirtAnimationController.playerController = playerController;
+                shirtAnimationController.ChangeColor(Color.red);
+            }
 
             playerController._myTeamController = this;
             playerController._team = team;
@@ -286,7 +294,7 @@
         {
         return BotsThatAreNotGoalkeepers().OrderBy(player => player.DistanceTo(GameManager.Instance._ballController.transform.position)).ToList();
         }
-        private List<PlayerController> BotsThatAreNotGoalkeepers(){
+        public List<PlayerController> BotsThatAreNotGoalkeepers(){
         return _allPlayersControllers.Where(player => player.controlSlot == PlayerController.ControlSlot.Bot && player._role !=PlayerController.Role.GoalKeeper).ToList();
         }
         public void ApplyBaseForceTowardsBall()

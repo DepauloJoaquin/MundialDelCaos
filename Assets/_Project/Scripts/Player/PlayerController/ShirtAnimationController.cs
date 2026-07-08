@@ -12,35 +12,32 @@ public class ShirtAnimationController : InputHandler
     {
         if(playerController == null)
         {
-            playerController = GetComponent<PlayerController>();
+           playerController = GetComponentInParent<PlayerController>();
         }
     }
 
-    private void Update()
+    /*private void Update()
     {
-        UpdateDirections();
+        //UpdateDirections();
         UpdateSpriteFlip();
         UpdateSelection();
-    }
+    }*/
 
-    public override void UpdateDirections()
+    private void LateUpdate()
     {
-        if (!selected) return;
-        base.UpdateDirections();
+        UpdateSpriteFlip();
     }
 
-    private void UpdateSpriteFlip()
-    {
-        if (horizontalInput > 0)
-        {
-            spriteRenderer.flipX = false;
-        }
-        else if (horizontalInput < 0)
-        {
-            spriteRenderer.flipX = true;
-        }
-    }
+    
+    
 
+   private void UpdateSpriteFlip()
+    {   
+    if (playerController == null) return;
+    if (playerController.spriteRenderer == null) return;
+
+    spriteRenderer.flipX = playerController.spriteRenderer.flipX;
+    }   
     private void UpdateSelection() 
     {
         selected = playerController.selected;
