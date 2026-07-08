@@ -2,7 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using Microsoft.Unity.VisualStudio.Editor;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
 
@@ -74,6 +78,7 @@ public class GameManager : MonoBehaviour
         GameStateManager.Instance.OnMatchPaused += PauseMatch;
         GameStateManager.Instance.OnMatchRestart += RestartGame;
         GameStateManager.Instance.OnGoalScored += RegisterGoal;
+        GameStateManager.Instance.OnMainSelectedTeamMenu += SelectTeam;
     }
     void OnDisable()
     {
@@ -82,6 +87,7 @@ public class GameManager : MonoBehaviour
         GameStateManager.Instance.OnMatchPaused -= PauseMatch;
         GameStateManager.Instance.OnMatchRestart -= RestartGame;
         GameStateManager.Instance.OnGoalScored -= RegisterGoal;
+        GameStateManager.Instance.OnMainSelectedTeamMenu -= SelectTeam;
     }
 
 
@@ -174,6 +180,55 @@ public class GameManager : MonoBehaviour
         
     }
     */
+
+    public void ChangedCountryUpTeamA()
+    {
+        CountrySelectedTeamA ++;
+        if (CountrySelectedTeamA > 7)
+        {
+            CountrySelectedTeamA = 0;
+        }
+        SpriteShirtTeamA = Shirt[CountrySelectedTeamA];
+        OnChangeCountryTeamA?.Invoke(SpriteShirtTeamA);
+        SpriteFlagTeamA = Flags[CountrySelectedTeamA];
+        OnChangeFlagTeamA?.Invoke(SpriteFlagTeamA);
+    }
+    public void ChangedCountryDownTeamA()
+    {
+        CountrySelectedTeamA --;
+        if (CountrySelectedTeamA < 0)
+        {
+            CountrySelectedTeamA = 7;
+        }
+        SpriteShirtTeamA = Shirt[CountrySelectedTeamA];
+        OnChangeCountryTeamA?.Invoke(SpriteShirtTeamA);
+        SpriteFlagTeamA = Flags[CountrySelectedTeamA];
+        OnChangeFlagTeamA?.Invoke(SpriteFlagTeamA);
+    }
+    public void ChangedCountryUpTeamB()
+    {
+        CountrySelectedTeamB ++;
+        if (CountrySelectedTeamB > 7)
+        {
+            CountrySelectedTeamB = 0;
+        }
+        SpriteShirtTeamB = Shirt[CountrySelectedTeamB];
+        OnChangeCountryTeamB?.Invoke(SpriteShirtTeamB);
+        SpriteFlagTeamB = Flags[CountrySelectedTeamB];
+        OnChangeFlagTeamB?.Invoke(SpriteFlagTeamB);
+    }
+    public void ChangedCountryDownTeamB()
+    {
+        CountrySelectedTeamB --;
+        if (CountrySelectedTeamB < 0)
+        {
+            CountrySelectedTeamB = 7;
+        }
+        SpriteShirtTeamB = Shirt[CountrySelectedTeamB];
+        OnChangeCountryTeamB?.Invoke(SpriteShirtTeamB);
+        SpriteFlagTeamB = Flags[CountrySelectedTeamB];
+        OnChangeFlagTeamB?.Invoke(SpriteFlagTeamB);
+    }
     public void RegisterGoal()
     {
         OnScoreChanged?.Invoke(_goalsTeam_A,_goalsTeam_B);
@@ -199,6 +254,16 @@ public class GameManager : MonoBehaviour
     public void StartMatch()
     {
         OnScoreChanged?.Invoke(_goalsTeam_A,_goalsTeam_B);
+    }
+    public void SelectTeam()
+    {
+        SpriteShirtTeamA = Shirt[CountrySelectedTeamA];
+        SpriteShirtTeamB = Shirt[CountrySelectedTeamB];
+        SpriteFlagTeamB = Flags[CountrySelectedTeamB];
+        SpriteFlagTeamA = Flags[CountrySelectedTeamA];
+        OnSelectedTeams?.Invoke(SpriteShirtTeamA, SpriteShirtTeamB);
+        OnChangeFlagTeamB?.Invoke(SpriteFlagTeamB);
+        OnChangeFlagTeamA?.Invoke(SpriteFlagTeamA);
     }
 
     public void ActivateEndEvent()
