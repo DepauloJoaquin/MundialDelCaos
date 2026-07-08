@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class PlayerController : InputHandler
 {
@@ -8,6 +9,7 @@ public class PlayerController : InputHandler
     public AIGoalKeeperBehaviour _GoalKeeperController;
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
+    public SpriteRenderer _indicadorControl;
     public Vector2 _targetGoal;
     public Team _team;
     public Role _role;
@@ -23,12 +25,14 @@ public class PlayerController : InputHandler
     public int _formationSlot;
     public float velocity = 3.5f;
     public float kickForce = 2f;
-    [Header("Visual Player Indicator")]
-    [SerializeField] private TextMesh playerIndicator;
-    [SerializeField] private Vector3 indicatorLocalPosition = new Vector3(0f, 1.2f, 0f);
-    private bool _AbilityActive = false;
-    private float _AbilityLeftTime;
     private Ball ball;
+    public TextMeshPro _textoIndicador;
+
+    [Header("Habilidad Súper Simplificada")]
+    public bool _habilidadActiva = false;
+    private float _tiempoRestanteHabilidad = 0f;
+    [SerializeField] private float _extraVelocidad = 2f;
+
 
     private void Awake()
     {
@@ -36,9 +40,44 @@ public class PlayerController : InputHandler
     }
 
     private void Update()
-    {   _position = transform.position;
+    {
+        _position = transform.position;
         UpdateDirections();
         UpdateSpriteFlip();
+        ActivateHabilidad();
+        //CountDown();
+
+
+    }
+
+    public void ActivateHabilidad()
+    {
+        // Falta el condicional si tiene la barra de  energia completa
+        // El jugador presiona el botón de 'Ability':
+        if (pInput != null && pInput.actions["Ability"].triggered && !_habilidadActiva && CanBeControlled())
+        {
+            Debug.Log(name + " activó su habilidad especial.");
+            _habilidadActiva = true;
+            _tiempoRestanteHabilidad = 4f; 
+
+            if (AudioManager.Instancia != null)
+            {
+                AudioManager.Instancia.ReproducirActivarHabilidad();
+            }
+        }
+    }
+
+    public void CountDown()
+    {
+        // Cuenta regresiva del tiempo
+        if (_habilidadActiva)
+        {
+            _tiempoRestanteHabilidad -= Time.deltaTime;
+            if (_tiempoRestanteHabilidad <= 0)
+            {
+                _habilidadActiva = false; // Se apaga sola cuando llega a 0
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -90,11 +129,19 @@ public class PlayerController : InputHandler
     }
 
     private float GetMoveSpeed()
-{
-    if (IsIdle()) return 0f;
+    {
+        if (IsIdle()) return 0f;
 
-    return isRunning ? velocity * 1.7f : velocity;
-}
+        float velocidadFinal = isRunning ? velocity * 1.7f : velocity;
+
+        // Si el booleano es verdadero, le sumamos la velocidad extra
+        if (_habilidadActiva)
+        {
+            velocidadFinal += _extraVelocidad;
+        }
+
+        return velocidadFinal;
+    }
 
     private void UpdateSpriteFlip()
     {   
@@ -192,14 +239,30 @@ public class PlayerController : InputHandler
     {
         if (!callbackContext.performed) return;
         if (!CanUseAction()) return;
-        if (ball == null) return;
 
-        Debug.Log(name + " pateó");
+        // Evaluamos si realmente el jugador tiene asignada la pelota
+        if (ball != null && ball._currentOwnerController == this)
+        {
+            Debug.Log(name + " pateó la pelota.");
 
-        playerStateManager.ChangeState(playerStateManager.shootState);
+            if (AudioManager.Instancia != null)
+            {
+                AudioManager.Instancia.ReproducirPatada();
+            }
 
-        ball.KickBall(this);
-        ball = null;
+            playerStateManager.ChangeState(playerStateManager.shootState);
+            ball.KickBall(this);
+            ball = null; // Se limpia la referencia después de disparar
+        }
+        else
+        {
+            Debug.Log(name + " intentó patear sin tener la pelota.");
+
+            if (AudioManager.Instancia != null)
+            {
+                AudioManager.Instancia.ReproducirPatearSinPelota();
+            }
+        }
     }
 
     public void PassOrTackle(InputAction.CallbackContext callbackContext)
@@ -207,9 +270,14 @@ public class PlayerController : InputHandler
         if (!callbackContext.performed) return;
         if (!CanUseAction()) return;
 
-        if (ball != null)
+        if (ball != null && ball._currentOwnerController == this)
         {
             Debug.Log(name + " hizo pase");
+
+            if (AudioManager.Instancia != null)
+            {
+                AudioManager.Instancia.ReproducirPase();
+            }
 
             playerStateManager.ChangeState(playerStateManager.passState);
             ball.PassBall(this);
@@ -217,6 +285,11 @@ public class PlayerController : InputHandler
         else
         {
             Debug.Log(name + " hizo barrida");
+
+            if (AudioManager.Instancia != null)
+            {
+                AudioManager.Instancia.ReproducirBarrida();
+            }
 
             playerStateManager.ChangeState(playerStateManager.tackleState);
         }
@@ -280,12 +353,46 @@ public class PlayerController : InputHandler
         {
             _GoalKeeperController.enabled = isBot && isGoalKeeper;
         }
+
         if (controlSlot != ControlSlot.Bot)
         {
-        _movementDirection = Vector2.zero;
+            _movementDirection = Vector2.zero;
         }
-         UpdatePlayerIndicator();
-
+        if (_indicadorControl != null)
+        {
+            bool esJugadorHumano = controlSlot != ControlSlot.Bot && controlSlot != ControlSlot.None;
+            if(controlSlot==ControlSlot.Player1)
+            {
+                _indicadorControl.enabled = esJugadorHumano;
+                _textoIndicador.enabled = esJugadorHumano;
+            }
+            else if(controlSlot==ControlSlot.Player2)
+            {
+                if (ColorUtility.TryParseHtmlString("#F8A139", out Color colorP2))
+                {
+                    _indicadorControl.color = colorP2;
+                }
+                _textoIndicador.text = "J2";
+                _indicadorControl.enabled = esJugadorHumano;
+                _textoIndicador.enabled = esJugadorHumano;
+            }
+            else if (controlSlot == ControlSlot.Player4)
+            {
+                if (ColorUtility.TryParseHtmlString("#39EEF8", out Color colorP2))
+                {
+                    _indicadorControl.color = colorP2;
+                }
+                _textoIndicador.text = "J4";
+                _indicadorControl.enabled = esJugadorHumano;
+                _textoIndicador.enabled = esJugadorHumano;
+            }
+            else
+            {
+                _indicadorControl.enabled = false;
+                if (_textoIndicador != null) _textoIndicador.enabled = false;
+            }
+        }
+          
     }
 
     public override bool IsIdle()
@@ -313,89 +420,5 @@ public class PlayerController : InputHandler
     public float DistanceTo(Vector2 targetPosition)
     {
         return Vector2.Distance(_position,targetPosition);
-    }
-    private void CreatePlayerIndicatorIfNeeded()
-{
-    if (playerIndicator != null)
-    {
-        return;
-    }
-
-    GameObject indicatorObject = new GameObject("Player Indicator");
-    indicatorObject.transform.SetParent(transform);
-    indicatorObject.transform.localPosition = indicatorLocalPosition;
-    indicatorObject.transform.localRotation = Quaternion.identity;
-    indicatorObject.transform.localScale = Vector3.one * 0.25f;
-
-    playerIndicator = indicatorObject.AddComponent<TextMesh>();
-    playerIndicator.anchor = TextAnchor.MiddleCenter;
-    playerIndicator.alignment = TextAlignment.Center;
-    playerIndicator.characterSize = 1f;
-    playerIndicator.fontSize = 40;
-
-    MeshRenderer meshRenderer = indicatorObject.GetComponent<MeshRenderer>();
-    meshRenderer.sortingOrder = 20;
-}
-
-private void UpdatePlayerIndicator()
-{
-    CreatePlayerIndicatorIfNeeded();
-
-    if (controlSlot == ControlSlot.Bot || controlSlot == ControlSlot.None)
-    {
-        playerIndicator.gameObject.SetActive(false);
-        return;
-    }
-
-    playerIndicator.gameObject.SetActive(true);
-
-    string teamText = _team == Team.A ? "A" : "B";
-
-    if (controlSlot == ControlSlot.Player1)
-    {
-        playerIndicator.text = teamText + "1";
-    }
-    else if (controlSlot == ControlSlot.Player2)
-    {
-        playerIndicator.text = teamText + "2";
-    }
-    else if (controlSlot == ControlSlot.Player3)
-    {
-        playerIndicator.text = teamText + "3";
-    }
-    else if (controlSlot == ControlSlot.Player4)
-    {
-        playerIndicator.text = teamText + "4";
-    }
-}
-
-    public void ActivateAbility()
-    {
-        // Falta el condicional si tiene la barra de  energia completa
-        // El jugador presiona el botón de 'Ability':
-        //if (pInput != null && pInput.actions["Ability"].triggered && !_habilidadActiva && CanBeControlled())
-        {
-            Debug.Log(name + " activó su habilidad especial.");
-            _AbilityActive = false;
-            _AbilityLeftTime = 4f; 
-
-            /*if (AudioManager.Instancia != null)
-            {
-                AudioManager.Instancia.ReproducirActivarHabilidad();
-            }*/
-        }
-    }
-
-    public void CountDown()
-    {
-        // Cuenta regresiva del tiempo
-        if (_AbilityActive)
-        {
-            _AbilityLeftTime -= Time.deltaTime;
-            if (_AbilityLeftTime <= 0)
-            {
-                _AbilityActive = false; // Se apaga sola cuando llega a 0
-            }
-        }
     }
 }

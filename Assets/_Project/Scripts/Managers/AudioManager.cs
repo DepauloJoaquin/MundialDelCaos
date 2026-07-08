@@ -8,16 +8,30 @@ public class AudioManager : MonoBehaviour
     [Header("Fuentes de Audio")]
     [SerializeField] private AudioSource fuenteEfectos; // Para sonidos cortos (patada, gol, etc.)
     [SerializeField] private AudioSource fuenteMusica;  // Solo para la música de fondo
+    [SerializeField] private AudioSource SonidoHambientalContinuo;//Para la lluvia
 
     [Header("Música del Juego")]
-    [SerializeField] private AudioClip musicaMenuPrincipal; 
-    [SerializeField] private AudioClip musicaPartida;
+    [SerializeField] private AudioClip musicaMenuPrincipal; //
+    [SerializeField] private AudioClip PublicoHablando;//
+    [SerializeField] private AudioClip PublicoCantando; //
+    [SerializeField] private AudioClip LLuvia; //
+    [SerializeField] private AudioClip LLuvia2; //
 
     [Header("Efectos de Sonido")]
-    [SerializeField] private AudioClip sonidoPatada;
-    [SerializeField] private AudioClip sonidoGol;
-    [SerializeField] private AudioClip sonidoRebote;
-    [SerializeField] private AudioClip sonidoBarrida;
+    [SerializeField] private AudioClip sonidoPatada;//-
+    [SerializeField] private AudioClip sonidoGol;//-
+    [SerializeField] private AudioClip PatearSinPelota; //
+
+    //[SerializeField] private AudioClip sonidoRebote;//-
+    [SerializeField] private AudioClip sonidoBarrida;//
+    [SerializeField] private AudioClip sonidoPase;//-
+    [SerializeField] private AudioClip sonidoSilvatoInicial;//-
+    [SerializeField] private AudioClip sonidoSilvatoFinal;
+    [SerializeField] private AudioClip sonidoActivarHabilidad;//-
+    [SerializeField] private AudioClip sonidoBotonMenu;//-
+    [SerializeField] private AudioClip sonidoPantallaFinalVictoria;//-
+    [SerializeField] private AudioClip sonidoCuentaRegresiva;//-
+
 
     private void Awake()
     {
@@ -25,6 +39,7 @@ public class AudioManager : MonoBehaviour
         if (Instancia == null)
         {
             Instancia = this;
+            DontDestroyOnLoad(gameObject); // Evita que se destruya al cambiar de escena
         }
         else
         {
@@ -34,34 +49,55 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        // la musicap se asigna en el inspecto por ahora.
+        // Llama automáticamente a la música del menú en cuanto arranca el juego
+        ActivarMusicaMenu();
     }
 
-    // Métodos para reproducir música
-    public void ReproducirMusica(AudioClip cancion, bool reproducirEnBucle = true)
-    {
-        if (fuenteMusica == null || cancion == null) return;
 
-        // Si ya está sonando esa misma canción, no la reinicies
-        if (fuenteMusica.clip == cancion && fuenteMusica.isPlaying) return;
-
-        fuenteMusica.clip = cancion;
-        fuenteMusica.loop = reproducirEnBucle;
-        fuenteMusica.Play();
-    }
-
-    public void DetenerMusica()
+    // Controlar la reproducción de sonidos y música
+    public void DetenerSonidos()
     {
         if (fuenteMusica != null) fuenteMusica.Stop();
+        if (SonidoHambientalContinuo != null) SonidoHambientalContinuo.Stop();
     }
+    public void PausarSonidos()
+    {
+        if (fuenteMusica != null && fuenteMusica.isPlaying)
+        {
+            fuenteMusica.Pause();
+        }
+        if (SonidoHambientalContinuo != null && SonidoHambientalContinuo.isPlaying)
+        {
+            SonidoHambientalContinuo.Pause();
+        }
+    }
+
+    public void ReanudarMusica()
+    {
+        if (fuenteMusica != null && !fuenteMusica.isPlaying)
+        {
+            fuenteMusica.UnPause();
+        }
+
+        if (SonidoHambientalContinuo != null && !SonidoHambientalContinuo.isPlaying)
+        {
+            SonidoHambientalContinuo.UnPause();
+        }
+    }
+
+    // Métodos para activar música específica
 
     public void ActivarMusicaMenu()
     {
         ReproducirMusica(musicaMenuPrincipal);
     }
-    public void ActivarMusicaPartida() 
+    public void ActivarMusicaPartida()
     {
-        ReproducirMusica(musicaPartida); 
+        ReproducirMusica(PublicoHablando);
+    }
+    public void ActivarLluvia()
+    {
+        ReproducirSonidoHambiente(LLuvia,true);
     }
 
     //metodos para reproducir cada sonido específico
@@ -70,20 +106,54 @@ public class AudioManager : MonoBehaviour
         ReproducirSonido(sonidoPatada);
     }
 
+    public void ReproducirPatearSinPelota()
+    {
+        ReproducirSonido(PatearSinPelota);
+    }
+
     public void ReproducirGol()
     {
         ReproducirSonido(sonidoGol);
     }
 
-    public void ReproducirRebote()
+    public void ReproducirSilvatoInicial()
     {
-        ReproducirSonido(sonidoRebote);
+        ReproducirSonido(sonidoSilvatoInicial);
     }
+    public void ReproducirSilvatoFinal()
+    {
+        ReproducirSonido(sonidoSilvatoFinal);
+    }
+    public void ReproducirActivarHabilidad()
+    {
+        ReproducirSonido(sonidoActivarHabilidad);
+    }
+    public void ReproducirBotonMenu()
+    {
+        ReproducirSonido(sonidoBotonMenu);
+    }
+    public void ReproducirPantallaFinalVictoria()
+    {
+        ReproducirSonido(sonidoPantallaFinalVictoria);
+    }
+
 
     public void ReproducirBarrida()
     {
         ReproducirSonido(sonidoBarrida);
     }
+
+    public void ReproducirPase()
+    {
+        ReproducirSonido(sonidoPase);
+    }
+
+    public void ReproducirCuentaRegresiva()
+    {
+        ReproducirSonido(sonidoCuentaRegresiva);
+    }
+
+    
 
     // Método privado interno para procesar la reproducción sin repetir código
     private void ReproducirSonido(AudioClip clip)
@@ -97,5 +167,38 @@ public class AudioManager : MonoBehaviour
         {
             Debug.LogWarning("Se intentó reproducir un sonido, pero el archivo de audio (AudioClip) está vacío.");
         }
+    }
+    // Métodos para reproducir música
+    public void ReproducirMusica(AudioClip cancion, bool reproducirEnBucle = true)
+    {
+        if (fuenteMusica == null || cancion == null) return;
+
+        // Si ya está sonando esa misma canción, no la reinicies
+        if (fuenteMusica.clip == cancion && fuenteMusica.isPlaying) return;
+
+        fuenteMusica.clip = cancion;
+        fuenteMusica.loop = reproducirEnBucle;
+        fuenteMusica.Play();
+    }
+
+    public void ReproducirSonidoHambiente(AudioClip cancion, bool reproducirEnBucle = true)
+    {
+        if (SonidoHambientalContinuo == null || cancion == null) return;
+
+        // Si ya tiene ese clip asignado (esté sonando o justo en la milésima de segundo que frena), ignoramos la orden de reinicio
+        if (SonidoHambientalContinuo.clip == cancion)
+        {
+            // Si por alguna razón se pausó o detuvo legítimamente, lo reanudamos sin reiniciar el clip
+            if (!SonidoHambientalContinuo.isPlaying)
+            {
+                SonidoHambientalContinuo.Play();
+            }
+            return;
+        }
+
+        // Si es un clip nuevo de ambiente, lo configuramos de cero
+        SonidoHambientalContinuo.clip = cancion;
+        SonidoHambientalContinuo.loop = reproducirEnBucle;
+        SonidoHambientalContinuo.Play();
     }
 }

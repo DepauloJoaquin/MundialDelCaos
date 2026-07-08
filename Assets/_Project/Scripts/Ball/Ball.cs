@@ -88,11 +88,15 @@ public class Ball : MonoBehaviour
     {
         if (collision.CompareTag("ScoreForA"))
         {
+            AudioManager.Instancia.ReproducirGol();
             GameManager.Instance.RegisterTeam_A_Goal();
+            //ahora deberia resetear la posicion de la pelota y de los jugadores y tocar el silvato el arbitro
         }
         else if (collision.CompareTag("ScoreForB"))
         {
+            AudioManager.Instancia.ReproducirGol();
             GameManager.Instance.RegisterTeam_B_Goal();
+            //ahora deberia resetear la posicion de la pelota y de los jugadores y tocar el silvato el arbitro
         }
     }
 
@@ -129,7 +133,6 @@ public class Ball : MonoBehaviour
     {
         PlayerController nearestPlayer = BallPassZone.GetNearestPlayerPosition(currentOwnerController._team, currentOwnerController);
         if(nearestPlayer == null) { print("NO"); return; }
-        currentOwnerController.setBall(null);
         _passTarget = nearestPlayer.gameObject;
         Vector2 shootDirection = (_passTarget.transform.position - transform.position).normalized;
         rb.isKinematic = false;
@@ -140,6 +143,7 @@ public class Ball : MonoBehaviour
 
         float passSpeed = currentOwnerController.kickForce * 0.8f;
         rb.AddForce(shootDirection * passSpeed, ForceMode2D.Impulse);
+        currentOwnerController.setBall(null);
     }
 
     private Vector2 GetShootDirection(PlayerController currentOwnerController) //buscar keyword out
