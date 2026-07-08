@@ -14,6 +14,7 @@ public class ShirtAnimationController : InputHandler
         {
             playerController = GetComponent<PlayerController>();
         }
+        controlSlot = playerController.controlSlot;
     }
 
     private void Update()

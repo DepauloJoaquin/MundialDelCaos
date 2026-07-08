@@ -23,7 +23,7 @@ public abstract class PlayerState : MonoBehaviour
         _stateEnterTime = Time.time;
     }
     public abstract void Tick();
-    public void Exit()
+    public virtual void Exit()
     {
         _playerAnimator.speed = 1;
     }

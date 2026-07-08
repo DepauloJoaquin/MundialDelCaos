@@ -58,48 +58,4 @@
             _currentState = stateTochange;
             _currentState.Enter();
         }
-
-        // public void TickCurrentState(InputHandler.KeyPress key)
-        // {
-        //    if (_currentState == null) { return; }
-        //     _currentState.Tick(key);
-        // }
-
-        // public void TickCurrentState(string key)
-        // {
-        //     InputHandler.KeyPress localKey;
-        //     switch (key)
-        //     {
-        //         case "Pass":
-        //         {
-        //             localKey = InputHandler.KeyPress.Pass;
-        //             break;
-        //         }
-        //         case "Tackle":
-        //         {
-        //             localKey = InputHandler.KeyPress.Tackle;
-        //             break;
-        //         }
-        //         case "Run":
-        //         {
-        //             localKey = InputHandler.KeyPress.Run;
-        //             break;
-        //         }
-        //         case "Ability":
-        //         {
-        //             localKey = InputHandler.KeyPress.Ability;
-        //             break;
-        //         }
-        //         case "Shoot":
-        //         {
-        //             localKey = InputHandler.KeyPress.Shoot;
-        //             break;
-        //         } 
-        //         default:
-        //         {
-        //             return;
-        //         }
-        //     }
-        //     TickCurrentState(localKey);
-        // }
     }

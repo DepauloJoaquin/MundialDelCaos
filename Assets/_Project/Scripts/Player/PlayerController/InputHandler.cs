@@ -7,6 +7,7 @@ public abstract class InputHandler : MonoBehaviour
     public Animator animator;
     public PlayerStateManager playerStateManager;
     public PlayerInput pInput;
+    public ControlSlot controlSlot = ControlSlot.Bot;
 
     [Header("Options")]
     public float verticalInput;
@@ -88,6 +89,10 @@ public abstract class InputHandler : MonoBehaviour
         return shootAction.IsPressed();
     }
 
+    public virtual void OnSlotChange(ControlSlot newState){}
+
+    public virtual void OnStateChanges(PlayerState newState){}
+
     public enum KeyPress
     {
         Pass,
@@ -96,5 +101,15 @@ public abstract class InputHandler : MonoBehaviour
         Ability,
         Shoot,
         None
+    }
+
+    public enum ControlSlot
+    {
+        None,
+        Player1,
+        Player2,
+        Player3,
+        Player4,
+        Bot
     }
 }

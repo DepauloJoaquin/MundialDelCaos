@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,14 +8,17 @@ public class PlayerController : InputHandler
     public Team team;
     public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
-    public ControlSlot controlSlot = ControlSlot.Bot;
+    // public ControlSlot controlSlot = ControlSlot.Bot;
     [SerializeField] private string bindingGroup = "Arrows";
     [SerializeField] private bool configureInputOnAwake = true;
 
     public float velocity = 3.5f;
     public float kickForce = 2f;
+    public float tackleForce = 6f;
 
     private Ball ball;
+
+    private bool isInTackleState = false;
 
     private void Awake()
     {
@@ -36,7 +40,7 @@ public class PlayerController : InputHandler
     {
         if (!CanBeControlled())
         {
-            rigidBody.velocity = Vector2.zero;
+            CeroVelocity();
             return;
         }
 
@@ -211,15 +215,15 @@ public class PlayerController : InputHandler
     SetBall(newBall);
     }
 
-    public enum ControlSlot
-    {
-        None,
-        Player1,
-        Player2,
-        Player3,
-        Player4,
-        Bot
-    }
+    // public enum ControlSlot
+    // {
+    //     None,
+    //     Player1,
+    //     Player2,
+    //     Player3,
+    //     Player4,
+    //     Bot
+    // }
 
     public void Action(InputAction.CallbackContext callbackContext)
     {
@@ -279,5 +283,44 @@ public class PlayerController : InputHandler
         {
             return 1f;
         }
+    }
+
+    public override void OnSlotChange(ControlSlot newState)
+    {
+        ConfigureInput(newState, bindingGroup);
+    }
+
+    public override void OnStateChanges(PlayerState newState)
+    {
+        switch (newState)
+        {
+            case TackleState tackleState:
+                {
+                    StartCoroutine(RigidBodyVelocitycCorrutine());
+                    break;
+                }
+            default:
+                {
+                    break;
+                }
+        }
+    }
+
+    public void CeroVelocity()
+    {
+        if(isInTackleState && rigidBody.velocity == Vector2.zero)
+        {
+            rigidBody.AddForce(new Vector2(GetHorizontalForceKick(), 0) * tackleForce, ForceMode2D.Impulse);
+            return;
+        }
+        rigidBody.velocity = Vector2.zero;
+    }
+
+    public IEnumerator RigidBodyVelocitycCorrutine()
+    {
+        rigidBody.velocity = Vector2.zero;
+        isInTackleState = true;
+        yield return new WaitForSeconds(1f);
+        isInTackleState = false;
     }
 }
