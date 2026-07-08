@@ -2,8 +2,10 @@
     using System.Collections.Generic;
     using UnityEngine;
     using System.Linq;
+using UnityEngine.UI;
+using Unity.VisualScripting;
 
-    public class TeamController : MonoBehaviour
+public class TeamController : MonoBehaviour
     {   
         [SerializeField] private float forceFalloff = 0.5f;
 
@@ -37,7 +39,141 @@
         [SerializeField] private float forceUpdateInterval = 0.15f;
         private float forceUpdateTimer = 0f;
         private int _currentBotPositionIndex = 0;
+        [Header("Stamina")]
+        [SerializeField] Slider StaminaBar;
+        [SerializeField] private float maxStamina = 100f;
+        [SerializeField] private float currentStamina = 100f;
+        [SerializeField] private float staminaDrainPerSecond = 25f;
+        [SerializeField] private float staminaBoostMultiplier = 1.7f;
+        private bool staminaBoostActive = false;
+        private PlayerController staminaPlayer;
+        private bool staminaWasRefilledAt50 = false;
 
+
+   void Update()
+    {
+        if (!GameStateManager.Instance.IsOnPlayState())
+        {
+            return;
+        }
+
+        forceUpdateTimer += Time.deltaTime;
+
+        if (forceUpdateTimer >= forceUpdateInterval)
+        {
+            forceUpdateTimer = 0f;
+            ApplyBaseForceTowardsBall();
+        }
+
+        UpdateStamina();
+        RefillStaminaWhenTimerIs50();
+    }
+    private void UpdateStamina()
+    {
+        UpdateStaminaBar();
+
+        PlayerController playerUsingStamina = GetPlayerUsingStamina();
+
+        if (playerUsingStamina == null)
+        {
+            staminaBoostActive = false;
+            staminaPlayer = null;
+            return;
+        }
+
+        if (currentStamina <= 0f)
+        {
+            currentStamina = 0f;
+            staminaBoostActive = false;
+            staminaPlayer = null;
+            UpdateStaminaBar();
+            return;
+        }
+
+        staminaBoostActive = true;
+        staminaPlayer = playerUsingStamina;
+
+        currentStamina -= staminaDrainPerSecond * Time.deltaTime;
+        currentStamina = Mathf.Clamp(currentStamina, 0f, maxStamina);
+
+        UpdateStaminaBar();
+        }
+    private PlayerController GetPlayerUsingStamina()
+    {
+    PlayerController ballOwner = GameManager.Instance._ballController._currentOwnerController;
+
+    if (ballOwner == null)
+    {
+        return null;
+    }
+
+    if (ballOwner._myTeamController != this)
+    {
+        return null;
+    }
+
+    if (ballOwner.controlSlot == PlayerController.ControlSlot.Bot)
+    {
+        return null;
+    }
+
+    if (!ballOwner.selected)
+    {
+        return null;
+    }
+
+    if (!ballOwner._habilidadActiva)
+    {
+        return null;
+    }
+
+    return ballOwner;
+    }
+    private void UpdateStaminaBar()
+{
+    if (StaminaBar == null)
+    {
+        return;
+    }
+
+    StaminaBar.maxValue = maxStamina;
+    StaminaBar.value = currentStamina;
+}
+private void RefillStaminaWhenTimerIs50()
+{
+    float tiempoRestante = GameManager.Instance.GetTiempoRestante();
+
+    if (tiempoRestante <= 10f && !staminaWasRefilledAt50)
+    {
+        currentStamina = maxStamina;
+        staminaWasRefilledAt50 = true;
+        UpdateStaminaBar();
+    }
+
+    if (tiempoRestante > 50f)
+    {
+        staminaWasRefilledAt50 = false;
+    }
+}
+ public float GetStaminaSpeedMultiplier(PlayerController player)
+{
+    if (!staminaBoostActive)
+    {
+        return 1f;
+    }
+
+    if (staminaPlayer != player)
+    {
+        return 1f;
+    }
+
+    if (currentStamina <= 0f)
+    {
+        return 1f;
+    }
+
+    return staminaBoostMultiplier;
+}
         void Awake()
         {
             _OurGoalScript = _thisTeamGoal.GetComponent<GoalScript>();
@@ -57,17 +193,6 @@
         GameStateManager.Instance.OnMatchResumed -= ResumeAllPlayersBehaviours;
     }
 
-
-    void Update()
-        {
-            forceUpdateTimer += Time.deltaTime;
-
-            if (forceUpdateTimer >= forceUpdateInterval)
-            {
-                forceUpdateTimer = 0f;
-                ApplyBaseForceTowardsBall();
-            }
-        }
     public void SpawnBots()
         {   Debug.Log("entre");
              if (botsSpawned)

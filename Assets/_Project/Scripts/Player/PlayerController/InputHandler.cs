@@ -88,13 +88,36 @@ public abstract class InputHandler : MonoBehaviour
         return shootAction.IsPressed();
     }
 
-    public bool AbilityPressed(){
-        if (!selected) return false;
-        if (pInput == null) return false;
-        InputAction AbilityAction = pInput.actions.FindAction("Ability", false);
-        if (AbilityAction == null) return false;
-        return AbilityAction.IsPressed();
+   public bool AbilityPressed()
+{
+    if (!selected)
+    {
+        Debug.Log(name + " no está selected");
+        return false;
     }
+
+    if (pInput == null)
+    {
+        Debug.LogError(name + " no tiene PlayerInput asignado");
+        return false;
+    }
+
+    InputAction abilityAction = pInput.actions.FindAction("Ability", false);
+
+    if (abilityAction == null)
+    {
+        Debug.LogError("No existe la acción Ability en el Input Actions");
+        return false;
+    }
+
+    if (abilityAction.IsPressed())
+    {
+        Debug.Log("Ability presionada");
+        return true;
+    }
+
+    return false;
+}
 
     public enum KeyPress
     {

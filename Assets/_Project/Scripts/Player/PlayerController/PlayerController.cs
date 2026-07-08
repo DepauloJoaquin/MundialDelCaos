@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.UI;
 
 public class PlayerController : InputHandler
 {
@@ -40,38 +41,35 @@ public class PlayerController : InputHandler
         GetComponents();
     }
 
-    private void Update()
-    {   
-        if (!GameStateManager.Instance.IsOnPlayState())
-        {
-            return;
-        }
-        
-
-        _position = transform.position;
-        UpdateDirections();
-        UpdateSpriteFlip();
-        ActivateHabilidad();
-        //CountDown();
-
-
+   private void Update()
+{   
+    if (!GameStateManager.Instance.IsOnPlayState())
+    {
+        return;
     }
 
-    public void ActivateHabilidad()
+    _position = transform.position;
+    UpdateDirections();
+    UpdateSpriteFlip();
+    CountDown();
+}
+
+    public void Ability(InputAction.CallbackContext callbackContext)
     {
-        // Falta el condicional si tiene la barra de  energia completa
-        // El jugador presiona el botón de 'Ability':
-        if (pInput != null && pInput.actions["Ability"].triggered && !_habilidadActiva && CanBeControlled())
-        {
+            if (!callbackContext.performed) return;
+            if (!CanUseAction()) return;
+            
+            
+       
             Debug.Log(name + " activó su habilidad especial.");
             _habilidadActiva = true;
-            _tiempoRestanteHabilidad = 4f; 
+            _tiempoRestanteHabilidad = 4f;
+            velocity += _extraVelocidad;
 
             if (AudioManager.Instancia != null)
             {
                 AudioManager.Instancia.ReproducirActivarHabilidad();
             }
-        }
     }
 
     public void CountDown()
@@ -141,19 +139,23 @@ public class PlayerController : InputHandler
     }
 
     private float GetMoveSpeed()
+{
+    if (IsIdle()) return 0f;
+
+    float velocidadFinal = velocity;
+
+    if (isRunning && _myTeamController != null)
     {
-        if (IsIdle()) return 0f;
-
-        float velocidadFinal = isRunning ? velocity * 1.7f : velocity;
-
-        // Si el booleano es verdadero, le sumamos la velocidad extra
-        if (_habilidadActiva)
-        {
-            velocidadFinal += _extraVelocidad;
-        }
-
-        return velocidadFinal;
+        velocidadFinal *= _myTeamController.GetStaminaSpeedMultiplier(this);
     }
+
+    if (_habilidadActiva)
+    {
+        velocidadFinal += _extraVelocidad;
+    }
+
+    return velocidadFinal;
+}
 
     private void UpdateSpriteFlip()
     {   

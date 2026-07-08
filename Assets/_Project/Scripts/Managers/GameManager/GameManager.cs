@@ -148,6 +148,11 @@ public class GameManager : MonoBehaviour
     {   
         MatchEndUIDecition();
     }
+
+    public float GetTiempoRestante()
+{
+    return _tiempoRestante;
+}
     
 
     public void ChangedCountryUpTeamA()
