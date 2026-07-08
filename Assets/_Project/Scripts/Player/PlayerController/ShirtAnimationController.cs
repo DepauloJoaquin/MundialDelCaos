@@ -20,7 +20,7 @@ public class ShirtAnimationController : InputHandler
     {
         UpdateDirections();
         UpdateSpriteFlip();
-        UpdateSelection();
+        UpdateSelection(); 
     }
 
     public override void UpdateDirections()

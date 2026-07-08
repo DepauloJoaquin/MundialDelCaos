@@ -240,32 +240,44 @@ public class PlayerController : InputHandler
 
     private Vector2 GetShootDirectionKeyboard()
     {
-        float verticalDirection = verticalInput; //- GetShootOffset(verticalInput); //(1, 0, -1)
-        float horizontalDirection = horizontalInput; //(1, 0, -1)
+        float verticalDirection = verticalInput - GetShootVerticalOffset(verticalInput); //(1, 0, -1)
+        float horizontalDirection = GetHorizontalForceKick(); //(1, 0, -1)
         return new Vector2(horizontalDirection, verticalDirection);
     }
 
     private Vector2 GetShootDirectionGamepad()
     {
         float verticalDirection = verticalInput; 
-        float horizontalDirection = horizontalInput; 
+        float horizontalDirection = GetHorizontalForceKick(); 
         return new Vector2(horizontalDirection, verticalDirection);
     }
 
-    private float GetShootOffset(float input)
+    private float GetShootVerticalOffset(float input)
     {
         if(Mathf.Sign(input) > 0)
         {
+            if (input == 0)
+            {
+                return 0f;
+            }
+
             return 0.4f;
-        }
-        else if (Mathf.Sign(input) < 0)
-        {
-            return -0.4f;
         }
         else
         {
-            return 0f;
+            return -0.4f;
         }
-        
+    }
+
+    private float GetHorizontalForceKick()
+    {
+        if(spriteRenderer.flipX)
+        {
+            return -1f;
+        }
+        else
+        {
+            return 1f;
+        }
     }
 }

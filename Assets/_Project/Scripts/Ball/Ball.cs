@@ -123,7 +123,7 @@ public class Ball : MonoBehaviour
     public void PassBall(PlayerController currentOwnerController)
     {
         PlayerController nearestPlayer = BallPassZone.GetNearestPlayerPosition(currentOwnerController.team, currentOwnerController);
-        if(nearestPlayer == null) { print("NO"); return; }
+        if(nearestPlayer == null) { return; }
 
         currentOwnerController.setBall(null);
         _passTarget = nearestPlayer.transform.GetChild(1).gameObject;

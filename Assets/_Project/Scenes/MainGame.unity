@@ -172,7 +172,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 513487062495154035, guid: ac4792c23a505494a861ca42c9181f9a, type: 3}
       propertyPath: controlSlot
-      value: 5
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 513487062495154035, guid: ac4792c23a505494a861ca42c9181f9a, type: 3}
+      propertyPath: bindingGroup
+      value: Gamepad
       objectReference: {fileID: 0}
     - target: {fileID: 3325976304563632852, guid: ac4792c23a505494a861ca42c9181f9a, type: 3}
       propertyPath: m_Name
@@ -180,7 +184,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4298268059283685189, guid: ac4792c23a505494a861ca42c9181f9a, type: 3}
       propertyPath: m_DefaultControlScheme
-      value: 
+      value: Gamepad
       objectReference: {fileID: 0}
     - target: {fileID: 5623647421358987113, guid: ac4792c23a505494a861ca42c9181f9a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1221,7 +1225,7 @@ Camera:
   far clip plane: 1000
   field of view: 53.559864
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

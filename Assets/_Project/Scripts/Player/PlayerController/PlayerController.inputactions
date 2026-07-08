@@ -176,10 +176,10 @@
                 {
                     "name": "up",
                     "id": "471c3dab-a688-4158-b7ee-b68154509218",
-                    "path": "",
+                    "path": "<Gamepad>/leftStick/up",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Gamepad",
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -187,10 +187,10 @@
                 {
                     "name": "down",
                     "id": "56ee8f2c-ff82-423c-8dcb-b31214c85af4",
-                    "path": "",
+                    "path": "<Gamepad>/leftStick/down",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Gamepad",
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -198,10 +198,10 @@
                 {
                     "name": "left",
                     "id": "d71b28ac-4d00-433a-a84f-988135b03ffc",
-                    "path": "",
+                    "path": "<Gamepad>/leftStick/left",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Gamepad",
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -209,24 +209,13 @@
                 {
                     "name": "right",
                     "id": "b853acc2-c5a5-42c6-8ebb-041f935357b9",
-                    "path": "",
+                    "path": "<Gamepad>/leftStick/right",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
-                },
-                {
-                    "name": "",
-                    "id": "8785f7b1-75db-4d01-8812-a09af51b6295",
-                    "path": "<Gamepad>/leftStick",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Movement",
-                    "isComposite": false,
-                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -246,6 +235,17 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Arrows",
+                    "action": "PassTackle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "98ebb6d5-f7d7-4163-a044-033b42bbf66f",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
                     "action": "PassTackle",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -274,6 +274,17 @@
                 },
                 {
                     "name": "",
+                    "id": "fcb6dc9e-7b7a-40da-8dfc-d492c9f43b7b",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Run",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "8a1b228b-5c3b-4aad-b344-98f2e375619e",
                     "path": "<Keyboard>/j",
                     "interactions": "",
@@ -296,6 +307,17 @@
                 },
                 {
                     "name": "",
+                    "id": "54f8b1ae-baaa-4e77-b59a-5969ab15901c",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "abe5ff45-3f52-4cb8-b780-663fa91f3348",
                     "path": "<Keyboard>/l",
                     "interactions": "",
@@ -312,6 +334,17 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Arrows",
+                    "action": "Ability",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a3363a05-e0f3-45c7-b666-5c8444d9465e",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
                     "action": "Ability",
                     "isComposite": false,
                     "isPartOfComposite": false
