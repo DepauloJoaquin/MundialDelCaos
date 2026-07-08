@@ -2,11 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using Microsoft.Unity.VisualStudio.Editor;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
 
@@ -65,7 +63,7 @@ public class GameManager : MonoBehaviour
     public event Action<Sprite> OnChangeCountryTeamA;
     public event Action<Sprite> OnChangeFlagTeamB;
     public event Action<Sprite> OnChangeCountryTeamB;
-
+    private bool botsAlreadySpawned = false;
     public TeamController _teamAController;
     public TeamController _teamBController;
     private int _goalsTeam_A = 0;
@@ -254,6 +252,18 @@ public class GameManager : MonoBehaviour
     public void StartMatch()
     {
         OnScoreChanged?.Invoke(_goalsTeam_A,_goalsTeam_B);
+
+
+        if (botsAlreadySpawned)
+        {
+            return;
+        }
+
+        _teamAController.SpawnBots();
+        _teamBController.SpawnBots();
+
+        botsAlreadySpawned = true;
+
     }
     public void SelectTeam()
     {
@@ -271,113 +281,96 @@ public class GameManager : MonoBehaviour
         
     }
 
-  
-
-    /*
-    void ReanudarPartida()
+    public string HexadecimalColorByCountryPosition(int countryPositionOnList)
     {   
-         if (_partidaTerminada)
+        string hexcolor;
+        switch (countryPositionOnList)
         {
-            return;
+            case 1:
+                hexcolor = "#FFFFFF";
+                break;
+            case 2:
+                hexcolor = "#70AFDA";
+                break;
+            case 3:
+                hexcolor =  "#056E38";
+                break;
+            case 4:
+                hexcolor = "#F7DB0D" ;
+                break;
+            case 5:
+                hexcolor = "#09236F";
+                break;
+            case 6:
+                hexcolor = "#A61327";
+                break;
+            case 7:
+                hexcolor ="#2A3655";
+                break;
+            default:
+                hexcolor = "#0A60AB";
+                break;
+
         }
- 
+        return hexcolor;
+    }
 
-        // Más adelante:
-        // UIManager.Instance.OcultarMenuPausa();
-        // AudioManager.Instance.ReanudarMusica();
+    public Color ObtainColorByHexa(string hexadecimalColor)
+    {
+     
+        Color color;
 
+        ColorUtility.TryParseHtmlString(hexadecimalColor, out color);
+
+        return color;
     }
 
 
-    void StartMatch()
-    {
-        Time.timeScale =1f;
-    }
     
-    void TerminarPartida()
-    {
 
 
-        // Más adelante:
-        // UIManager.Instance.MostrarPantallaFinal();
-        // AudioManager.Instance.ReproducirSonidoFinPartida();
-   }
- 
+
+
 
     
-   // void CongelarComportamientosDeLosEquipos()
-    //{
-         /*
-        Más adelante:
-        - Avisar a los TeamController que bloqueen movimiento.
-        - Bloquear disparos, barridas y habilidades.
-        */
-    //}
+
     
-    
-    
+
+
     /*
-    public void ActualizarMarcadores()
-    {   //UIManager
-        /*_marcadorEquipoA.text = _golesEquipoA.ToString();
-        _marcadorEquipoB.text = _golesEquipoB.ToString();*/
-
-    //}
-    
-/*
-    void PrepararPartida()
+    void HandleGameEventByGameState(GameState state)
     {
-        ReiniciarPartida();
-
-
-
-        _tiempoRestante = _tiempoInicial;
-    }
-    */
-    
-    
-    
-    /*void ReiniciarEquipos()
-    {
-        ReiniciarEquipoA();
-        ReiniciarEquipoB();
-    }
-
-    void ReiniciarEquipoA()
-    {
-        /*
-        Reiniciar Posiciones
-        Reiniciar habilidades
-        Reiniciar UI Habilidad
-        */
-    //}
-    /* void ReiniciarEquipoB()
-    {
-        /*
-        Reiniciar Posiciones
-        Reiniciar habilidades
-        Reiniciar UI Habilidad
-        */
-    //}
-    
-    //void ReiniciarPosicionPelota()
-    //{
-          /*
-        Más adelante:
-        - Enviar la pelota al centro de la cancha.
-        - Frenar su velocidad.
-        */
-    //}
-
-//    void ReiniciarMarcadores()
-    //{
-        //Llamar a UIManager
-    //}
-
-//    void ReiniciarTiempo()
-    //{
-    //    
-    //}//
+        switch (state)
+        {
+            case GameState.MainMenu:
+                 OnMainMenu?.Invoke();
+                 break;
+            case GameState.Paused:
+                OnMatchPaused?.Invoke();
+                break;
+            case GameState.Start:
+                OnMatchStarted?.Invoke();
+                break;
+            case GameState.Restart:
+                OnMatchRestart?.Invoke();
+                break;
+            case GameState.OptionsMenu:
+                 OnOptionsMenu?.Invoke();
+                 break;
+            case GameState.End:
+                OnMatchEnded?.Invoke();
+                break;
+            case GameState.SelectTeamMenu:
+                OnMainSelectedTeamMenu?.Invoke();
+                break;
+            case GameState.Playing:
+                OnMatchResumed?.Invoke();
+                break;
+            case GameState.Goal:
+                OnGoalScored?.Invoke();
+                break;            
+        }
+    }*/
 
     
 

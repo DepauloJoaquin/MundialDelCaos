@@ -16,16 +16,6 @@ public class PlayerInputManager : MonoBehaviour
     private bool botsTeamASpawned = false;
     private bool botsTeamBSpawned = false;
 
-
-
-    void Start()
-    {
-        _teamAController.SpawnBots(_teamAController._amountBots);
-        _teamBController.SpawnBots(_teamBController._amountBots);
-
-        botsTeamASpawned = true;
-        botsTeamBSpawned = true;
-    }
      void Update()
      {
         if (Keyboard.current != null)

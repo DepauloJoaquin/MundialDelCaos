@@ -23,6 +23,8 @@
         private int _amountHumanPlayers = 0;
         public int _amountBots;
 
+        private bool botsSpawned = false;
+
         [SerializeField] private GameObject _prefabPlayer;
 
         public PlayerController _currentSelectedPlayer1;
@@ -34,7 +36,6 @@
         private InputDevice _player2Device;
         [SerializeField] private float forceUpdateInterval = 0.15f;
         private float forceUpdateTimer = 0f;
-
         private int _currentBotPositionIndex = 0;
 
         void Awake()
@@ -43,15 +44,7 @@
             _OurScoreZone = _thisTeamGoal.transform.GetChild(0).gameObject;
         }
 
-        void OnEnable()
-        {
- 
-        }
-
-        void OnDisable()
-        {
         
-        }
         void Update()
         {
             forceUpdateTimer += Time.deltaTime;
@@ -62,9 +55,14 @@
                 ApplyBaseForceTowardsBall();
             }
         }
-    public void SpawnBots(int amountBots)
-        {   
-            for (int i = 0; i < amountBots; i++)
+    public void SpawnBots()
+        {   Debug.Log("entre");
+             if (botsSpawned)
+            {
+                return;
+            }
+            
+            for (int i = 0; i < _amountBots; i++)
             {
                 GameObject spawnPoint = _availablePositions[_currentBotPositionIndex];
 
@@ -81,15 +79,7 @@
                 playerController._spawnPosition = spawnPoint.transform.position;
                 playerController._position = spawnPoint.transform.position;
                 playerController._formationSlot = _currentBotPositionIndex;
-                if(team == Team.B)
-                {
-                   playerController.spriteRenderer.flipX = true;
-                   ShirtAnimationController shirtAnimationController =
-                   newPlayer.GetComponentInChildren<ShirtAnimationController>();
-                   shirtAnimationController.playerController = playerController;
-                   shirtAnimationController.ChangeColor(Color.red);
-                }
-               
+                SelectPlayerShirtByTeam(newPlayer,playerController);
                 if(_currentBotPositionIndex == 0)
                 {
                     playerController._role = PlayerController.Role.GoalKeeper;
@@ -105,6 +95,8 @@
 
                 _currentBotPositionIndex += 1;
             }
+            botsSpawned = true;
+
         }
         public (PlayerController,PlayerController) CurrentPlayers()
         {    PlayerController firstPlayer = null;
@@ -248,14 +240,7 @@
             );
 
             PlayerController playerController = newPlayer.GetComponent<PlayerController>();
-            if(team == Team.B)
-            {
-                playerController.spriteRenderer.flipX = true;
-                ShirtAnimationController shirtAnimationController =
-                newPlayer.GetComponentInChildren<ShirtAnimationController>();
-                shirtAnimationController.playerController = playerController;
-                shirtAnimationController.ChangeColor(Color.red);
-            }
+            SelectPlayerShirtByTeam(newPlayer,playerController);
 
             playerController._myTeamController = this;
             playerController._team = team;
@@ -330,6 +315,37 @@
             AssignPlayer2(receiver);
         }
         }
+
+        void SelectPlayerShirtByTeam(GameObject newPlayer, PlayerController playerController)
+        {
+           if(team == Team.B)
+            {   
+                playerController.spriteRenderer.flipX = true;
+                ShirtAnimationController shirtAnimationController =
+                newPlayer.GetComponentInChildren<ShirtAnimationController>();
+                int playerBCountry = GameManager.Instance.CountrySelectedTeamB;
+                string hexadecimalColor = GameManager.Instance.HexadecimalColorByCountryPosition(playerBCountry);
+                Color playerShirtColor = GameManager.Instance.ObtainColorByHexa(hexadecimalColor);
+                shirtAnimationController.playerController = playerController;
+                shirtAnimationController.ChangeColor(playerShirtColor);
+
+
+            }
+            else
+            {   
+                ShirtAnimationController shirtAnimationController =
+                newPlayer.GetComponentInChildren<ShirtAnimationController>();
+                int playerACountry = GameManager.Instance.CountrySelectedTeamA;
+                string hexadecimalColor = GameManager.Instance.HexadecimalColorByCountryPosition(playerACountry);
+                Color playerShirtColor = GameManager.Instance.ObtainColorByHexa(hexadecimalColor);
+                shirtAnimationController.playerController = playerController;
+                shirtAnimationController.ChangeColor(playerShirtColor);
+            }
+        }
+
+       
+
+
     }
 
     

@@ -252,6 +252,17 @@
                 },
                 {
                     "name": "",
+                    "id": "500f2daa-f877-42ae-81f8-c7f1e71581ba",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Pass/Tackle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "6eb8c7a8-b645-41a9-a911-4a9cca161f7e",
                     "path": "<Keyboard>/ctrl",
                     "interactions": "",
@@ -264,10 +275,21 @@
                 {
                     "name": "",
                     "id": "de619816-fe41-4306-949b-cd7d6c82ea1a",
-                    "path": "<Keyboard>/ctrl",
+                    "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
                     "groups": ";WASD",
+                    "action": "Run",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a120334e-06e3-463d-88f0-93828d788659",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
                     "action": "Run",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -296,6 +318,17 @@
                 },
                 {
                     "name": "",
+                    "id": "f2422ea4-d458-4229-9c6b-dea913108b61",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "abe5ff45-3f52-4cb8-b780-663fa91f3348",
                     "path": "<Keyboard>/l",
                     "interactions": "",
@@ -312,6 +345,17 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Arrows",
+                    "action": "Ability",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b41f9401-835b-4cce-a687-b6519a24b726",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
                     "action": "Ability",
                     "isComposite": false,
                     "isPartOfComposite": false
