@@ -47,10 +47,14 @@
     void OnEnable()
     {
         GameStateManager.Instance.OnGoalScored += ResetAllPlayers;
+        GameStateManager.Instance.OnMatchPaused += PauseAllPlayersBehaviours;
+        GameStateManager.Instance.OnMatchResumed += ResumeAllPlayersBehaviours;
     }
     void OnDisable()
     {
-         GameStateManager.Instance.OnGoalScored -= ResetAllPlayers;
+        GameStateManager.Instance.OnGoalScored -= ResetAllPlayers;
+        GameStateManager.Instance.OnMatchPaused -= PauseAllPlayersBehaviours;
+        GameStateManager.Instance.OnMatchResumed -= ResumeAllPlayersBehaviours;
     }
 
 
@@ -349,6 +353,31 @@
                 shirtAnimationController.playerController = playerController;
                 shirtAnimationController.ChangeColor(playerShirtColor);
             }
+        }
+
+        public void PauseAllPlayersBehaviours()
+        {
+        foreach (PlayerController player in _allPlayersControllers)
+        {
+            if (player == null)
+            {
+                continue;
+            }
+
+            player.PauseBehaviours();
+        }
+        }
+        public void ResumeAllPlayersBehaviours()
+        {
+        foreach (PlayerController player in _allPlayersControllers)
+        {
+            if (player == null)
+            {
+                continue;
+            }
+
+            player.ResumeBehaviours();
+        }
         }
 
        

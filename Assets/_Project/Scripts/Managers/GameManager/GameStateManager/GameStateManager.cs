@@ -124,6 +124,7 @@ public class GameStateManager : MonoBehaviour
     public void RestartMatch()
     {
         ChangeState(new RestartState());
+        StartCoroutine(ReturnToMainMenuAfterRestart());
     }
 
     public void EndMatch()
@@ -148,6 +149,17 @@ public class GameStateManager : MonoBehaviour
     public bool IsOnPlayState()
     {
         return _currentGameState.StateType == GameState.Playing;
+    }
+
+    private IEnumerator ReturnToMainMenuAfterRestart()
+    {
+        yield return new WaitForSeconds(1f);
+        ChangeState(new MainMenuState());
+    }
+
+    public IGameState CurrentGameState()
+    {
+        return _currentGameState;
     }
 
  

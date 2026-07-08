@@ -25,6 +25,7 @@ public class PlayerController : InputHandler
     public int _formationSlot;
     public float velocity = 3.5f;
     public float kickForce = 2f;
+    private bool _matchPaused = false;
     private Ball ball;
     public TextMeshPro _textoIndicador;
 
@@ -40,7 +41,13 @@ public class PlayerController : InputHandler
     }
 
     private void Update()
-    {
+    {   
+        if (!GameStateManager.Instance.IsOnPlayState())
+        {
+            return;
+        }
+        
+
         _position = transform.position;
         UpdateDirections();
         UpdateSpriteFlip();
@@ -82,7 +89,12 @@ public class PlayerController : InputHandler
 
     private void FixedUpdate()
     {
-        
+        if (!GameStateManager.Instance.IsOnPlayState())
+        {
+            rigidBody.velocity = Vector2.zero;
+            return;
+        }
+
         if(controlSlot == ControlSlot.Bot)
         {
             rigidBody.velocity = _movementDirection;
@@ -237,6 +249,11 @@ public class PlayerController : InputHandler
 
     public void Shoot(InputAction.CallbackContext callbackContext)
     {
+        if (!GameStateManager.Instance.IsOnPlayState())
+        {
+            return;
+        }
+
         if (!callbackContext.performed) return;
         if (!CanUseAction()) return;
 
@@ -251,7 +268,7 @@ public class PlayerController : InputHandler
             }
 
             playerStateManager.ChangeState(playerStateManager.shootState);
-            ball.KickBall(this);
+            ball.OnKick(this);
             ball = null; // Se limpia la referencia después de disparar
         }
         else
@@ -264,9 +281,65 @@ public class PlayerController : InputHandler
             }
         }
     }
+    public Vector2 GetShootDirection() {
+        if(bindingGroup == "Arrows" || bindingGroup == "WASD")
+        {
+            return GetShootDirectionKeyboard();
+        }
+        else
+        {
+            return GetShootDirectionGamepad();
+        }
+    }
+
+
+private Vector2 GetShootDirectionKeyboard()
+    {
+        float verticalDirection = verticalInput - GetShootVerticalOffset(verticalInput); //(1, 0, -1)
+        float horizontalDirection = GetHorizontalForceKick(); //(1, 0, -1)
+        return new Vector2(horizontalDirection, verticalDirection);
+    }
+
+    private Vector2 GetShootDirectionGamepad()
+    {
+        float verticalDirection = verticalInput; 
+        float horizontalDirection = GetHorizontalForceKick(); 
+        return new Vector2(horizontalDirection, verticalDirection);
+    }
+ private float GetHorizontalForceKick()
+    {
+        if(spriteRenderer.flipX)
+        {
+            return -1f;
+        }
+        else
+        {
+            return 1f;
+        }
+    }
+
+private float GetShootVerticalOffset(float input)
+    {
+        if(Mathf.Sign(input) > 0)
+        {
+            if (input == 0)
+            {
+                return 0f;
+            }
+
+            return 0.4f;
+        }
+        else
+        {
+            return -0.4f;
+        }
+    }
 
     public void PassOrTackle(InputAction.CallbackContext callbackContext)
-    {
+    {    if (!GameStateManager.Instance.IsOnPlayState())
+        {
+            return;
+        }
         if (!callbackContext.performed) return;
         if (!CanUseAction()) return;
 
@@ -507,5 +580,56 @@ private void ActivateIndicatorByTeamB(SpriteRenderer indicator)
         _textoIndicador.enabled = true;
         _textoIndicador.text = text;
     }
-}
+    }
+    public void PauseBehaviours()
+    {
+    _matchPaused = true;
+
+    if (rigidBody != null)
+    {
+        rigidBody.velocity = Vector2.zero;
+        rigidBody.angularVelocity = 0f;
+    }
+
+    if (_AIController != null)
+    {
+        _AIController.enabled = false;
+    }
+
+    if (_GoalKeeperController != null)
+    {
+        _GoalKeeperController.enabled = false;
+    }
+
+    if (pInput != null)
+    {
+        pInput.DeactivateInput();
+    }
+
+    _movementDirection = Vector2.zero;
+    horizontalInput = 0;
+    verticalInput = 0;
+    isRunning = false;
+    }
+    public void ResumeBehaviours()
+    {
+    _matchPaused = false;
+
+    if (controlSlot == ControlSlot.Bot)
+    {
+        SetControlSlot(ControlSlot.Bot);
+        return;
+    }
+
+    if (controlSlot != ControlSlot.None)
+    {
+        if (pInput != null)
+        {
+            pInput.ActivateInput();
+            pInput.SwitchCurrentActionMap("Player");
+        }
+
+        SetControlSlot(controlSlot);
+    }
+    }
 }

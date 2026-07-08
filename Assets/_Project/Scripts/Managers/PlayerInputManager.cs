@@ -15,6 +15,10 @@ public class PlayerInputManager : MonoBehaviour
     private bool arrowsJoined = false;
     private bool botsTeamASpawned = false;
     private bool botsTeamBSpawned = false;
+    public GameObject _waitingRoom;
+
+    private int nextPlayerImageIndex = 1;
+    private const int maxPlayers = 4;
 
      void Update()
      {
@@ -24,12 +28,16 @@ public class PlayerInputManager : MonoBehaviour
             {
                 _teamAController.AddPlayerToTeam("WASD", Keyboard.current);
                 wasdJoined = true;
+                ActivateNextPlayerImage();
+             
             }
 
             if (!arrowsJoined && Keyboard.current.numpad7Key.wasPressedThisFrame)
             {
                 _teamAController.AddPlayerToTeam("Arrows", Keyboard.current);
                 arrowsJoined = true;
+                ActivateNextPlayerImage();
+               
             }
         }
         
@@ -41,28 +49,72 @@ public class PlayerInputManager : MonoBehaviour
             }
 
             if (gamepad.startButton.wasPressedThisFrame)
-            {
-                AddGamepadToAvailableTeam(gamepad);
-                joinedGamepads.Add(gamepad);
+            {   
+                bool added = AddGamepadToAvailableTeam(gamepad);
+                 if (added)
+                {
+                    joinedGamepads.Add(gamepad);
+                    ActivateNextPlayerImage();
+                }
             }
         }
 
      }
 
-     private void AddGamepadToAvailableTeam(Gamepad gamepad)
+       private bool AddGamepadToAvailableTeam(Gamepad gamepad)
     {
         if (_teamAController.HasFreeHumanSlot())
         {
             _teamAController.AddPlayerToTeam("Gamepad", gamepad);
-            return;
+            return true;
         }
 
         if (_teamBController.HasFreeHumanSlot())
         {
             _teamBController.AddPlayerToTeam("Gamepad", gamepad);
-            return;
+            return true;
         }
 
         Debug.Log("Ya hay 4 jugadores humanos en total.");
+        return false;
+    }
+
+    void ActivatePlayer(GameObject playerImage)
+    {
+        playerImage.SetActive(true);    
+    }
+    void DesactivatePlayer(GameObject playerImage)
+    {
+        playerImage.SetActive(false);    
+    }
+
+    private GameObject ImageOfPlayer(int numberOfplayer)
+    {
+        return _waitingRoom.transform.Find($"Jugador {numberOfplayer}").gameObject;
+    }
+
+      private void ActivateNextPlayerImage()
+    {
+        if (nextPlayerImageIndex > maxPlayers)
+        {
+            return;
+        }
+
+        ActivatePlayer(ImageOfPlayer(nextPlayerImageIndex));
+        nextPlayerImageIndex++;
+    }
+    public void DesactivateAllPlayers()
+    {
+    for (int i = 1; i <= 4; i++)
+    {
+        GameObject playerImage = ImageOfPlayer(i);
+
+        if (playerImage != null)
+        {
+            DesactivatePlayer(playerImage);
+        }
+    }
+
+    nextPlayerImageIndex = 1;
     }
 }

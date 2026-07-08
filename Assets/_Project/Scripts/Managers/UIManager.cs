@@ -29,6 +29,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject _panelPausa;
     [SerializeField] private GameObject _panelPantallaFinal;
     [SerializeField] private GameObject _panelPantallaInicial;
+    [SerializeField] private GameObject _panelPantallaEmpate;
+
 
     [Header("Country")]
     [SerializeField] private GameObject _shirtTeamA;
@@ -39,6 +41,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject _flagGoalTeamB;
     [SerializeField] private GameObject _flagWinnerTeam;
     [SerializeField] private GameObject _flagLoserTeam;
+    [SerializeField] private GameObject _flagDrawTeamA;
+    [SerializeField] private GameObject _flagDrawTeamB;
+
     
     public static UIManager Instance { get; private set; }
     private void Awake()
@@ -72,7 +77,7 @@ public class UIManager : MonoBehaviour
        GameManager.Instance.OnScoreChanged += UpdateScores;
        GameManager.Instance.OnSelectedTeams += SelectedTeams;
        GameManager.Instance.OnResults += MatchEnd;
-       
+
     }
     private void OnDisable()
     {
@@ -81,6 +86,7 @@ public class UIManager : MonoBehaviour
        GameManager.Instance.OnChangeFlagTeamA -= UpdateFlagsTeamA;
        GameManager.Instance.OnChangeFlagTeamB -= UpdateFlagsTeamB;
        GameManager.Instance.OnDrawGame -= DrawFinish;
+  
        GameManager.Instance.OnScoreTeamA -= ScoreTeamA;
        GameManager.Instance.OnScoreTeamA -= ScoreTeamB;
        GameManager.Instance.OnTimeChanged -= UpdateTimer;
@@ -141,11 +147,10 @@ public class UIManager : MonoBehaviour
         StartCoroutine(PanelGolB());
     }
     void MatchEnd(Sprite winnerTeam,Sprite loserTeam)
-    {   ShowEndMenu();
+    {    ShowEndMenu();
         _flagWinnerTeam.GetComponent<Image>().sprite = winnerTeam;
         _flagLoserTeam.GetComponent<Image>().sprite = loserTeam;
         
-
     }
     void SelectedTeams(Sprite TeamADefaut, Sprite TeamBDefaut)
     {
@@ -167,9 +172,20 @@ public class UIManager : MonoBehaviour
         
     }
 
-    void DrawFinish(int TeamA,int TeamB)
+    void DrawFinish(Sprite spriteTeamA,Sprite SpriteTeamB,int TeamAScore,int TeamBScore)
+    {   
+        _flagDrawTeamA.GetComponent<Image>().sprite = spriteTeamA;
+        _flagDrawTeamB.GetComponent<Image>().sprite = SpriteTeamB;
+        _textScoreTeamADraw.text = TeamAScore.ToString();
+        _textScoreTeamBDraw.text = TeamBScore.ToString();
+        ShowDrawUI();
+
+
+    }
+
+    void ShowDrawUI()
     {
-        
+        _panelPantallaEmpate.SetActive(true);
     }
 
     public void StartMatch()

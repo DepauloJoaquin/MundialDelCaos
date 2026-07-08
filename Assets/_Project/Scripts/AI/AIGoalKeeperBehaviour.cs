@@ -155,7 +155,7 @@ private bool BallIsDangerous()
 
     private bool ShouldGoalkeeperMove()
     {
-    if (IsBallFreeAndNearMyGoal())
+    if (IsBallNearMyGoal())
     {
         return true;
     }
@@ -176,5 +176,14 @@ private bool BallIsDangerous()
         return weight * direction;
 
     }
+    private bool IsBallNearMyGoal()
+{
+    float distanceBetweenBallAndGoal = Vector2.Distance(
+        _ball.transform.position,
+        _currentPlayer._myTeamController._thisTeamGoal.transform.position
+    );
+
+    return distanceBetweenBallAndGoal <= 6f;
+}
 
 }

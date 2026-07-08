@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float _intialTimeInSecods = 180;
     private float _timeLeft;
 
-    public event Action<int,int> OnDrawGame;
+    public event Action<Sprite,Sprite,int,int> OnDrawGame;
 
     public event Action OnScoreTeamA;
     public event Action OnScoreTeamB;
@@ -145,8 +145,8 @@ public class GameManager : MonoBehaviour
     }
     
     void FinishMatch()
-    {
-        OnResults?.Invoke(TeamCountryWinnerSprite(),TeamCountryLoserSprite());
+    {   
+        MatchEndUIDecition();
     }
     
 
@@ -296,17 +296,20 @@ public class GameManager : MonoBehaviour
         return color;
     }
 
-    public Team WhoIsTheWinner()
-    {   Team winner;
-        if(_goalsTeam_A > _goalsTeam_B)
+    public Team? WhoIsTheWinner()
+    {   
+        if (_goalsTeam_A > _goalsTeam_B)
         {
-            winner = Team.A;
+            return Team.A;
+        }
+        else if (_goalsTeam_B > _goalsTeam_A)
+        {
+            return Team.B;
         }
         else
         {
-            winner = Team.B;
+            return null;
         }
-        return winner;
     } 
 
     public Sprite TeamCountryWinnerSprite()
@@ -345,6 +348,28 @@ public class GameManager : MonoBehaviour
             loser = Team.B;
         }
         return loser;
+    }
+
+    void MatchEndUIDecition()
+    {
+        if(WhoIsTheWinner() == null)
+        {
+            DrawFinish();
+        }
+        else
+        {
+            MatchEndedWithWinner();
+        }
+    }
+
+    void DrawFinish()
+    {
+        OnDrawGame?.Invoke(Flags[CountrySelectedTeamA],Flags[CountrySelectedTeamB],_goalsTeam_A,_goalsTeam_B);
+    }
+
+    void MatchEndedWithWinner()
+    {
+        OnResults?.Invoke(TeamCountryWinnerSprite(),TeamCountryLoserSprite());
     }
 
 

@@ -7,6 +7,7 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
     public float rotationSpeed = 300f;
+    public float cooldownAfterKick = 0.5f;
     public GameObject _currentOwner;
     public PlayerController _currentOwnerController;
     public GameObject _lastOwner;
@@ -143,16 +144,28 @@ public class Ball : MonoBehaviour
         _isFree = false;
     }
 
-    public void KickBall(PlayerController currentOwnerController)
+     public void OnKick(PlayerController currentOwnerController)
     {
         float currentKickForce = currentOwnerController.kickForce;
-        Vector2 shootDirection = GetShootDirection(currentOwnerController);
-        rb.isKinematic = false;
+        Vector2 shootDirection = currentOwnerController.GetShootDirection();
+        ContinueBallMovement();
+        StartCoroutine(BlockBallCoroutine());
+        rb.AddForce(shootDirection * currentKickForce, ForceMode2D.Impulse);
+    }
+    private void ContinueBallMovement()
+    {
         _isFree = true;
         _lastKickPlayer = _currentOwner;
         _currentOwner = null;
-        _currentOwnerController = null;
-        rb.AddForce(shootDirection * currentKickForce, ForceMode2D.Impulse);
+    }
+   
+    
+
+ private IEnumerator BlockBallCoroutine()
+    {
+        _isFree = false;
+        yield return new WaitForSeconds(cooldownAfterKick);
+        _isFree = true;
     }
 
     public void PassBall(PlayerController currentOwnerController)

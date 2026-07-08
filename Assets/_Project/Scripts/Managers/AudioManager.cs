@@ -53,6 +53,18 @@ public class AudioManager : MonoBehaviour
         ActivarMusicaMenu();
     }
 
+    void  OnEnable() {
+        GameStateManager.Instance.OnMatchEnded += ReproducirSilvatoFinal;
+        GameStateManager.Instance.OnMatchEnded += ReproducirPantallaFinalVictoria;
+        GameStateManager.Instance.OnGoalScored += ReproducirSilvatoInicial;
+    }
+    void OnDisable()
+    {
+        GameStateManager.Instance.OnMatchEnded -= ReproducirSilvatoFinal;
+        GameStateManager.Instance.OnMatchEnded -= ReproducirPantallaFinalVictoria;
+        GameStateManager.Instance.OnGoalScored -= ReproducirSilvatoInicial;
+    }
+
 
     // Controlar la reproducción de sonidos y música
     public void DetenerSonidos()
