@@ -20,7 +20,9 @@ public class PlayerController : InputHandler
     public Vector2 _position;
     public float _forceTowardsTheBall = 1f;
     public bool _isBotRunning;
-    public ControlSlot controlSlot = ControlSlot.Bot;
+    public float tackleForce = 6f;
+    private bool isInTackleState = false;
+    
     [SerializeField] private string bindingGroup = "";
     [SerializeField] private bool configureInputOnAwake = true;
     public int _formationSlot;
@@ -55,41 +57,61 @@ public class PlayerController : InputHandler
 }
 
     public void Ability(InputAction.CallbackContext callbackContext)
-    {
-            if (!callbackContext.performed) return;
-            if (!CanUseAction()) return;
-            
-            
-       
-            Debug.Log(name + " activó su habilidad especial.");
-            _habilidadActiva = true;
-            _tiempoRestanteHabilidad = 4f;
-            velocity += _extraVelocidad;
+{
+    if (!callbackContext.performed) return;
+    if (!CanUseAction()) return;
 
-            if (AudioManager.Instancia != null)
-            {
-                AudioManager.Instancia.ReproducirActivarHabilidad();
-            }
+    if (GameManager.Instance._ballController._currentOwnerController != this)
+    {
+        return;
     }
+
+    if (_myTeamController == null)
+    {
+        return;
+    }
+
+    if (!_myTeamController.TryUseFullStamina(this))
+    {
+        return;
+    }
+
+    Debug.Log(name + " activó su habilidad especial.");
+
+    _habilidadActiva = true;
+    _tiempoRestanteHabilidad = 4f;
+
+    if (AudioManager.Instancia != null)
+    {
+        AudioManager.Instancia.ReproducirActivarHabilidad();
+    }
+}
 
     public void CountDown()
+{
+    if (!_habilidadActiva)
     {
-        // Cuenta regresiva del tiempo
-        if (_habilidadActiva)
+        return;
+    }
+
+    _tiempoRestanteHabilidad -= Time.deltaTime;
+
+    if (_tiempoRestanteHabilidad <= 0)
+    {
+        _habilidadActiva = false;
+
+        if (_myTeamController != null)
         {
-            _tiempoRestanteHabilidad -= Time.deltaTime;
-            if (_tiempoRestanteHabilidad <= 0)
-            {
-                _habilidadActiva = false; // Se apaga sola cuando llega a 0
-            }
+            _myTeamController.StopStaminaBoost(this);
         }
     }
+}
 
     private void FixedUpdate()
     {
         if (!GameStateManager.Instance.IsOnPlayState())
         {
-            rigidBody.velocity = Vector2.zero;
+            CeroVelocity();
             return;
         }
 
@@ -100,8 +122,8 @@ public class PlayerController : InputHandler
         }
         if (!CanBeControlled())
         {
-        rigidBody.velocity = Vector2.zero;
-        return;
+            CeroVelocity();
+            return;
         }
 
 
@@ -138,23 +160,21 @@ public class PlayerController : InputHandler
         return new Vector2(horizontalInput, verticalInput).normalized;
     }
 
-    private float GetMoveSpeed()
+private float GetMoveSpeed()
 {
     if (IsIdle()) return 0f;
 
-    float velocidadFinal = velocity;
-
-    if (isRunning && _myTeamController != null)
+    if (_habilidadActiva && _myTeamController != null)
     {
-        velocidadFinal *= _myTeamController.GetStaminaSpeedMultiplier(this);
+        return velocity * _myTeamController.GetStaminaSpeedMultiplier(this);
     }
 
-    if (_habilidadActiva)
+    if (isRunning)
     {
-        velocidadFinal += _extraVelocidad;
+        return velocity * 1.7f;
     }
 
-    return velocidadFinal;
+    return velocity;
 }
 
     private void UpdateSpriteFlip()
@@ -262,7 +282,7 @@ public class PlayerController : InputHandler
         // Evaluamos si realmente el jugador tiene asignada la pelota
         if (ball != null && ball._currentOwnerController == this)
         {
-            Debug.Log(name + " pateó la pelota.");
+            
 
             if (AudioManager.Instancia != null)
             {
@@ -275,7 +295,7 @@ public class PlayerController : InputHandler
         }
         else
         {
-            Debug.Log(name + " intentó patear sin tener la pelota.");
+            
 
             if (AudioManager.Instancia != null)
             {
@@ -355,6 +375,7 @@ private float GetShootVerticalOffset(float input)
             }
 
             playerStateManager.ChangeState(playerStateManager.passState);
+            transform.GetChild(0).GetComponent<ShirtAnimationController>().ChangeState("Pass");
             ball.PassBall(this);
         }
         else
@@ -379,15 +400,7 @@ private float GetShootVerticalOffset(float input)
     SetBall(newBall);
     }
 
-    public enum ControlSlot
-    {
-        None,
-        Player1,
-        Player2,
-        Player3,
-        Player4,
-        Bot
-    }
+    
          public  enum Role
     {
         GoalKeeper,
@@ -633,5 +646,15 @@ private void ActivateIndicatorByTeamB(SpriteRenderer indicator)
 
         SetControlSlot(controlSlot);
     }
+    }
+
+    public void CeroVelocity()
+    {
+        if(isInTackleState && rigidBody.velocity == Vector2.zero)
+        {
+            rigidBody.AddForce(new Vector2(GetHorizontalForceKick(), 0) * tackleForce, ForceMode2D.Impulse);
+            return;
+        }
+        rigidBody.velocity = Vector2.zero;
     }
 }

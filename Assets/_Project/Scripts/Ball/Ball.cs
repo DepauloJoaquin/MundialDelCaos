@@ -1,7 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
@@ -45,7 +42,7 @@ public class Ball : MonoBehaviour
         {   
             //Debug.DrawRay(transform.position, GetShootDirection(GetCurrentOwnerController()), Color.green); 
         }
-        DrawRaycastInGame();
+        //DrawRaycastInGame();
         
         
     }

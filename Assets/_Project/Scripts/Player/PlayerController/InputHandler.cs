@@ -7,6 +7,14 @@ public abstract class InputHandler : MonoBehaviour
     public Animator animator;
     public PlayerStateManager playerStateManager;
     public PlayerInput pInput;
+    public ControlSlot controlSlot = ControlSlot.Bot;
+    public enum ControlSlot
+    {
+        None,
+        Player1,
+        Player2,
+        Bot
+    }
 
     [Header("Options")]
     public float verticalInput;
@@ -127,5 +135,8 @@ public abstract class InputHandler : MonoBehaviour
         Ability,
         Shoot,
         None
+    }
+    public virtual void OnStateChanges(PlayerState newState)
+    {
     }
 }

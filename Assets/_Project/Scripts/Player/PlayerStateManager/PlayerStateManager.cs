@@ -19,6 +19,7 @@
         public ShootState shootState;
         public TackleState tackleState;
         public Dive diveState;
+        public StunState stunState;
 
         void Awake()
 {
@@ -26,45 +27,19 @@
     {
         _playerController = GetComponent<PlayerController>();
     }
-
-    if (_playerController == null)
-    {
-        Debug.LogError(name + " no tiene PlayerController.");
-        return;
-    }
-
     _player = gameObject;
     if (shirtAnimator == null)
-{
+    {
     ShirtAnimationController shirtController = GetComponentInChildren<ShirtAnimationController>();
 
     if (shirtController != null)
     {
         shirtAnimator = shirtController.GetComponent<Animator>();
     }
-}
-
-    if (_playerController.animator == null)
-    {
-        Debug.LogError(name + " no tiene Animator asignado en PlayerController.");
-        return;
     }
+
 
     _playerAnimator = _playerController.animator;
-
-    if (idleState == null) Debug.LogError(name + " no tiene IdleState.");
-    if (walkState == null) Debug.LogError(name + " no tiene WalkState.");
-    if (runState == null) Debug.LogError(name + " no tiene RunState.");
-    if (passState == null) Debug.LogError(name + " no tiene PassState.");
-    if (shootState == null) Debug.LogError(name + " no tiene ShootState.");
-    if (tackleState == null) Debug.LogError(name + " no tiene TackleState.");
-    if (diveState == null) Debug.LogError(name + " no tiene DiveState.");
-
-    if (idleState == null || walkState == null || runState == null ||
-        passState == null || shootState == null || tackleState == null || diveState == null)
-    {
-        return;
-    }
 
     idleState.Init(this, _playerController, _player, _playerAnimator);
     walkState.Init(this, _playerController, _player, _playerAnimator);
@@ -73,6 +48,7 @@
     shootState.Init(this, _playerController, _player, _playerAnimator);
     tackleState.Init(this, _playerController, _player, _playerAnimator);
     diveState.Init(this, _playerController, _player, _playerAnimator);
+    stunState.Init(this, _playerController,_player,_playerAnimator);
 }
         
         void Start()

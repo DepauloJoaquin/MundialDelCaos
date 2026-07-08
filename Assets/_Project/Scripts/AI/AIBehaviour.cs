@@ -112,14 +112,6 @@ public class AIBehaviour : MonoBehaviour
         }
     }
 
-    /*public Vector2 GetMovementTowardsGoal()
-    {
-        Vector2 target = _currentPlayer._myTeamController._OurGoalScript.GetEnemyGoalFirstTargetPosition();
-        Vector2 direction = _currentPlayer.DirectionTo(target);
-        float weight = GetBicircularWeight(_currentPlayer._position,target,100,0,150,1);
-        return weight * direction;
-    }*/
-
     public bool isBallCarriedByTeamMate()
     {
         return _ball._currentOwner != null && _ball._currentOwner != _currentPlayer && _ball._currentOwnerController._team == _currentPlayer._team;
