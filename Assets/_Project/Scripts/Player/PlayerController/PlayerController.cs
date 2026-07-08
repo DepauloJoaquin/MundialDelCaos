@@ -294,9 +294,13 @@ public class PlayerController : InputHandler
     {
         switch (newState)
         {
-            case TackleState tackleState:
+            case TackleState:
                 {
                     StartCoroutine(RigidBodyVelocitycCorrutine());
+                    break;
+                }
+            case StunState:
+                {
                     break;
                 }
             default:
@@ -322,5 +326,23 @@ public class PlayerController : InputHandler
         isInTackleState = true;
         yield return new WaitForSeconds(1f);
         isInTackleState = false;
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.name.Contains("PlayerBase"))
+        {
+            CheckTackleCollision(collision.gameObject.GetComponent<PlayerController>());
+        }
+        
+    }
+
+    private void CheckTackleCollision(PlayerController rival)
+    {
+        if(rival.isInTackleState)
+        {
+            playerStateManager.ChangeState(playerStateManager.stunState);
+            transform.GetChild(0).GetComponent<ShirtAnimationController>().ChangeState("Stun");
+        }
     }
 }

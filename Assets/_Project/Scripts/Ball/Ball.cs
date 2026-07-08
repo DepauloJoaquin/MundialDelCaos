@@ -50,8 +50,14 @@ public class Ball : MonoBehaviour
     {
         PlayerController receiver = collision.gameObject.GetComponent<PlayerController>();
         if(! _isFree) { return; }
-        if (receiver == null) { return; }
-        
+        if (receiver != null) 
+        { 
+            OnPlayerCollisionEnter(receiver, collision);
+        }
+    }
+
+    void OnPlayerCollisionEnter(PlayerController receiver, Collision2D collision)
+    {
         receiver.setBall(this);
         isRotating = true;
         PlayerController previousOwnerController = null;
@@ -62,6 +68,7 @@ public class Ball : MonoBehaviour
         _lastOwner = _currentOwner;
         _currentOwner = collision.gameObject;
         receiver.OnPlayerReceivesBall(previousOwnerController); 
+        _lastOwner.GetComponent<PlayerController>().setBall(null);
         ResetBallMovement();
     }
 

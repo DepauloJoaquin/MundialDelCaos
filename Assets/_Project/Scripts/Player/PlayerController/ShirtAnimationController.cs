@@ -63,9 +63,13 @@ public class ShirtAnimationController : InputHandler
         {
             playerStateManager.ChangeState(playerStateManager.passState);
         }
-        else
+        else if (state == "Tackle")
         {
             playerStateManager.ChangeState(playerStateManager.tackleState);
+        }
+        else if (state == "Stun")
+        {
+            playerStateManager.ChangeState(playerStateManager.stunState);
         }
     }
 }

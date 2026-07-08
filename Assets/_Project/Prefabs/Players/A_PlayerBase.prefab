@@ -119,6 +119,7 @@ GameObject:
   - component: {fileID: 8190903908935271074}
   - component: {fileID: 3698812972829530256}
   - component: {fileID: 1649670282738841869}
+  - component: {fileID: 1965299615577108696}
   m_Layer: 0
   m_Name: A_PlayerBase
   m_TagString: Untagged
@@ -282,6 +283,7 @@ MonoBehaviour:
   animator: {fileID: 6059151333275915411}
   playerStateManager: {fileID: 727739539802385316}
   pInput: {fileID: 4298268059283685189}
+  controlSlot: 1
   verticalInput: 0
   horizontalInput: 0
   isRunning: 0
@@ -290,11 +292,11 @@ MonoBehaviour:
   team: 0
   rigidBody: {fileID: 9062169989657019609}
   spriteRenderer: {fileID: 2525865851198080052}
-  controlSlot: 1
   bindingGroup: WASD
   configureInputOnAwake: 1
   velocity: 3.5
   kickForce: 2
+  tackleForce: 6
 --- !u!114 &4298268059283685189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -433,6 +435,7 @@ MonoBehaviour:
   passState: {fileID: 5381239611236545104}
   shootState: {fileID: 8190903908935271074}
   tackleState: {fileID: 3698812972829530256}
+  stunState: {fileID: 1965299615577108696}
 --- !u!114 &1291457079385323965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -505,6 +508,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea569fe2855d1c4081accb1feebd8b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1965299615577108696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3325976304563632852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acd572a43d9161e45b416939415f9c0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7557462401888143863
 GameObject:
   m_ObjectHideFlags: 0
@@ -524,6 +539,7 @@ GameObject:
   - component: {fileID: 879423654322279294}
   - component: {fileID: 8500480369630048644}
   - component: {fileID: 9068289991832504853}
+  - component: {fileID: 7398289050857669747}
   m_Layer: 0
   m_Name: Shirt
   m_TagString: Untagged
@@ -613,6 +629,7 @@ MonoBehaviour:
   animator: {fileID: 4636627549207701479}
   playerStateManager: {fileID: 7952746834855766236}
   pInput: {fileID: 4298268059283685189}
+  controlSlot: 5
   verticalInput: 0
   horizontalInput: 0
   isRunning: 0
@@ -659,6 +676,7 @@ MonoBehaviour:
   passState: {fileID: 5456168463240991660}
   shootState: {fileID: 879423654322279294}
   tackleState: {fileID: 8500480369630048644}
+  stunState: {fileID: 7398289050857669747}
 --- !u!114 &7209420737974496527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -729,5 +747,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ea569fe2855d1c4081accb1feebd8b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7398289050857669747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7557462401888143863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acd572a43d9161e45b416939415f9c0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

@@ -16,6 +16,7 @@
         public PassState passState;
         public ShootState shootState;
         public TackleState tackleState;
+        public StunState stunState;
 
         void Awake()
         {
@@ -31,6 +32,7 @@
             passState.Init(this, _playerController,_player,_playerAnimator);
             shootState.Init(this, _playerController,_player,_playerAnimator);
             tackleState.Init(this, _playerController,_player,_playerAnimator);
+            stunState.Init(this, _playerController,_player,_playerAnimator);
         }
         
         void Start()
