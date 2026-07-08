@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class PlayerController : InputHandler
 {
@@ -25,6 +26,7 @@ public class PlayerController : InputHandler
     public float velocity = 3.5f;
     public float kickForce = 2f;
     private Ball ball;
+    public TextMeshPro _textoIndicador;
 
     [Header("Habilidad Súper Simplificada")]
     public bool _habilidadActiva = false;
@@ -352,8 +354,38 @@ public class PlayerController : InputHandler
         if (_indicadorControl != null)
         {
             bool esJugadorHumano = controlSlot != ControlSlot.Bot && controlSlot != ControlSlot.None;
-            _indicadorControl.enabled = esJugadorHumano;
+            if(controlSlot==ControlSlot.Player1)
+            {
+                _indicadorControl.enabled = esJugadorHumano;
+                _textoIndicador.enabled = esJugadorHumano;
+            }
+            else if(controlSlot==ControlSlot.Player2)
+            {
+                if (ColorUtility.TryParseHtmlString("#F8A139", out Color colorP2))
+                {
+                    _indicadorControl.color = colorP2;
+                }
+                _textoIndicador.text = "J2";
+                _indicadorControl.enabled = esJugadorHumano;
+                _textoIndicador.enabled = esJugadorHumano;
+            }
+            else if (controlSlot == ControlSlot.Player4)
+            {
+                if (ColorUtility.TryParseHtmlString("#39EEF8", out Color colorP2))
+                {
+                    _indicadorControl.color = colorP2;
+                }
+                _textoIndicador.text = "J4";
+                _indicadorControl.enabled = esJugadorHumano;
+                _textoIndicador.enabled = esJugadorHumano;
+            }
+            else
+            {
+                _indicadorControl.enabled = false;
+                if (_textoIndicador != null) _textoIndicador.enabled = false;
+            }
         }
+          
     }
 
     public override bool IsIdle()
